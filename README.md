@@ -4,6 +4,7 @@ A comprehensive, modern redesign of the iconic **Karachi Bakery** web platform (
 
 ![Karachi Bakery Brand](https://img.shields.io/badge/Karachi%20Bakery-Est.%201953-8B0000?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Sprint%20Progress-Day%201%20of%2010-gold?style=for-the-badge)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FSamudralaHitesh%2FKarachi-Bakery-Website-Redesign)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 
 ---
@@ -45,3 +46,21 @@ git clone https://github.com/SamudralaHitesh/Karachi-Bakery-Website-Redesign.git
 cd Karachi-Bakery-Website-Redesign
 # Open index.html in your preferred browser
 ```
+
+---
+
+## 🌐 Live Vercel Deployment
+
+This project is pre-configured for instant **Vercel** deployment with optimized headers and clean routing (`vercel.json`).
+
+### Option 1: 1-Click Git Integration (Recommended)
+1. Go to [vercel.com/new](https://vercel.com/new) and log in with your GitHub account.
+2. Select repository: `SamudralaHitesh/Karachi-Bakery-Website-Redesign`.
+3. Keep default settings (Framework Preset: **Other**) and click **Deploy**.
+4. Every future commit to `main` will automatically deploy live with zero extra setup!
+
+### Option 2: Deploy via Vercel CLI
+```bash
+npx vercel
+```
+
