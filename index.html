@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Karachi Bakery — Est. 1953 | Hyderabad's Iconic Bakery & Confectionery</title>
+  <meta name="description" content="Official Karachi Bakery Online Portal. Order authentic Osmania & Fruit Biscuits, Artisan Cakes, Mithai, and Corporate Gifting packs with pan-India delivery.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
+  
+  <!-- Main Design System CSS -->
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+
+  <!-- ==========================================================================
+       Top Announcement & Express Pincode Checker (Addresses Delivery Info #12)
+       ========================================================================== -->
+  <aside class="top-announcement" aria-label="Announcement bar">
+    <div class="container">
+      <div class="announcement-text">
+        <span class="announcement-badge">Pan-India</span>
+        <span>🚚 Shipping across 19,000+ pincodes • Same-day local delivery in Hyderabad</span>
+      </div>
+      <div class="pincode-quick-check">
+        <span>Delivery to:</span>
+        <div class="pincode-input-group">
+          <input type="text" id="quickPincodeInput" placeholder="Enter Pincode" maxlength="6" aria-label="Enter your 6-digit delivery pincode">
+          <button type="button" id="btnQuickPincodeCheck">Check</button>
+        </div>
+        <span id="pincodeStatusBadge" style="display:none; font-weight:700; font-size:0.75rem;"></span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ==========================================================================
+       Customer Journey Switcher Bar (Directly Resolves Issue #15 & #4)
+       Separates Retail, Corporate B2B, Custom Studio & Stores into cohesive tabs
+       ========================================================================== -->
+  <nav class="journey-switcher-bar" aria-label="Customer Journey Selector">
+    <div class="container">
+      <div class="journey-tabs" role="tablist">
+        <button class="journey-tab active" id="tabRetail" role="tab" aria-selected="true" data-journey="retail">
+          🛍️ Retail Online Shop <span class="tag">B2C</span>
+        </button>
+        <button class="journey-tab" id="tabB2B" role="tab" aria-selected="false" data-journey="b2b">
+          🏢 Corporate & Bulk Orders <span class="tag">B2B</span>
+        </button>
+        <button class="journey-tab" id="tabCustomCakes" role="tab" aria-selected="false" data-journey="custom">
+          🎂 Custom Cake Studio
+        </button>
+        <button class="journey-tab" id="tabStores" role="tab" aria-selected="false" data-journey="stores">
+          📍 Store Locator <span class="tag">50+ Outlets</span>
+        </button>
+      </div>
+      <div class="journey-indicator" id="currentJourneyBadge">
+        Browsing: <strong>Retail Online Store</strong>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ==========================================================================
+       Main Sticky Site Header
+       ========================================================================== -->
+  <header class="site-header">
+    <div class="main-nav">
+      <div class="container">
+        <!-- Brand Identity -->
+        <a href="index.html" class="brand-identity" aria-label="Karachi Bakery Homepage">
+          <div class="brand-emblem">KB</div>
+          <div class="brand-text">
+            <h1>Karachi Bakery</h1>
+            <span>Hyderabad • Est. 1953</span>
+          </div>
+        </a>
+
+        <!-- Global Search Bar with Autocomplete Preview (Addresses Issue #2) -->
+        <div class="header-search">
+          <div class="search-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="globalSearchInput" placeholder="Search Fruit Biscuits, Kaju Katli, Sugar-free..." aria-label="Search Karachi Bakery products">
+          </div>
+        </div>
+
+        <!-- Quick Navigation -->
+        <ul class="nav-links">
+          <li><a href="#shopPreview" class="nav-link">Biscuits</a></li>
+          <li><a href="#shopPreview" class="nav-link">Sweets & Mithai</a></li>
+          <li><a href="#shopPreview" class="nav-link">Cakes & Pastries</a></li>
+          <li><a href="#b2bHighlight" class="nav-link">Corporate Bulk</a></li>
+          <li><a href="#storesSection" class="nav-link">Stores</a></li>
+        </ul>
+
+        <!-- Action Buttons -->
+        <div class="header-actions">
+          <button class="action-btn action-btn-ghost" id="btnCompareBadge" title="Compare Products (Issue #13)">
+            ⚖️ <span class="action-text">Compare</span>
+            <span class="badge-count" id="compareCount">0</span>
+          </button>
+          
+          <button class="action-btn action-btn-primary" id="btnCartDrawer" title="View Cart">
+            🛒 <span class="action-text">Cart</span>
+            <span class="badge-count" id="cartCount">0</span>
+          </button>
+
+          <button class="mobile-toggle" id="mobileMenuBtn" aria-label="Toggle navigation menu">
+            ☰
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       Hero Section & Customer Journey Gateway Hub (Direct Solution to #4 & #15)
+       ========================================================================== -->
+  <main>
+    <section class="hero-portal" id="heroPortal">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <div class="hero-badge-tag">
+            👑 Hyderabad's Most Beloved Confectioner Since 1953
+          </div>
+          <h2 class="hero-title">
+            The True Taste of Tradition, Crafted for <span class="gold-gradient">Every Celebration</span>
+          </h2>
+          <p class="hero-description">
+            From our legendary hand-baked Fruit Biscuits and melt-in-mouth Osmania cookies to bespoke multi-tiered wedding cakes and premium corporate gifting suites.
+          </p>
+
+          <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+            <a href="#shopPreview" class="btn-add-cart" style="font-size:0.95rem; padding:0.8rem 1.6rem;">
+              Shop Bestsellers Now →
+            </a>
+            <a href="#b2bHighlight" class="action-btn-ghost" style="color:#fff; border-color:rgba(255,255,255,0.4); padding:0.8rem 1.4rem;">
+              Corporate Catalogue (B2B)
+            </a>
+          </div>
+        </div>
+
+        <!-- Interactive Journey Portals (Addresses Issue #15 directly) -->
+        <div class="hero-gateways">
+          <div class="gateways-header">
+            <h3>Choose Your Ordering Journey</h3>
+            <span style="font-size:0.75rem; color:rgba(255,255,255,0.7);">Seamless • No Redirects</span>
+          </div>
+          <div class="gateway-cards">
+            <!-- Journey 1: Retail -->
+            <a href="#shopPreview" class="gateway-card" onclick="switchJourney('retail')">
+              <div>
+                <div class="gateway-icon">🍪</div>
+                <h4>Retail & Gift Packs</h4>
+                <p>Iconic biscuits, sweets, artisanal chocolates, and ready-to-ship gift hampers.</p>
+              </div>
+              <span class="gateway-btn">Explore Retail →</span>
+            </a>
+
+            <!-- Journey 2: Corporate B2B (Solves Issue #3 & #8) -->
+            <a href="#b2bHighlight" class="gateway-card b2b-highlight" onclick="switchJourney('b2b')">
+              <div>
+                <div class="gateway-icon">🏢</div>
+                <h4>Corporate & Bulk</h4>
+                <p>Bulk pricing, case pack MOQ, custom brand logo tins, and GST invoices.</p>
+              </div>
+              <span class="gateway-btn">B2B Portal →</span>
+            </a>
+
+            <!-- Journey 3: Custom Cake Studio (Solves Issue #10) -->
+            <a href="#customCakeSection" class="gateway-card" onclick="switchJourney('custom')">
+              <div>
+                <div class="gateway-icon">🎂</div>
+                <h4>Custom Cakes Studio</h4>
+                <p>Personalized fondant, theme cakes, and celebration bakes with custom photo prints.</p>
+              </div>
+              <span class="gateway-btn">Design Cake →</span>
+            </a>
+
+            <!-- Journey 4: Store Finder (Solves Issue #5 & #6) -->
+            <a href="#storesSection" class="gateway-card" onclick="switchJourney('stores')">
+              <div>
+                <div class="gateway-icon">📍</div>
+                <h4>Find Nearest Store</h4>
+                <p>Locate over 50 flagship bakeries, cafes, and airport outlets with live timings.</p>
+              </div>
+              <span class="gateway-btn">Find Outlets →</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         Trust & Value Highlights (Addresses Issue #12 Transparent Delivery)
+         ========================================================================== -->
+    <section class="value-ribbon" aria-label="Customer Guarantees">
+      <div class="container ribbon-grid">
+        <div class="ribbon-item">
+          <div class="ribbon-icon">🇮🇳</div>
+          <div class="ribbon-info">
+            <h4>Pan-India Shipping</h4>
+            <p>Reliable 3–5 day doorstep delivery across all Indian pin codes.</p>
+          </div>
+        </div>
+        <div class="ribbon-item">
+          <div class="ribbon-icon">⭐</div>
+          <div class="ribbon-info">
+            <h4>70+ Years of Heritage</h4>
+            <p>Original secret recipes perfected since 1953 in Moazzam Jahi Market.</p>
+          </div>
+        </div>
+        <div class="ribbon-item">
+          <div class="ribbon-icon">🌱</div>
+          <div class="ribbon-info">
+            <h4>100% Pure Vegetarian</h4>
+            <p>All classic biscuits and sweets crafted in pure veg certified facilities.</p>
+          </div>
+        </div>
+        <div class="ribbon-item">
+          <div class="ribbon-icon">🛡️</div>
+          <div class="ribbon-info">
+            <h4>Vacuum Sealed Freshness</h4>
+            <p>Multi-layered nitrogen packaging for extended shelf life and crispness.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         Unified Shopping Experience Preview (Resolves Issue #4: Online shopping 
+         integrated into the website, not an isolated external store)
+         ========================================================================== -->
+    <section class="shopping-preview" id="shopPreview">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-sub">Signature Collections</span>
+          <h2 class="section-title">Iconic Bestsellers</h2>
+          <p class="section-desc">
+            Direct online ordering directly through our unified platform. Freshly baked, safely packed, and dispatched straight to your home.
+          </p>
+        </div>
+
+        <!-- Category Quick Pills (Preparation for Days 2 & 3) -->
+        <div class="category-filter-pills" role="tablist">
+          <button class="filter-pill active" onclick="filterCatalog('all', this)">All Delicacies</button>
+          <button class="filter-pill" onclick="filterCatalog('biscuits', this)">Famous Biscuits</button>
+          <button class="filter-pill" onclick="filterCatalog('sweets', this)">Mithai & Sweets</button>
+          <button class="filter-pill" onclick="filterCatalog('sugar-free', this)">Sugar-Free & Vegan</button>
+          <button class="filter-pill" onclick="filterCatalog('hampers', this)">Gift Boxes & Tins</button>
+        </div>
+
+        <!-- Curated Product Catalog Cards -->
+        <div class="product-grid" id="productGridContainer">
+          
+          <!-- Product 1 -->
+          <article class="product-card" data-category="biscuits">
+            <span class="product-tag">Legendary</span>
+            <span class="product-tag dietary">Veg 🟢</span>
+            <div class="product-thumb">
+              <span class="product-thumb-placeholder">🍪</span>
+            </div>
+            <div class="product-details">
+              <span class="product-category-label">Signature Biscuit</span>
+              <h3 class="product-title">Original Hyderabad Fruit Biscuit</h3>
+              <div class="product-specs">
+                <span>📦 400g Tin</span>
+                <span>•</span>
+                <span>⏳ 6 Months Shelf Life</span>
+              </div>
+              <p style="font-size:0.8rem; color:var(--kb-text-secondary); margin-bottom:0.75rem;">
+                The crown jewel of Karachi Bakery. Studded with candied tutti-frutti and rich cashew bits.
+              </p>
+              <div class="product-pricing">
+                <div class="price-box">
+                  <span class="price-current">₹220</span>
+                  <span class="price-original">₹240</span>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart('Original Hyderabad Fruit Biscuit (400g)', 220)">
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Product 2 -->
+          <article class="product-card" data-category="biscuits">
+            <span class="product-tag">Royal Heritage</span>
+            <span class="product-tag dietary">Veg 🟢</span>
+            <div class="product-thumb">
+              <span class="product-thumb-placeholder">☕</span>
+            </div>
+            <div class="product-details">
+              <span class="product-category-label">Tea-Time Classic</span>
+              <h3 class="product-title">Hyderabadi Osmania Biscuits</h3>
+              <div class="product-specs">
+                <span>📦 400g Box</span>
+                <span>•</span>
+                <span>⏳ 6 Months Shelf Life</span>
+              </div>
+              <p style="font-size:0.8rem; color:var(--kb-text-secondary); margin-bottom:0.75rem;">
+                Crisp, sweet and salty traditional biscuits named after the last Nizam of Hyderabad.
+              </p>
+              <div class="product-pricing">
+                <div class="price-box">
+                  <span class="price-current">₹190</span>
+                  <span class="price-original">₹210</span>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart('Hyderabadi Osmania Biscuits (400g)', 190)">
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Product 3 -->
+          <article class="product-card" data-category="sweets">
+            <span class="product-tag">Pure Desi Ghee</span>
+            <span class="product-tag dietary">Veg 🟢</span>
+            <div class="product-thumb">
+              <span class="product-thumb-placeholder">🍬</span>
+            </div>
+            <div class="product-details">
+              <span class="product-category-label">Traditional Mithai</span>
+              <h3 class="product-title">Royal Kaju Katli (Diamond Cut)</h3>
+              <div class="product-specs">
+                <span>📦 500g Luxury Box</span>
+                <span>•</span>
+                <span>⏳ 30 Days</span>
+              </div>
+              <p style="font-size:0.8rem; color:var(--kb-text-secondary); margin-bottom:0.75rem;">
+                Pure whole Goan cashews grounded with delicate silver vark. Melt-in-mouth richness.
+              </p>
+              <div class="product-pricing">
+                <div class="price-box">
+                  <span class="price-current">₹540</span>
+                  <span class="price-original">₹580</span>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart('Royal Kaju Katli (500g)', 540)">
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Product 4 -->
+          <article class="product-card" data-category="sugar-free">
+            <span class="product-tag">Dietary Choice</span>
+            <span class="product-tag dietary">Sugar-Free 🍃</span>
+            <div class="product-thumb">
+              <span class="product-thumb-placeholder">🌾</span>
+            </div>
+            <div class="product-details">
+              <span class="product-category-label">Wellness Range</span>
+              <h3 class="product-title">Sugar-Free Roasted Almond Cookies</h3>
+              <div class="product-specs">
+                <span>📦 350g Pack</span>
+                <span>•</span>
+                <span>⏳ 4 Months</span>
+              </div>
+              <p style="font-size:0.8rem; color:var(--kb-text-secondary); margin-bottom:0.75rem;">
+                Zero added refined sugar, sweetened naturally with stevia, loaded with Californian almonds.
+              </p>
+              <div class="product-pricing">
+                <div class="price-box">
+                  <span class="price-current">₹260</span>
+                  <span class="price-original">₹290</span>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart('Sugar-Free Roasted Almond Cookies', 260)">
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         Dedicated B2B & Corporate Section (Resolves Issues #3, #8, #9)
+         Eliminates confusing B2B pricing from retail shoppers while providing
+         dedicated corporate inquiries, MOQ, and sample ordering.
+         ========================================================================== -->
+    <section class="b2b-highlight-strip" id="b2bHighlight">
+      <div class="container b2b-strip-grid">
+        <div class="b2b-content">
+          <div class="hero-badge-tag" style="background:rgba(201,151,38,0.2); border-color:var(--kb-gold); color:var(--kb-gold-light);">
+            🏢 Corporate & Bulk Ordering Suite
+          </div>
+          <h3>Dedicated Bulk Orders for <span>Festivals, Weddings & Enterprises</span></h3>
+          <p>
+            No more confusing MOQ mixed with retail prices. Karachi Bakery's dedicated B2B division delivers customized corporate hampers, custom co-branded gift tins, and GST invoices with tiered volume discounts.
+          </p>
+
+          <div class="b2b-perks">
+            <div class="b2b-perk-item">
+              <span>✔</span> Custom Logo Packaging & Ribbon Foil
+            </div>
+            <div class="b2b-perk-item">
+              <span>✔</span> Tiered Volume Discounts (10% to 30%)
+            </div>
+            <div class="b2b-perk-item">
+              <span>✔</span> Pan-India Multi-Address Employee Delivery
+            </div>
+            <div class="b2b-perk-item">
+              <span>✔</span> Dedicated Account Manager & Sample Box
+            </div>
+          </div>
+
+          <div class="b2b-actions">
+            <button class="btn-b2b-primary" onclick="showToast('Corporate RFQ Portal will unlock on Day 6 milestone!')">
+              Request Corporate Catalog (RFQ)
+            </button>
+            <button class="btn-b2b-outline" onclick="showToast('Sample box request registered!')">
+              Order Tasting Sample Kit
+            </button>
+          </div>
+        </div>
+
+        <div class="b2b-card-preview">
+          <h4>B2B Instant Volume Estimator</h4>
+          <p>Transparent corporate bulk tiers for Diwali & New Year</p>
+          <div style="background:rgba(0,0,0,0.2); border-radius:var(--radius-sm); padding:1rem; margin-bottom:1rem; text-align:left;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem; font-size:0.85rem;">
+              <span>Tier 1 (25 – 99 Boxes):</span>
+              <strong style="color:var(--kb-gold-light);">10% OFF</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem; font-size:0.85rem;">
+              <span>Tier 2 (100 – 499 Boxes):</span>
+              <strong style="color:var(--kb-gold-light);">20% OFF</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:0.85rem;">
+              <span>Tier 3 (500+ Boxes):</span>
+              <strong style="color:var(--kb-gold-light);">30% OFF + Free Branding</strong>
+            </div>
+          </div>
+          <div class="b2b-stats-row">
+            <div class="b2b-stat">
+              <strong>1,500+</strong>
+              <span>Corporate Clients</span>
+            </div>
+            <div class="b2b-stat">
+              <strong>100%</strong>
+              <span>Timely Delivery</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Custom Cakes & Celebration Studio Placeholder (Issue #10) -->
+    <section class="container" id="customCakeSection" style="padding: 3rem 1.5rem; text-align:center; background:#fff; border-radius:var(--radius-lg); margin-bottom:4rem; border:1px solid var(--kb-border);">
+      <span class="section-sub">Celebration Studio</span>
+      <h2 class="section-title">Custom Cake & Celebration Ordering</h2>
+      <p class="section-desc" style="max-width:600px; margin:0 auto 1.5rem;">
+        Say goodbye to generic order forms. Our guided step-by-step custom cake builder helps you pick flavours, upload photo references, and select delivery slots.
+      </p>
+      <div style="display:inline-flex; gap:1rem; align-items:center; background:var(--kb-gold-subtle); padding:0.75rem 1.5rem; border-radius:var(--radius-pill); border:1px solid var(--kb-border-gold);">
+        <span>🎂 Scheduled for <strong>Day 7 Milestone</strong></span>
+        <button class="action-btn-primary" style="padding:0.4rem 1rem; font-size:0.8rem;" onclick="showToast('Custom Cake Studio wizard launches on Day 7!')">Preview Wizard</button>
+      </div>
+    </section>
+
+    <!-- Store Locator Section Placeholder (Issue #5 & #6) -->
+    <section class="container" id="storesSection" style="padding: 3rem 1.5rem; text-align:center; background:var(--kb-cream-card); border-radius:var(--radius-lg); margin-bottom:4rem; border:1px solid var(--kb-border);">
+      <span class="section-sub">Outlets Across India</span>
+      <h2 class="section-title">Interactive Store Locator</h2>
+      <p class="section-desc" style="max-width:600px; margin:0 auto 1.5rem;">
+        No more scrolling through endless addresses. Search by city, find live open hours, get direct Google Map directions, and see outlet specialties.
+      </p>
+      <div style="display:inline-flex; gap:1rem; align-items:center; background:#E1F0FA; padding:0.75rem 1.5rem; border-radius:var(--radius-pill); border:1px solid #BEE3F8;">
+        <span>📍 Scheduled for <strong>Day 8 Milestone</strong> (Map & City Search)</span>
+        <button class="action-btn-primary" style="background:#026AA7; padding:0.4rem 1rem; font-size:0.8rem;" onclick="showToast('Interactive Store Locator launches on Day 8!')">Explore Locations</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==========================================================================
+       Site Footer
+       ========================================================================== -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.75rem;">
+          <div class="brand-emblem" style="width:38px; height:38px; font-size:1.1rem;">KB</div>
+          <h3 style="margin-bottom:0;">Karachi Bakery</h3>
+        </div>
+        <p>
+          Crafting heritage culinary traditions since 1953. Hyderabad's pride and a household name across India and overseas.
+        </p>
+        <p style="font-size:0.8rem; color:var(--kb-gold);">
+          FSSAI Lic. No: 13615015000254
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Retail Journeys</h4>
+        <ul>
+          <li><a href="#shopPreview">Osmania & Fruit Biscuits</a></li>
+          <li><a href="#shopPreview">Artisanal Cakes & Pastries</a></li>
+          <li><a href="#shopPreview">Kaju Katli & Royal Sweets</a></li>
+          <li><a href="#shopPreview">Sugar-Free Health Range</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Corporate & Custom</h4>
+        <ul>
+          <li><a href="#b2bHighlight">Corporate Gift Hampers</a></li>
+          <li><a href="#b2bHighlight">Bulk Festive Orders</a></li>
+          <li><a href="#customCakeSection">Wedding & Birthday Cakes</a></li>
+          <li><a href="#storesSection">Flagship Store Outlets</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Customer Support</h4>
+        <ul>
+          <li><a href="tel:+914066662222">📞 +91 40 6666 2222</a></li>
+          <li><a href="mailto:care@karachibakery.com">✉️ care@karachibakery.com</a></li>
+          <li><a href="#storesSection">Store Timings: 9:00 AM - 10:30 PM</a></li>
+          <li><a href="#heroPortal">Pan-India Tracking</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="container footer-bottom">
+      <div>
+        © 2026 Karachi Bakery Pvt. Ltd. All Rights Reserved. • Redesign Sprint (Day 1 of 10)
+      </div>
+      <div>
+        Designed for Excellence • Issues #4 & #15 Addressed
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==========================================================================
+       Notification Toast
+       ========================================================================== -->
+  <div class="toast-notice" id="toastNotice" role="alert" aria-live="polite">
+    <span id="toastIcon">✨</span>
+    <span id="toastMessage">Action completed successfully</span>
+  </div>
+
+  <!-- Main JavaScript Logic -->
+  <script src="js/app.js"></script>
+</body>
+</html>
