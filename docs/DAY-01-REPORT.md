@@ -2,7 +2,8 @@
 **Sprint:** 10-Day Full Website Redesign & Bug Resolution  
 **Date:** Day 1 Deliverable  
 **Author:** Samudrala Hitesh  
-**Repository:** [SamudralaHitesh/Karachi-Bakery-Website-Redesign](https://github.com/SamudralaHitesh/Karachi-Bakery-Website-Redesign)
+**Repository:** [SamudralaHitesh/Karachi-Bakery-Website-Redesign](https://github.com/SamudralaHitesh/Karachi-Bakery-Website-Redesign)  
+**Live Production URL:** [https://karachi-bakery-redesign.vercel.app](https://karachi-bakery-redesign.vercel.app)
 
 ---
 

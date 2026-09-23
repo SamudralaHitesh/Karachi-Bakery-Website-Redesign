@@ -4,8 +4,10 @@ A comprehensive, modern redesign of the iconic **Karachi Bakery** web platform (
 
 ![Karachi Bakery Brand](https://img.shields.io/badge/Karachi%20Bakery-Est.%201953-8B0000?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Sprint%20Progress-Day%201%20of%2010-gold?style=for-the-badge)
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FSamudralaHitesh%2FKarachi-Bakery-Website-Redesign)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-karachi--bakery--redesign.vercel.app-000000?style=for-the-badge&logo=vercel)](https://karachi-bakery-redesign.vercel.app)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
+
+> 🔗 **Live Website Demo:** [https://karachi-bakery-redesign.vercel.app](https://karachi-bakery-redesign.vercel.app)
 
 ---
 
