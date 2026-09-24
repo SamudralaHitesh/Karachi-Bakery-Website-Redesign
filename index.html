@@ -81,17 +81,21 @@
         <div class="header-search">
           <div class="search-wrapper">
             <span class="search-icon">🔍</span>
-            <input type="text" id="globalSearchInput" placeholder="Search Fruit Biscuits, Kaju Katli, Sugar-free..." aria-label="Search Karachi Bakery products">
+            <input type="text" id="globalSearchInput" placeholder="Search biscuits, cakes, mithai..." aria-label="Search Karachi Bakery products">
           </div>
         </div>
 
-        <!-- Quick Navigation -->
+        <!-- Main Navigation with Visual Mega Menu (Day 2: Resolves Issue #1 & #15) -->
         <ul class="nav-links">
-          <li><a href="#shopPreview" class="nav-link">Biscuits</a></li>
-          <li><a href="#shopPreview" class="nav-link">Sweets & Mithai</a></li>
-          <li><a href="#shopPreview" class="nav-link">Cakes & Pastries</a></li>
-          <li><a href="#b2bHighlight" class="nav-link">Corporate Bulk</a></li>
-          <li><a href="#storesSection" class="nav-link">Stores</a></li>
+          <li class="has-mega-menu">
+            <button class="nav-link nav-mega-trigger" id="btnMegaMenu" aria-expanded="false" aria-controls="megaMenuDropdown">
+              Categories <span class="mega-arrow">▾</span>
+            </button>
+          </li>
+          <li><a href="#categoryShowcase" class="nav-link">5 Signature Pillars</a></li>
+          <li><a href="#b2bHighlight" class="nav-link" onclick="switchJourney('b2b')">Corporate B2B</a></li>
+          <li><a href="#customCakeSection" class="nav-link" onclick="switchJourney('custom')">Cake Studio</a></li>
+          <li><a href="#storesSection" class="nav-link" onclick="switchJourney('stores')">Store Locator</a></li>
         </ul>
 
         <!-- Action Buttons -->
@@ -112,7 +116,243 @@
         </div>
       </div>
     </div>
+
+    <!-- ==========================================================================
+         Visual Mega Menu Dropdown (Day 2 Deliverable: Solves Issue #1 & #15)
+         Consolidates 30+ scattered categories into 5 refined signature pillars
+         ========================================================================== -->
+    <div class="mega-menu-wrapper" id="megaMenuDropdown" aria-hidden="true">
+      <div class="container mega-menu-inner">
+        <div class="mega-columns">
+          
+          <!-- Pillar 1: Iconic Biscuits & Cookies -->
+          <div class="mega-col">
+            <div class="mega-col-header" onclick="selectCategoryFromMega('biscuits')">
+              <span class="mega-icon">🍪</span>
+              <div>
+                <h4>Iconic Biscuits</h4>
+                <span class="mega-price-from">From ₹140</span>
+              </div>
+            </div>
+            <ul class="mega-links">
+              <li><a href="#shopPreview" onclick="selectCategoryFromMega('biscuits', 'Fruit')">Hyderabad Fruit Biscuit <span class="badge-mini gold">Legend</span></a></li>
+              <li><a href="#shopPreview" onclick="selectCategoryFromMega('biscuits', 'Osmania')">Royal Osmania Biscuits <span class="badge-mini">Classic</span></a></li>
+              <li><a href="#shopPreview" onclick="selectCategoryFromMega('biscuits', 'Cashew')">Cashew & Pista Butter</a></li>
+              <li><a href="#shopPreview" onclick="selectCategoryFromMega('biscuits', 'Chai Rusk')">Irani Chai Butter Rusk</a></li>
+              <li><a href="#shopPreview" onclick="selectCategoryFromMega('biscuits')" class="view-all-link">Browse All Biscuits →</a></li>
+            </ul>
+          </div>
+
+          <!-- Pillar 2: Artisanal Cakes & Pastries -->
+          <div class="mega-col">
+            <div class="mega-col-header" onclick="selectCategoryFromMega('cakes')">
+              <span class="mega-icon">🎂</span>
+              <div>
+                <h4>Artisanal Cakes</h4>
+                <span class="mega-price-from">From ₹380</span>
+              </div>
+            </div>
+            <ul class="mega-links">
+              <li><a href="#shopPreview" onclick="selectCategoryFromMega('cakes', 'Chocolate')">Belgian Dark Truffle <span class="badge-mini gold">Rich</span></a></li>
+              <li><a href="#shopPreview" onclick="selectCategoryFromMega('cakes', 'Plum')">Heritage Dry Fruit Plum</a></li>
+              <li><a href="#shopPreview" onclick="selectCategoryFromMega('cakes', 'Red Velvet')">Red Velvet Pastry Box</a></li>
+              <li><a href="#customCakeSection" onclick="switchJourney('custom')">Bespoke 3D Studio ✨</a></li>
+              <li><a href="#shopPreview" onclick="selectCategoryFromMega('cakes')" class="view-all-link">Browse All Cakes →</a></li>
+            </ul>
+          </div>
+
+          <!-- Pillar 3: Royal Mithai & Confectionery -->
+          <div class="mega-col">
+            <div class="mega-col-header" onclick="selectCategoryFromMega('sweets')">
+              <span class="mega-icon">🍬</span>
+              <div>
+                <h4>Royal Mithai</h4>
+                <span class="mega-price-from">From ₹360</span>
+              </div>
+            </div>
+            <ul class="mega-links">
+              <li><a href="#shopPreview" onclick="selectCategoryFromMega('sweets', 'Kaju Katli')">Royal Kaju Katli <span class="badge-mini gold">Pure Ghee</span></a></li>
+              <li><a href="#shopPreview" onclick="selectCategoryFromMega('sweets', 'Motichoor')">Pure Ghee Motichoor Ladoo</a></li>
+              <li><a href="#shopPreview" onclick="selectCategoryFromMega('sweets', 'Barfi')">Badam & Anjeer Barfi</a></li>
+              <li><a href="#shopPreview" onclick="selectCategoryFromMega('sweets', 'Halwa')">Karachi Bombay Halwa</a></li>
+              <li><a href="#shopPreview" onclick="selectCategoryFromMega('sweets')" class="view-all-link">Browse All Mithai →</a></li>
+            </ul>
+          </div>
+
+          <!-- Pillar 4: Luxury Hampers & Gift Tins -->
+          <div class="mega-col">
+            <div class="mega-col-header" onclick="selectCategoryFromMega('hampers')">
+              <span class="mega-icon">🎁</span>
+              <div>
+                <h4>Luxury Hampers</h4>
+                <span class="mega-price-from">From ₹750</span>
+              </div>
+            </div>
+            <ul class="mega-links">
+              <li><a href="#shopPreview" onclick="selectCategoryFromMega('hampers', 'Nizam')">Nizam's 3-in-1 Royal Tin <span class="badge-mini gold">Vintage</span></a></li>
+              <li><a href="#shopPreview" onclick="selectCategoryFromMega('hampers', 'Festive')">Hyderabad Heritage Hamper</a></li>
+              <li><a href="#shopPreview" onclick="selectCategoryFromMega('hampers', 'Corporate')">Executive Wooden Crate</a></li>
+              <li><a href="#b2bHighlight" onclick="switchJourney('b2b')">Custom B2B Logo Tins 🏢</a></li>
+              <li><a href="#shopPreview" onclick="selectCategoryFromMega('hampers')" class="view-all-link">Browse All Hampers →</a></li>
+            </ul>
+          </div>
+
+          <!-- Pillar 5: Healthy Bakes & Savoury -->
+          <div class="mega-col">
+            <div class="mega-col-header" onclick="selectCategoryFromMega('healthy')">
+              <span class="mega-icon">🌾</span>
+              <div>
+                <h4>Healthy & Savoury</h4>
+                <span class="mega-price-from">From ₹160</span>
+              </div>
+            </div>
+            <ul class="mega-links">
+              <li><a href="#shopPreview" onclick="selectCategoryFromMega('healthy', 'Sugar-Free')">Sugar-Free Almond Cookies <span class="badge-mini green">Stevia 🍃</span></a></li>
+              <li><a href="#shopPreview" onclick="selectCategoryFromMega('healthy', 'Millet')">Millet & Jowar Crisp</a></li>
+              <li><a href="#shopPreview" onclick="selectCategoryFromMega('healthy', 'Mixture')">Hyderabadi Teekha Mixture</a></li>
+              <li><a href="#shopPreview" onclick="selectCategoryFromMega('healthy', 'Cashew')">Roasted Salted Cashews</a></li>
+              <li><a href="#shopPreview" onclick="selectCategoryFromMega('healthy')" class="view-all-link">Browse All Healthy →</a></li>
+            </ul>
+          </div>
+
+        </div>
+
+        <!-- Spotlight Featured Bestseller Card -->
+        <div class="mega-spotlight">
+          <div class="mega-spotlight-card">
+            <span class="spotlight-tag">🌟 Collector's Edition</span>
+            <h4>Nizam's Royal Heritage 3-in-1 Tin</h4>
+            <p>Our 3 most legendary recipes: Fruit Biscuits, Osmania, and Cashew Butter packed in an embossed golden keepsake tin.</p>
+            <div class="spotlight-price-row">
+              <span class="spotlight-price">₹750</span>
+              <span class="spotlight-mrp">₹850</span>
+              <span class="spotlight-save">Save ₹100</span>
+            </div>
+            <button class="btn-spotlight-order" onclick="addToCart('Nizam\'s Royal Heritage 3-in-1 Tin (800g)', 750)">
+              ⚡ Quick Add to Cart
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
   </header>
+
+  <!-- ==========================================================================
+       Mobile Navigation Drawer & Accordion Taxonomy (Addresses Issue #1 & #15)
+       ========================================================================== -->
+  <div class="mobile-drawer-backdrop" id="mobileDrawerBackdrop"></div>
+  <aside class="mobile-drawer" id="mobileDrawer" aria-hidden="true" aria-label="Mobile Navigation Menu">
+    <div class="mobile-drawer-header">
+      <div class="brand-identity">
+        <div class="brand-emblem" style="width:38px; height:38px; font-size:1.1rem;">KB</div>
+        <div class="brand-text">
+          <h2 style="font-size:1.15rem; color:var(--kb-burgundy); margin:0; font-family:var(--font-serif);">Karachi Bakery</h2>
+          <span>Hyderabad • Est. 1953</span>
+        </div>
+      </div>
+      <button class="btn-drawer-close" id="btnDrawerClose" aria-label="Close menu">✕</button>
+    </div>
+
+    <!-- Mobile Journey Bar -->
+    <div class="mobile-drawer-journeys">
+      <span style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--kb-text-muted); font-weight:700;">Customer Journeys</span>
+      <div class="mobile-journey-grid">
+        <button class="mobile-j-btn active" onclick="switchJourney('retail'); closeMobileDrawer();">🛍️ Retail</button>
+        <button class="mobile-j-btn" onclick="switchJourney('b2b'); closeMobileDrawer();">🏢 Bulk B2B</button>
+        <button class="mobile-j-btn" onclick="switchJourney('custom'); closeMobileDrawer();">🎂 Cake Studio</button>
+        <button class="mobile-j-btn" onclick="switchJourney('stores'); closeMobileDrawer();">📍 Outlets</button>
+      </div>
+    </div>
+
+    <!-- Mobile Category Accordion -->
+    <div class="mobile-drawer-categories">
+      <span style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--kb-text-muted); font-weight:700; margin-bottom:0.5rem; display:block;">
+        5 Signature Categories (Problem #1 Solved)
+      </span>
+      
+      <!-- Accordion 1 -->
+      <div class="mobile-acc-item">
+        <button class="mobile-acc-header" onclick="toggleMobileAcc(this)">
+          <span>🍪 Iconic Biscuits & Cookies</span>
+          <span class="acc-chevron">›</span>
+        </button>
+        <div class="mobile-acc-body">
+          <a href="#shopPreview" onclick="selectCategoryFromMega('biscuits', 'Fruit'); closeMobileDrawer();">Hyderabad Fruit Biscuit</a>
+          <a href="#shopPreview" onclick="selectCategoryFromMega('biscuits', 'Osmania'); closeMobileDrawer();">Royal Osmania Biscuits</a>
+          <a href="#shopPreview" onclick="selectCategoryFromMega('biscuits', 'Cashew'); closeMobileDrawer();">Cashew & Pista Butter</a>
+          <a href="#shopPreview" onclick="selectCategoryFromMega('biscuits', 'Chai Rusk'); closeMobileDrawer();">Irani Chai Butter Rusk</a>
+          <a href="#shopPreview" onclick="selectCategoryFromMega('biscuits'); closeMobileDrawer();" class="mobile-acc-all">View All Biscuits →</a>
+        </div>
+      </div>
+
+      <!-- Accordion 2 -->
+      <div class="mobile-acc-item">
+        <button class="mobile-acc-header" onclick="toggleMobileAcc(this)">
+          <span>🎂 Artisanal Cakes & Pastries</span>
+          <span class="acc-chevron">›</span>
+        </button>
+        <div class="mobile-acc-body">
+          <a href="#shopPreview" onclick="selectCategoryFromMega('cakes', 'Chocolate'); closeMobileDrawer();">Belgian Dark Truffle Cake</a>
+          <a href="#shopPreview" onclick="selectCategoryFromMega('cakes', 'Plum'); closeMobileDrawer();">Heritage Dry Fruit Plum Cake</a>
+          <a href="#shopPreview" onclick="selectCategoryFromMega('cakes', 'Red Velvet'); closeMobileDrawer();">Red Velvet Pastry Box</a>
+          <a href="#customCakeSection" onclick="switchJourney('custom'); closeMobileDrawer();">Custom 3D Cake Studio ✨</a>
+          <a href="#shopPreview" onclick="selectCategoryFromMega('cakes'); closeMobileDrawer();" class="mobile-acc-all">View All Cakes →</a>
+        </div>
+      </div>
+
+      <!-- Accordion 3 -->
+      <div class="mobile-acc-item">
+        <button class="mobile-acc-header" onclick="toggleMobileAcc(this)">
+          <span>🍬 Royal Mithai & Confectionery</span>
+          <span class="acc-chevron">›</span>
+        </button>
+        <div class="mobile-acc-body">
+          <a href="#shopPreview" onclick="selectCategoryFromMega('sweets', 'Kaju Katli'); closeMobileDrawer();">Royal Kaju Katli (Diamond Cut)</a>
+          <a href="#shopPreview" onclick="selectCategoryFromMega('sweets', 'Motichoor'); closeMobileDrawer();">Pure Desi Ghee Motichoor Ladoo</a>
+          <a href="#shopPreview" onclick="selectCategoryFromMega('sweets', 'Barfi'); closeMobileDrawer();">Roasted Badam & Anjeer Barfi</a>
+          <a href="#shopPreview" onclick="selectCategoryFromMega('sweets'); closeMobileDrawer();" class="mobile-acc-all">View All Mithai →</a>
+        </div>
+      </div>
+
+      <!-- Accordion 4 -->
+      <div class="mobile-acc-item">
+        <button class="mobile-acc-header" onclick="toggleMobileAcc(this)">
+          <span>🎁 Luxury Hampers & Gift Tins</span>
+          <span class="acc-chevron">›</span>
+        </button>
+        <div class="mobile-acc-body">
+          <a href="#shopPreview" onclick="selectCategoryFromMega('hampers', 'Nizam'); closeMobileDrawer();">Nizam's 3-in-1 Royal Tin</a>
+          <a href="#shopPreview" onclick="selectCategoryFromMega('hampers', 'Festive'); closeMobileDrawer();">Hyderabad Heritage Hamper</a>
+          <a href="#shopPreview" onclick="selectCategoryFromMega('hampers', 'Corporate'); closeMobileDrawer();">Executive Wooden Crate</a>
+          <a href="#shopPreview" onclick="selectCategoryFromMega('hampers'); closeMobileDrawer();" class="mobile-acc-all">View All Hampers →</a>
+        </div>
+      </div>
+
+      <!-- Accordion 5 -->
+      <div class="mobile-acc-item">
+        <button class="mobile-acc-header" onclick="toggleMobileAcc(this)">
+          <span>🌾 Healthy Bakes & Savoury</span>
+          <span class="acc-chevron">›</span>
+        </button>
+        <div class="mobile-acc-body">
+          <a href="#shopPreview" onclick="selectCategoryFromMega('healthy', 'Sugar-Free'); closeMobileDrawer();">Sugar-Free Almond Cookies</a>
+          <a href="#shopPreview" onclick="selectCategoryFromMega('healthy', 'Millet'); closeMobileDrawer();">Roasted Jowar & Millet Crisp</a>
+          <a href="#shopPreview" onclick="selectCategoryFromMega('healthy', 'Mixture'); closeMobileDrawer();">Hyderabadi Teekha Mixture</a>
+          <a href="#shopPreview" onclick="selectCategoryFromMega('healthy'); closeMobileDrawer();" class="mobile-acc-all">View All Healthy →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-drawer-footer">
+      <div style="font-size:0.8rem; color:var(--kb-text-muted); margin-bottom:0.75rem;">
+        📞 Customer Helpline: <strong style="color:var(--kb-burgundy);">+91 40 6666 2222</strong>
+      </div>
+      <button class="action-btn-primary" style="width:100%; justify-content:center;" onclick="closeMobileDrawer(); document.getElementById('quickPincodeInput').focus();">
+        🚚 Check Express Pincode
+      </button>
+    </div>
+  </aside>
 
   <!-- ==========================================================================
        Hero Section & Customer Journey Gateway Hub (Direct Solution to #4 & #15)
@@ -229,48 +469,203 @@
     </section>
 
     <!-- ==========================================================================
-         Unified Shopping Experience Preview (Resolves Issue #4: Online shopping 
-         integrated into the website, not an isolated external store)
+         Day 2 Deliverable: Refined Category Architecture (Resolves Issue #1 & #15)
+         Eliminates 30+ fragmented, cluttered categories by reorganizing into
+         5 Refined Signature Pillars with clear visual taxonomy.
+         ========================================================================== -->
+    <section class="category-architecture-showcase" id="categoryShowcase">
+      <div class="container">
+        <div class="section-head text-center">
+          <span class="section-sub">Taxonomy Architecture • Issue #1 Solved</span>
+          <h2 class="section-title">The 5 Signature Culinary Pillars</h2>
+          <p class="section-desc" style="max-width:720px; margin: 0 auto;">
+            We replaced the cluttered maze of 30+ fragmented subcategories with 5 master-crafted pillars. Explore authentic Hyderabad heritage with organized elegance.
+          </p>
+        </div>
+
+        <div class="category-grid-5">
+          <!-- Pillar 1 -->
+          <div class="category-card-pillar" onclick="selectCategoryFromMega('biscuits')">
+            <div class="pillar-top">
+              <span class="pillar-badge">👑 Legendary Heritage</span>
+              <span class="pillar-count">4 Delicacies</span>
+            </div>
+            <div class="pillar-icon-box">🍪</div>
+            <h3 class="pillar-title">Iconic Biscuits & Cookies</h3>
+            <p class="pillar-desc">
+              Moazzam Jahi Market's original Fruit Biscuits, savoury Osmania, butter cashews, and crispy Irani chai rusks.
+            </p>
+            <div class="pillar-tags">
+              <span class="pillar-tag">Fruit Biscuits</span>
+              <span class="pillar-tag">Osmania</span>
+              <span class="pillar-tag">Cashew Butter</span>
+              <span class="pillar-tag">Chai Rusk</span>
+            </div>
+            <div class="pillar-action">
+              <span class="pillar-link">Browse Biscuits →</span>
+              <span class="pillar-start-price">From ₹140</span>
+            </div>
+          </div>
+
+          <!-- Pillar 2 -->
+          <div class="category-card-pillar" onclick="selectCategoryFromMega('cakes')">
+            <div class="pillar-top">
+              <span class="pillar-badge">🎂 Fresh Daily</span>
+              <span class="pillar-count">3 Delicacies</span>
+            </div>
+            <div class="pillar-icon-box">🍫</div>
+            <h3 class="pillar-title">Artisanal Cakes & Pastries</h3>
+            <p class="pillar-desc">
+              Decadent Belgian dark chocolate ganache, heritage dry fruit plum cakes, and velvety celebration pastries.
+            </p>
+            <div class="pillar-tags">
+              <span class="pillar-tag">Belgian Truffle</span>
+              <span class="pillar-tag">Plum Cake</span>
+              <span class="pillar-tag">Red Velvet</span>
+              <span class="pillar-tag">Pastries</span>
+            </div>
+            <div class="pillar-action">
+              <span class="pillar-link">Browse Cakes →</span>
+              <span class="pillar-start-price">From ₹380</span>
+            </div>
+          </div>
+
+          <!-- Pillar 3 -->
+          <div class="category-card-pillar" onclick="selectCategoryFromMega('sweets')">
+            <div class="pillar-top">
+              <span class="pillar-badge">✨ Pure Desi Ghee</span>
+              <span class="pillar-count">3 Delicacies</span>
+            </div>
+            <div class="pillar-icon-box">🍬</div>
+            <h3 class="pillar-title">Royal Mithai & Confectionery</h3>
+            <p class="pillar-desc">
+              Goan cashew Kaju Katli with real silver vark, fragrant motichoor ladoos, and rich badam-anjeer barfi.
+            </p>
+            <div class="pillar-tags">
+              <span class="pillar-tag">Kaju Katli</span>
+              <span class="pillar-tag">Motichoor Ladoo</span>
+              <span class="pillar-tag">Badam Barfi</span>
+              <span class="pillar-tag">Karachi Halwa</span>
+            </div>
+            <div class="pillar-action">
+              <span class="pillar-link">Browse Mithai →</span>
+              <span class="pillar-start-price">From ₹360</span>
+            </div>
+          </div>
+
+          <!-- Pillar 4 -->
+          <div class="category-card-pillar" onclick="selectCategoryFromMega('hampers')">
+            <div class="pillar-top">
+              <span class="pillar-badge">🎁 Keepsake Tins</span>
+              <span class="pillar-count">3 Delicacies</span>
+            </div>
+            <div class="pillar-icon-box">🎀</div>
+            <h3 class="pillar-title">Luxury Hampers & Gift Tins</h3>
+            <p class="pillar-desc">
+              Embossed vintage tins, royal festive celebration hampers, and premium corporate gifting crates.
+            </p>
+            <div class="pillar-tags">
+              <span class="pillar-tag">Nizam's 3-in-1</span>
+              <span class="pillar-tag">Festive Hamper</span>
+              <span class="pillar-tag">Executive Crate</span>
+              <span class="pillar-tag">Custom Logo</span>
+            </div>
+            <div class="pillar-action">
+              <span class="pillar-link">Browse Hampers →</span>
+              <span class="pillar-start-price">From ₹750</span>
+            </div>
+          </div>
+
+          <!-- Pillar 5 -->
+          <div class="category-card-pillar" onclick="selectCategoryFromMega('healthy')">
+            <div class="pillar-top">
+              <span class="pillar-badge">🍃 Guilt-Free & Crisp</span>
+              <span class="pillar-count">3 Delicacies</span>
+            </div>
+            <div class="pillar-icon-box">🌾</div>
+            <h3 class="pillar-title">Healthy Bakes & Savoury</h3>
+            <p class="pillar-desc">
+              Zero refined sugar stevia cookies, millet crunchies, and fiery authentic Hyderabadi spicy teekha mixture.
+            </p>
+            <div class="pillar-tags">
+              <span class="pillar-tag">Sugar-Free Almond</span>
+              <span class="pillar-tag">Millet Crisp</span>
+              <span class="pillar-tag">Teekha Mixture</span>
+              <span class="pillar-tag">Salted Kaju</span>
+            </div>
+            <div class="pillar-action">
+              <span class="pillar-link">Browse Healthy →</span>
+              <span class="pillar-start-price">From ₹160</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         Unified Shopping Experience (Resolves Issue #4 & Expands for Day 2)
+         Interactive 5-Pillar catalog with real-time filtering & Add-to-Cart
          ========================================================================== -->
     <section class="shopping-preview" id="shopPreview">
       <div class="container">
         <div class="section-head">
-          <span class="section-sub">Signature Collections</span>
-          <h2 class="section-title">Iconic Bestsellers</h2>
-          <p class="section-desc">
-            Direct online ordering directly through our unified platform. Freshly baked, safely packed, and dispatched straight to your home.
-          </p>
+          <div style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:1rem;">
+            <div>
+              <span class="section-sub">Online Ordering Catalog</span>
+              <h2 class="section-title">Fresh Bakes & Royal Confections</h2>
+              <p class="section-desc">
+                Direct online ordering with guaranteed freshness. Baked fresh, nitrogen-sealed, and dispatched to your doorstep.
+              </p>
+            </div>
+            <div class="catalog-counter-badge" id="catalogCountBadge">
+              Showing <strong>16</strong> authentic delicacies
+            </div>
+          </div>
         </div>
 
-        <!-- Category Quick Pills (Preparation for Days 2 & 3) -->
-        <div class="category-filter-pills" role="tablist">
-          <button class="filter-pill active" onclick="filterCatalog('all', this)">All Delicacies</button>
-          <button class="filter-pill" onclick="filterCatalog('biscuits', this)">Famous Biscuits</button>
-          <button class="filter-pill" onclick="filterCatalog('sweets', this)">Mithai & Sweets</button>
-          <button class="filter-pill" onclick="filterCatalog('sugar-free', this)">Sugar-Free & Vegan</button>
-          <button class="filter-pill" onclick="filterCatalog('hampers', this)">Gift Boxes & Tins</button>
+        <!-- 5-Pillar Refined Category Filter Pills (Resolves Issue #1) -->
+        <div class="category-filter-pills" role="tablist" id="categoryPillsContainer">
+          <button class="filter-pill active" data-filter="all" onclick="filterCatalog('all', this)">
+            ✨ All Delicacies (16)
+          </button>
+          <button class="filter-pill" data-filter="biscuits" onclick="filterCatalog('biscuits', this)">
+            🍪 Biscuits & Cookies (4)
+          </button>
+          <button class="filter-pill" data-filter="cakes" onclick="filterCatalog('cakes', this)">
+            🎂 Cakes & Pastries (3)
+          </button>
+          <button class="filter-pill" data-filter="sweets" onclick="filterCatalog('sweets', this)">
+            🍬 Royal Mithai (3)
+          </button>
+          <button class="filter-pill" data-filter="hampers" onclick="filterCatalog('hampers', this)">
+            🎁 Luxury Hampers (3)
+          </button>
+          <button class="filter-pill" data-filter="healthy" onclick="filterCatalog('healthy', this)">
+            🌾 Healthy & Savoury (3)
+          </button>
         </div>
 
-        <!-- Curated Product Catalog Cards -->
+        <!-- Curated 16-Product Catalog Grid -->
         <div class="product-grid" id="productGridContainer">
           
-          <!-- Product 1 -->
-          <article class="product-card" data-category="biscuits">
+          <!-- Product 1: Biscuits -->
+          <article class="product-card" data-category="biscuits" data-tags="fruit cashews sweet bakery legend">
             <span class="product-tag">Legendary</span>
             <span class="product-tag dietary">Veg 🟢</span>
             <div class="product-thumb">
               <span class="product-thumb-placeholder">🍪</span>
+              <span class="thumb-badge">Est. 1953</span>
             </div>
             <div class="product-details">
               <span class="product-category-label">Signature Biscuit</span>
               <h3 class="product-title">Original Hyderabad Fruit Biscuit</h3>
               <div class="product-specs">
-                <span>📦 400g Tin</span>
+                <span>📦 400g Collectible Tin</span>
                 <span>•</span>
                 <span>⏳ 6 Months Shelf Life</span>
               </div>
-              <p style="font-size:0.8rem; color:var(--kb-text-secondary); margin-bottom:0.75rem;">
-                The crown jewel of Karachi Bakery. Studded with candied tutti-frutti and rich cashew bits.
+              <p class="product-card-desc">
+                The crown jewel of Karachi Bakery. Golden baked biscuits studded with candied tutti-frutti and rich cashew nuts.
               </p>
               <div class="product-pricing">
                 <div class="price-box">
@@ -284,12 +679,13 @@
             </div>
           </article>
 
-          <!-- Product 2 -->
-          <article class="product-card" data-category="biscuits">
+          <!-- Product 2: Biscuits -->
+          <article class="product-card" data-category="biscuits" data-tags="osmania chai tea salt sweet royal">
             <span class="product-tag">Royal Heritage</span>
             <span class="product-tag dietary">Veg 🟢</span>
             <div class="product-thumb">
               <span class="product-thumb-placeholder">☕</span>
+              <span class="thumb-badge">Nizam's Choice</span>
             </div>
             <div class="product-details">
               <span class="product-category-label">Tea-Time Classic</span>
@@ -299,8 +695,8 @@
                 <span>•</span>
                 <span>⏳ 6 Months Shelf Life</span>
               </div>
-              <p style="font-size:0.8rem; color:var(--kb-text-secondary); margin-bottom:0.75rem;">
-                Crisp, sweet and salty traditional biscuits named after the last Nizam of Hyderabad.
+              <p class="product-card-desc">
+                Crisp, delicately sweet and salty traditional biscuits named after the last Nizam of Hyderabad. Perfect with Irani chai.
               </p>
               <div class="product-pricing">
                 <div class="price-box">
@@ -314,12 +710,168 @@
             </div>
           </article>
 
-          <!-- Product 3 -->
-          <article class="product-card" data-category="sweets">
+          <!-- Product 3: Biscuits -->
+          <article class="product-card" data-category="biscuits" data-tags="cashew pista butter rich crunch">
+            <span class="product-tag">Nutty Crunch</span>
+            <span class="product-tag dietary">Veg 🟢</span>
+            <div class="product-thumb">
+              <span class="product-thumb-placeholder">🥜</span>
+              <span class="thumb-badge">Pure Butter</span>
+            </div>
+            <div class="product-details">
+              <span class="product-category-label">Signature Biscuit</span>
+              <h3 class="product-title">Royal Cashew & Pista Butter Biscuits</h3>
+              <div class="product-specs">
+                <span>📦 350g Tin</span>
+                <span>•</span>
+                <span>⏳ 5 Months Shelf Life</span>
+              </div>
+              <p class="product-card-desc">
+                Slow-baked with pure cream butter and roasted Iranian pistachios. Rich aroma and delicate crumbly texture.
+              </p>
+              <div class="product-pricing">
+                <div class="price-box">
+                  <span class="price-current">₹250</span>
+                  <span class="price-original">₹280</span>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart('Royal Cashew & Pista Butter Biscuits (350g)', 250)">
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Product 4: Biscuits -->
+          <article class="product-card" data-category="biscuits" data-tags="rusk chai irani toast crispy breakfast">
+            <span class="product-tag">Tea Master</span>
+            <span class="product-tag dietary">Veg 🟢</span>
+            <div class="product-thumb">
+              <span class="product-thumb-placeholder">🍞</span>
+              <span class="thumb-badge">Double-Baked</span>
+            </div>
+            <div class="product-details">
+              <span class="product-category-label">Breakfast & Chai</span>
+              <h3 class="product-title">Irani Chai Double-Baked Butter Rusk</h3>
+              <div class="product-specs">
+                <span>📦 300g Pack</span>
+                <span>•</span>
+                <span>⏳ 6 Months Shelf Life</span>
+              </div>
+              <p class="product-card-desc">
+                Double-baked golden rusks with subtle hints of green cardamom and butter. The quintessential dip for hot morning tea.
+              </p>
+              <div class="product-pricing">
+                <div class="price-box">
+                  <span class="price-current">₹140</span>
+                  <span class="price-original">₹160</span>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart('Irani Chai Double-Baked Butter Rusk (300g)', 140)">
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Product 5: Cakes -->
+          <article class="product-card" data-category="cakes" data-tags="chocolate truffle dark cake bakery fresh celebration">
+            <span class="product-tag">Chef's Special</span>
+            <span class="product-tag dietary">Veg 🟢</span>
+            <div class="product-thumb">
+              <span class="product-thumb-placeholder">🍫</span>
+              <span class="thumb-badge">70% Cocoa</span>
+            </div>
+            <div class="product-details">
+              <span class="product-category-label">Artisanal Cake</span>
+              <h3 class="product-title">Belgian Dark Chocolate Truffle Cake</h3>
+              <div class="product-specs">
+                <span>📦 500g Fresh Bake</span>
+                <span>•</span>
+                <span>⏳ 3 Days (Chilled)</span>
+              </div>
+              <p class="product-card-desc">
+                Silky 70% dark Belgian chocolate ganache layered with moist chocolate sponge and edible golden dust.
+              </p>
+              <div class="product-pricing">
+                <div class="price-box">
+                  <span class="price-current">₹550</span>
+                  <span class="price-original">₹620</span>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart('Belgian Dark Chocolate Truffle Cake (500g)', 550)">
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Product 6: Cakes -->
+          <article class="product-card" data-category="cakes" data-tags="plum cake christmas dry fruit spice classic">
+            <span class="product-tag">Festive Heritage</span>
+            <span class="product-tag dietary">Veg 🟢</span>
+            <div class="product-thumb">
+              <span class="product-thumb-placeholder">🍰</span>
+              <span class="thumb-badge">Macerated Fruits</span>
+            </div>
+            <div class="product-details">
+              <span class="product-category-label">Tea Cake</span>
+              <h3 class="product-title">Heritage Rich Plum & Dry Fruit Cake</h3>
+              <div class="product-specs">
+                <span>📦 450g Pack</span>
+                <span>•</span>
+                <span>⏳ 45 Days Shelf Life</span>
+              </div>
+              <p class="product-card-desc">
+                Infused with premium dry fruits, candied orange peel, cinnamon, and nutmeg. Rich, moist, and aromatic.
+              </p>
+              <div class="product-pricing">
+                <div class="price-box">
+                  <span class="price-current">₹420</span>
+                  <span class="price-original">₹460</span>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart('Heritage Rich Plum & Dry Fruit Cake (450g)', 420)">
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Product 7: Cakes -->
+          <article class="product-card" data-category="cakes" data-tags="red velvet pastry cream cheese dessert">
+            <span class="product-tag">Patisserie</span>
+            <span class="product-tag dietary">Veg 🟢</span>
+            <div class="product-thumb">
+              <span class="product-thumb-placeholder">🧁</span>
+              <span class="thumb-badge">Pastry Box</span>
+            </div>
+            <div class="product-details">
+              <span class="product-category-label">Artisan Pastry</span>
+              <h3 class="product-title">Red Velvet & Cream Cheese Pastry Pack</h3>
+              <div class="product-specs">
+                <span>📦 4 Pcs Luxury Box</span>
+                <span>•</span>
+                <span>⏳ 3 Days (Chilled)</span>
+              </div>
+              <p class="product-card-desc">
+                Velvety crimson sponge layered with Philadelphia-style cream cheese frosting and white chocolate curls.
+              </p>
+              <div class="product-pricing">
+                <div class="price-box">
+                  <span class="price-current">₹380</span>
+                  <span class="price-original">₹420</span>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart('Red Velvet & Cream Cheese Pastry Pack (4 Pcs)', 380)">
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Product 8: Sweets -->
+          <article class="product-card" data-category="sweets" data-tags="kaju katli cashew sweet vark royal ghee">
             <span class="product-tag">Pure Desi Ghee</span>
             <span class="product-tag dietary">Veg 🟢</span>
             <div class="product-thumb">
               <span class="product-thumb-placeholder">🍬</span>
+              <span class="thumb-badge">Silver Vark</span>
             </div>
             <div class="product-details">
               <span class="product-category-label">Traditional Mithai</span>
@@ -327,10 +879,10 @@
               <div class="product-specs">
                 <span>📦 500g Luxury Box</span>
                 <span>•</span>
-                <span>⏳ 30 Days</span>
+                <span>⏳ 30 Days Shelf Life</span>
               </div>
-              <p style="font-size:0.8rem; color:var(--kb-text-secondary); margin-bottom:0.75rem;">
-                Pure whole Goan cashews grounded with delicate silver vark. Melt-in-mouth richness.
+              <p class="product-card-desc">
+                Pure whole Goan cashews grounded with delicate silver vark. Melt-in-mouth richness with zero adulteration.
               </p>
               <div class="product-pricing">
                 <div class="price-box">
@@ -344,12 +896,168 @@
             </div>
           </article>
 
-          <!-- Product 4 -->
-          <article class="product-card" data-category="sugar-free">
+          <!-- Product 9: Sweets -->
+          <article class="product-card" data-category="sweets" data-tags="motichoor ladoo ghee saffron celebration">
+            <span class="product-tag">Festive Must-Have</span>
+            <span class="product-tag dietary">Veg 🟢</span>
+            <div class="product-thumb">
+              <span class="product-thumb-placeholder">🟡</span>
+              <span class="thumb-badge">Kashmiri Kesar</span>
+            </div>
+            <div class="product-details">
+              <span class="product-category-label">Royal Mithai</span>
+              <h3 class="product-title">Pure Desi Ghee Motichoor Ladoo</h3>
+              <div class="product-specs">
+                <span>📦 500g Gift Box</span>
+                <span>•</span>
+                <span>⏳ 15 Days Shelf Life</span>
+              </div>
+              <p class="product-card-desc">
+                Fine gram flour pearls slow-fried in pure desi ghee and infused with saffron strands and melon seeds.
+              </p>
+              <div class="product-pricing">
+                <div class="price-box">
+                  <span class="price-current">₹360</span>
+                  <span class="price-original">₹400</span>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart('Pure Desi Ghee Motichoor Ladoo (500g)', 360)">
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Product 10: Sweets -->
+          <article class="product-card" data-category="sweets" data-tags="barfi badam anjeer almond fig dry fruit">
+            <span class="product-tag">No Added Sugar</span>
+            <span class="product-tag dietary">Veg 🟢</span>
+            <div class="product-thumb">
+              <span class="product-thumb-placeholder">🌰</span>
+              <span class="thumb-badge">Natural Figs</span>
+            </div>
+            <div class="product-details">
+              <span class="product-category-label">Luxury Dry Fruit Sweet</span>
+              <h3 class="product-title">Roasted Badam & Anjeer Royal Barfi</h3>
+              <div class="product-specs">
+                <span>📦 400g Box</span>
+                <span>•</span>
+                <span>⏳ 25 Days Shelf Life</span>
+              </div>
+              <p class="product-card-desc">
+                Crafted from sun-dried Turkish figs, roasted almonds, and pistachios. Naturally sweetened with zero refined sugar.
+              </p>
+              <div class="product-pricing">
+                <div class="price-box">
+                  <span class="price-current">₹480</span>
+                  <span class="price-original">₹520</span>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart('Roasted Badam & Anjeer Royal Barfi (400g)', 480)">
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Product 11: Hampers -->
+          <article class="product-card" data-category="hampers" data-tags="hamper gift tin nizam royal assorted">
+            <span class="product-tag">Collector's Edition</span>
+            <span class="product-tag dietary">Veg 🟢</span>
+            <div class="product-thumb">
+              <span class="product-thumb-placeholder">🎁</span>
+              <span class="thumb-badge">3-in-1 Tin</span>
+            </div>
+            <div class="product-details">
+              <span class="product-category-label">Heritage Gift Tin</span>
+              <h3 class="product-title">Nizam's Royal Heritage 3-in-1 Tin</h3>
+              <div class="product-specs">
+                <span>📦 800g Collectible Tin</span>
+                <span>•</span>
+                <span>⏳ 6 Months Shelf Life</span>
+              </div>
+              <p class="product-card-desc">
+                The ultimate Hyderabad souvenir. Contains Karachi Fruit Biscuits, Royal Osmania, and Cashew Butter cookies.
+              </p>
+              <div class="product-pricing">
+                <div class="price-box">
+                  <span class="price-current">₹750</span>
+                  <span class="price-original">₹850</span>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart('Nizam\'s Royal Heritage 3-in-1 Tin (800g)', 750)">
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Product 12: Hampers -->
+          <article class="product-card" data-category="hampers" data-tags="festive hamper gift basket celebration diwali">
+            <span class="product-tag">Celebration Special</span>
+            <span class="product-tag dietary">Veg 🟢</span>
+            <div class="product-thumb">
+              <span class="product-thumb-placeholder">🎀</span>
+              <span class="thumb-badge">Artisan Basket</span>
+            </div>
+            <div class="product-details">
+              <span class="product-category-label">Luxury Festive Hamper</span>
+              <h3 class="product-title">Vintage Hyderabad Festive Hamper</h3>
+              <div class="product-specs">
+                <span>📦 1.2kg Grand Hamper</span>
+                <span>•</span>
+                <span>⏳ 4 Months Shelf Life</span>
+              </div>
+              <p class="product-card-desc">
+                Handcrafted wicker basket featuring Fruit Biscuits, Kaju Katli, Roasted Cashews, Plum Cake, and silver diya.
+              </p>
+              <div class="product-pricing">
+                <div class="price-box">
+                  <span class="price-current">₹1,299</span>
+                  <span class="price-original">₹1,499</span>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart('Vintage Hyderabad Festive Hamper (1.2kg)', 1299)">
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Product 13: Hampers -->
+          <article class="product-card" data-category="hampers" data-tags="corporate crate wooden gift premium bulk">
+            <span class="product-tag">Corporate Elite</span>
+            <span class="product-tag dietary">Veg 🟢</span>
+            <div class="product-thumb">
+              <span class="product-thumb-placeholder">📦</span>
+              <span class="thumb-badge">Pine Wood Crate</span>
+            </div>
+            <div class="product-details">
+              <span class="product-category-label">Executive Crate</span>
+              <h3 class="product-title">Corporate Executive Wooden Gift Crate</h3>
+              <div class="product-specs">
+                <span>📦 1.5kg Luxury Crate</span>
+                <span>•</span>
+                <span>⏳ 4 Months Shelf Life</span>
+              </div>
+              <p class="product-card-desc">
+                Engraved pine wood crate filled with signature bakery tins, exotic dry fruits, and artisanal cookies.
+              </p>
+              <div class="product-pricing">
+                <div class="price-box">
+                  <span class="price-current">₹1,850</span>
+                  <span class="price-original">₹2,100</span>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart('Corporate Executive Wooden Gift Crate (1.5kg)', 1850)">
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Product 14: Healthy & Savoury -->
+          <article class="product-card" data-category="healthy" data-tags="sugar free almond stevia diabetic diet healthy">
             <span class="product-tag">Dietary Choice</span>
             <span class="product-tag dietary">Sugar-Free 🍃</span>
             <div class="product-thumb">
               <span class="product-thumb-placeholder">🌾</span>
+              <span class="thumb-badge">Stevia Sweetened</span>
             </div>
             <div class="product-details">
               <span class="product-category-label">Wellness Range</span>
@@ -357,17 +1065,79 @@
               <div class="product-specs">
                 <span>📦 350g Pack</span>
                 <span>•</span>
-                <span>⏳ 4 Months</span>
+                <span>⏳ 4 Months Shelf Life</span>
               </div>
-              <p style="font-size:0.8rem; color:var(--kb-text-secondary); margin-bottom:0.75rem;">
-                Zero added refined sugar, sweetened naturally with stevia, loaded with Californian almonds.
+              <p class="product-card-desc">
+                Zero added refined sugar, sweetened naturally with stevia extract, packed with whole roasted Californian almonds.
               </p>
               <div class="product-pricing">
                 <div class="price-box">
                   <span class="price-current">₹260</span>
                   <span class="price-original">₹290</span>
                 </div>
-                <button class="btn-add-cart" onclick="addToCart('Sugar-Free Roasted Almond Cookies', 260)">
+                <button class="btn-add-cart" onclick="addToCart('Sugar-Free Roasted Almond Cookies (350g)', 260)">
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Product 15: Healthy & Savoury -->
+          <article class="product-card" data-category="healthy" data-tags="millet jowar healthy crisp gluten free guilt free">
+            <span class="product-tag">Superfood Bake</span>
+            <span class="product-tag dietary">Gluten-Free 🟢</span>
+            <div class="product-thumb">
+              <span class="product-thumb-placeholder">🌱</span>
+              <span class="thumb-badge">100% Roasted</span>
+            </div>
+            <div class="product-details">
+              <span class="product-category-label">Ancient Grain Range</span>
+              <h3 class="product-title">Roasted Jowar & Millet Superfood Crisp</h3>
+              <div class="product-specs">
+                <span>📦 250g Pack</span>
+                <span>•</span>
+                <span>⏳ 3 Months Shelf Life</span>
+              </div>
+              <p class="product-card-desc">
+                Zero maida, non-fried crisp made with nutrient-rich sorghum and foxtail millets seasoned with rock salt.
+              </p>
+              <div class="product-pricing">
+                <div class="price-box">
+                  <span class="price-current">₹190</span>
+                  <span class="price-original">₹220</span>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart('Roasted Jowar & Millet Superfood Crisp (250g)', 190)">
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Product 16: Healthy & Savoury -->
+          <article class="product-card" data-category="healthy" data-tags="namkeen mixture teekha spicy hyderabadi crunchy">
+            <span class="product-tag">Hyderabadi Crunch</span>
+            <span class="product-tag dietary">Veg 🟢</span>
+            <div class="product-thumb">
+              <span class="product-thumb-placeholder">🌶️</span>
+              <span class="thumb-badge">Authentic Spices</span>
+            </div>
+            <div class="product-details">
+              <span class="product-category-label">Traditional Namkeen</span>
+              <h3 class="product-title">Hyderabadi Royal Teekha Mixture</h3>
+              <div class="product-specs">
+                <span>📦 400g Pack</span>
+                <span>•</span>
+                <span>⏳ 4 Months Shelf Life</span>
+              </div>
+              <p class="product-card-desc">
+                Iconic spicy teatime snack blending gram sev, roasted peanuts, crispy curry leaves, and secret Hyderabadi masalas.
+              </p>
+              <div class="product-pricing">
+                <div class="price-box">
+                  <span class="price-current">₹160</span>
+                  <span class="price-original">₹180</span>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart('Hyderabadi Royal Teekha Mixture (400g)', 160)">
                   Add to Cart
                 </button>
               </div>
@@ -528,10 +1298,10 @@
 
     <div class="container footer-bottom">
       <div>
-        © 2026 Karachi Bakery Pvt. Ltd. All Rights Reserved. • Redesign Sprint (Day 1 of 10)
+        © 2026 Karachi Bakery Pvt. Ltd. All Rights Reserved. • Redesign Sprint (Day 2 of 10)
       </div>
       <div>
-        Designed for Excellence • Issues #4 & #15 Addressed
+        Designed for Excellence • Issues #1, #4 & #15 Addressed (5-Pillar Architecture & Visual Mega Menu)
       </div>
     </div>
   </footer>

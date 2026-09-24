@@ -3,7 +3,7 @@
 A comprehensive, modern redesign of the iconic **Karachi Bakery** web platform (Est. 1953, Hyderabad), resolving the **Top 15 UX and E-Commerce Architecture Problems**.
 
 ![Karachi Bakery Brand](https://img.shields.io/badge/Karachi%20Bakery-Est.%201953-8B0000?style=for-the-badge)
-![Status](https://img.shields.io/badge/Sprint%20Progress-Day%201%20of%2010-gold?style=for-the-badge)
+![Status](https://img.shields.io/badge/Sprint%20Progress-Day%202%20of%2010-gold?style=for-the-badge)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-karachi--bakery--website--redesign.vercel.app-000000?style=for-the-badge&logo=vercel)](https://karachi-bakery-website-redesign.vercel.app)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 
@@ -16,7 +16,7 @@ A comprehensive, modern redesign of the iconic **Karachi Bakery** web platform (
 | Day | Primary Focus | Status |
 | :---: | :--- | :---: |
 | **Day 1** | **Brand Architecture, Design System & Customer Journey Hub** | ✅ **Completed** |
-| **Day 2** | **Category Architecture & Visual Mega Menu** | ⏳ Upcoming |
+| **Day 2** | **Category Architecture & Visual Mega Menu** | ✅ **Completed** |
 | **Day 3** | **Multi-Faceted Search & Advanced Filtering** | ⏳ Upcoming |
 | **Day 4** | **Standardized Product Detail (PDP) & Smart Recommendations** | ⏳ Upcoming |
 | **Day 5** | **Side-by-Side Product Comparison Drawer** | ⏳ Upcoming |
@@ -25,6 +25,18 @@ A comprehensive, modern redesign of the iconic **Karachi Bakery** web platform (
 | **Day 8** | **Interactive Map-Based Store Locator** | ⏳ Upcoming |
 | **Day 9** | **Pincode Delivery Estimator & Unified Checkout Cart** | ⏳ Upcoming |
 | **Day 10** | **Final Quality Assurance, Responsiveness & Final Report** | ⏳ Upcoming |
+
+---
+
+## 🚀 Day 2 Achievements
+
+- **5 Signature Culinary Pillars (Problem #1 Solved)**: Consolidated 30+ fragmented and cluttered categories into 5 master pillars: *Iconic Biscuits*, *Artisanal Cakes*, *Royal Mithai*, *Luxury Hampers*, and *Healthy & Savoury*.
+- **Interactive Visual Mega Menu (Problem #15 Solved)**: Multi-column desktop mega menu with starting prices, badges (*Legend*, *Pure Ghee*, *Stevia 🍃*), and an embedded *Collector's Edition Spotlight Card* with direct Quick Add to Cart.
+- **Mobile Off-Canvas Navigation Drawer**: Touch-friendly accordion taxonomy and customer journey quick switcher for smartphone users.
+- **Responsive Real-Time Search Bar (Problem #2 Preview)**: Live search across 16 delicacies with instant catalog filtering and Enter-key smooth scroll.
+- **Expanded 16-Product Catalog Grid**: Fresh bakes with dietary indicators, unit weights, pricing specs, and working cart counter badges.
+
+For full technical details, see the [Day 2 Progress Report](docs/DAY-02-REPORT.md).
 
 ---
 
