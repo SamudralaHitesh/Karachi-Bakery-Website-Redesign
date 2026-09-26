@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
   
   <!-- Main Design System CSS -->
-  <link rel="stylesheet" href="styles/main.css?v=2.0.1">
+  <link rel="stylesheet" href="styles/main.css?v=5.0.0">
 </head>
 <body>
 
@@ -100,7 +100,7 @@
 
         <!-- Action Buttons -->
         <div class="header-actions">
-          <button class="action-btn action-btn-ghost" id="btnCompareBadge" title="Compare Products (Issue #13)">
+          <button class="action-btn action-btn-ghost" id="btnCompareBadge" title="Compare Delicacies Side-by-Side (Day 5)" onclick="openCompareModal()">
             ⚖️ <span class="action-text">Compare</span>
             <span class="badge-count" id="compareCount">0</span>
           </button>
@@ -623,46 +623,192 @@
           </div>
         </div>
 
-        <!-- 5-Pillar Refined Category Filter Pills (Resolves Issue #1) -->
-        <div class="category-filter-pills" role="tablist" id="categoryPillsContainer">
-          <button class="filter-pill active" data-filter="all" onclick="filterCatalog('all', this)">
-            ✨ All Delicacies (16)
-          </button>
-          <button class="filter-pill" data-filter="biscuits" onclick="filterCatalog('biscuits', this)">
-            🍪 Biscuits & Cookies (4)
-          </button>
-          <button class="filter-pill" data-filter="cakes" onclick="filterCatalog('cakes', this)">
-            🎂 Cakes & Pastries (3)
-          </button>
-          <button class="filter-pill" data-filter="sweets" onclick="filterCatalog('sweets', this)">
-            🍬 Royal Mithai (3)
-          </button>
-          <button class="filter-pill" data-filter="hampers" onclick="filterCatalog('hampers', this)">
-            🎁 Luxury Hampers (3)
-          </button>
-          <button class="filter-pill" data-filter="healthy" onclick="filterCatalog('healthy', this)">
-            🌾 Healthy & Savoury (3)
-          </button>
+        <!-- ====================================================================
+             Day 3 Deliverable: Multi-Faceted Search & Advanced Filtering Hub
+             (Resolves Issue #2: Search & Advanced Filtering)
+             Includes:
+             1. Real-time Search with Instant Clear & Popular Query Suggestions
+             2. 5-Pillar Taxonomy Selector with product counters
+             3. Dietary Multi-Select Facet Chips (Veg/Eggless, Vegan, Sugar-Free, Gluten-Free, Nut-Free)
+             4. Interactive Price Range Slider (₹140 - ₹2,000) & Quick Budget Presets
+             5. Multi-Criteria Sort Engine (Bestsellers, Price Low/High, Rating, Name)
+             6. Active Filter Tags Bar with 1-click individual removal & Reset All
+             7. Zero-Results Fallback State with smart recommendations & 1-click cart
+             ==================================================================== -->
+        <div class="catalog-filter-hub" id="catalogFilterHub">
+          <!-- Top Row: Catalog Search & Quick Query Suggestion Tags -->
+          <div class="filter-search-row">
+            <div class="catalog-search-box">
+              <span class="catalog-search-icon">🔍</span>
+              <input type="text" id="catalogSearchInput" placeholder="Search by delicacy name, flavor, ingredient (e.g., fruit, cashew, saffron, stevia)..." aria-label="Search catalog delicacies">
+              <button type="button" id="btnClearCatalogSearch" class="btn-clear-search" title="Clear search" aria-label="Clear search">✕</button>
+            </div>
+            <div class="quick-search-tags">
+              <span class="quick-tags-label">Popular Searches:</span>
+              <button type="button" class="quick-tag-chip" onclick="quickFilterSearch('Fruit Biscuit')">Fruit Biscuit</button>
+              <button type="button" class="quick-tag-chip" onclick="quickFilterSearch('Osmania')">Osmania</button>
+              <button type="button" class="quick-tag-chip" onclick="quickFilterSearch('Kaju Katli')">Kaju Katli</button>
+              <button type="button" class="quick-tag-chip" onclick="quickFilterSearch('Sugar-Free')">Sugar-Free</button>
+              <button type="button" class="quick-tag-chip" onclick="quickFilterSearch('Truffle')">Dark Truffle</button>
+              <button type="button" class="quick-tag-chip" onclick="quickFilterSearch('Hamper')">Luxury Hampers</button>
+              <button type="button" class="quick-tag-chip" onclick="quickFilterSearch('Millet')">Millet Crisp</button>
+            </div>
+          </div>
+
+          <!-- Main Filter Controls Card -->
+          <div class="filter-controls-card">
+            <div class="filter-controls-header">
+              <div class="filter-header-left">
+                <span class="filter-hub-icon">⚙️</span>
+                <h4>Advanced Filters & Taste Preferences</h4>
+              </div>
+              <button type="button" class="mobile-filter-toggle" id="btnToggleMobileFilterDrawer" onclick="toggleMobileFilters()">
+                <span>Filters & Sorting</span>
+                <span class="toggle-icon">▾</span>
+              </button>
+            </div>
+
+            <div class="filter-controls-body" id="filterControlsBody">
+              <!-- Facet Group 1: 5-Pillar Categories -->
+              <div class="filter-facet-group">
+                <span class="facet-label">Culinary Pillar</span>
+                <div class="category-filter-pills" role="tablist" id="categoryPillsContainer">
+                  <button type="button" class="filter-pill active" data-filter="all" onclick="setCategoryFilter('all', this)">
+                    ✨ All Delicacies <span class="pill-count">(16)</span>
+                  </button>
+                  <button type="button" class="filter-pill" data-filter="biscuits" onclick="setCategoryFilter('biscuits', this)">
+                    🍪 Biscuits & Cookies <span class="pill-count">(4)</span>
+                  </button>
+                  <button type="button" class="filter-pill" data-filter="cakes" onclick="setCategoryFilter('cakes', this)">
+                    🎂 Cakes & Pastries <span class="pill-count">(3)</span>
+                  </button>
+                  <button type="button" class="filter-pill" data-filter="sweets" onclick="setCategoryFilter('sweets', this)">
+                    🍬 Royal Mithai <span class="pill-count">(3)</span>
+                  </button>
+                  <button type="button" class="filter-pill" data-filter="hampers" onclick="setCategoryFilter('hampers', this)">
+                    🎁 Luxury Hampers <span class="pill-count">(3)</span>
+                  </button>
+                  <button type="button" class="filter-pill" data-filter="healthy" onclick="setCategoryFilter('healthy', this)">
+                    🌾 Healthy & Savoury <span class="pill-count">(3)</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Facet Group 2 & 3: Dietary Preferences + Price Budget + Sorting -->
+              <div class="filter-facets-dual-row">
+                <!-- Dietary Multi-Select -->
+                <div class="facet-block dietary-facet-block">
+                  <div class="facet-block-header">
+                    <span class="facet-label">Dietary Preferences <span class="facet-sub">(Multi-Select)</span></span>
+                  </div>
+                  <div class="dietary-pills-wrap">
+                    <button type="button" class="dietary-pill" data-dietary="eggless" onclick="toggleDietaryFilter('eggless', this)" title="100% Vegetarian & Eggless bakery items">
+                      <span class="dietary-check">✓</span> 🟢 100% Veg / Eggless
+                    </button>
+                    <button type="button" class="dietary-pill" data-dietary="vegan" onclick="toggleDietaryFilter('vegan', this)" title="Plant-based, Dairy-free delicacies">
+                      <span class="dietary-check">✓</span> 🌿 Vegan
+                    </button>
+                    <button type="button" class="dietary-pill" data-dietary="sugar-free" onclick="toggleDietaryFilter('sugar-free', this)" title="Zero added refined sugar, stevia or natural fruit sweetened">
+                      <span class="dietary-check">✓</span> 🍃 Sugar-Free / Stevia
+                    </button>
+                    <button type="button" class="dietary-pill" data-dietary="gluten-free" onclick="toggleDietaryFilter('gluten-free', this)" title="Millet, besan & nut-based without wheat flour">
+                      <span class="dietary-check">✓</span> 🌾 Gluten-Free
+                    </button>
+                    <button type="button" class="dietary-pill" data-dietary="nut-free" onclick="toggleDietaryFilter('nut-free', this)" title="Delicacies prepared strictly without nuts">
+                      <span class="dietary-check">✓</span> 🥜 Nut-Free Recipe
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Price Budget Range Slider & Shortcuts -->
+                <div class="facet-block price-facet-block">
+                  <div class="facet-block-header">
+                    <span class="facet-label">Maximum Budget: <strong id="priceDisplayLabel" style="color:var(--kb-burgundy);">₹2,000</strong></span>
+                    <span class="price-range-min-max">₹140 – ₹2,000</span>
+                  </div>
+                  <div class="price-slider-wrap">
+                    <input type="range" id="priceRangeSlider" min="140" max="2000" step="20" value="2000" oninput="onPriceSliderChange(this.value)" aria-label="Filter maximum price">
+                  </div>
+                  <div class="price-quick-presets">
+                    <button type="button" class="price-preset-btn active" data-max="2000" onclick="setPricePreset(2000, this)">All Prices</button>
+                    <button type="button" class="price-preset-btn" data-max="250" onclick="setPricePreset(250, this)">Under ₹250</button>
+                    <button type="button" class="price-preset-btn" data-max="500" onclick="setPricePreset(500, this)">Under ₹500</button>
+                    <button type="button" class="price-preset-btn" data-max="800" onclick="setPricePreset(800, this)">Under ₹800</button>
+                  </div>
+                </div>
+
+                <!-- Sorting Dropdown -->
+                <div class="facet-block sort-facet-block">
+                  <div class="facet-block-header">
+                    <span class="facet-label">Sort Catalog By</span>
+                  </div>
+                  <div class="sort-select-wrap">
+                    <select id="catalogSortSelect" onchange="onSortChange(this.value)" aria-label="Sort delicacies">
+                      <option value="bestseller">🏆 Bestsellers & Popularity</option>
+                      <option value="price-asc">💰 Price: Low to High</option>
+                      <option value="price-desc">💎 Price: High to Low</option>
+                      <option value="rating-desc">⭐ Highest Customer Rating</option>
+                      <option value="name-asc">🔤 Delicacy Name: A to Z</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Active Filter Chips Bar -->
+            <div class="active-filters-bar" id="activeFiltersBar" style="display:none;">
+              <span class="active-filters-title">Active Filters:</span>
+              <div class="active-chips-container" id="activeChipsContainer">
+                <!-- Dynamically populated chips -->
+              </div>
+              <button type="button" class="btn-reset-filters" id="btnResetAllFilters" onclick="resetAllFilters()">
+                🔄 Reset All Filters
+              </button>
+            </div>
+          </div>
         </div>
 
-        <!-- Curated 16-Product Catalog Grid -->
+        <!-- Curated 16-Product Catalog Grid with Enriched Attributes -->
         <div class="product-grid" id="productGridContainer">
           
           <!-- Product 1: Biscuits -->
-          <article class="product-card" data-category="biscuits" data-tags="fruit cashews sweet bakery legend">
-            <span class="product-tag">Legendary</span>
+          <article class="product-card" 
+            data-id="p1"
+            data-category="biscuits" 
+            data-price="220" 
+            data-rating="4.9" 
+            data-rating-count="2450" 
+            data-dietary="veg eggless" 
+            data-bestseller="1" 
+            data-name="Original Hyderabad Fruit Biscuit"
+            data-tags="fruit cashews sweet bakery legend original hyderabad fruit biscuit tutti frutti">
+            <div class="product-card-top-bar">
+              <div class="product-tags-group">
+                <span class="product-tag">Legendary</span>
             <span class="product-tag dietary">Veg 🟢</span>
-            <div class="product-thumb">
+              </div>
+              <button type="button" class="btn-card-compare" data-compare-id="p1" onclick="toggleCompareItem('p1', this, event)" title="Compare specifications side-by-side">⚖️ Compare</button>
+            </div>
+            <div class="product-thumb" onclick="openProductDetail('p1', event)" title="Click to view full specifications, nutrition & ingredients">
               <span class="product-thumb-placeholder">🍪</span>
               <span class="thumb-badge">Est. 1953</span>
             </div>
             <div class="product-details">
+              <div class="product-rating">
+                <span class="star-icon">⭐</span>
+                <strong>4.9</strong>
+                <span class="rating-count">(2,450)</span>
+              </div>
               <span class="product-category-label">Signature Biscuit</span>
-              <h3 class="product-title">Original Hyderabad Fruit Biscuit</h3>
+              <h3 class="product-title" onclick="openProductDetail('p1', event)" title="Click to view full specifications, nutrition & ingredients">Original Hyderabad Fruit Biscuit</h3>
               <div class="product-specs">
                 <span>📦 400g Collectible Tin</span>
                 <span>•</span>
                 <span>⏳ 6 Months Shelf Life</span>
+              </div>
+              <div class="product-dietary-tags">
+                <span class="dietary-badge-pill veg">100% Veg 🟢</span>
+                <span class="dietary-badge-pill veg">Eggless</span>
               </div>
               <p class="product-card-desc">
                 The crown jewel of Karachi Bakery. Golden baked biscuits studded with candied tutti-frutti and rich cashew nuts.
@@ -672,28 +818,56 @@
                   <span class="price-current">₹220</span>
                   <span class="price-original">₹240</span>
                 </div>
-                <button class="btn-add-cart" onclick="addToCart('Original Hyderabad Fruit Biscuit (400g)', 220)">
+                <div class="product-card-buttons">
+                  <button type="button" class="btn-card-details" onclick="openProductDetail('p1', event)" title="View comprehensive ingredients, allergens & nutrition">
+                    👁️ Specs
+                  </button>
+                  <button class="btn-add-cart" onclick="addToCart('Original Hyderabad Fruit Biscuit (400g)', 220)">
                   Add to Cart
                 </button>
+                </div>
               </div>
             </div>
           </article>
 
           <!-- Product 2: Biscuits -->
-          <article class="product-card" data-category="biscuits" data-tags="osmania chai tea salt sweet royal">
-            <span class="product-tag">Royal Heritage</span>
+          <article class="product-card" 
+            data-id="p2"
+            data-category="biscuits" 
+            data-price="190" 
+            data-rating="4.9" 
+            data-rating-count="1890" 
+            data-dietary="veg eggless nut-free" 
+            data-bestseller="2" 
+            data-name="Hyderabadi Osmania Biscuits"
+            data-tags="osmania chai tea salt sweet royal hyderabadi osmania biscuits nizam">
+            <div class="product-card-top-bar">
+              <div class="product-tags-group">
+                <span class="product-tag">Royal Heritage</span>
             <span class="product-tag dietary">Veg 🟢</span>
-            <div class="product-thumb">
+              </div>
+              <button type="button" class="btn-card-compare" data-compare-id="p2" onclick="toggleCompareItem('p2', this, event)" title="Compare specifications side-by-side">⚖️ Compare</button>
+            </div>
+            <div class="product-thumb" onclick="openProductDetail('p2', event)" title="Click to view full specifications, nutrition & ingredients">
               <span class="product-thumb-placeholder">☕</span>
               <span class="thumb-badge">Nizam's Choice</span>
             </div>
             <div class="product-details">
+              <div class="product-rating">
+                <span class="star-icon">⭐</span>
+                <strong>4.9</strong>
+                <span class="rating-count">(1,890)</span>
+              </div>
               <span class="product-category-label">Tea-Time Classic</span>
-              <h3 class="product-title">Hyderabadi Osmania Biscuits</h3>
+              <h3 class="product-title" onclick="openProductDetail('p2', event)" title="Click to view full specifications, nutrition & ingredients">Hyderabadi Osmania Biscuits</h3>
               <div class="product-specs">
                 <span>📦 400g Box</span>
                 <span>•</span>
                 <span>⏳ 6 Months Shelf Life</span>
+              </div>
+              <div class="product-dietary-tags">
+                <span class="dietary-badge-pill veg">100% Veg 🟢</span>
+                <span class="dietary-badge-pill nut-free">Nut-Free 🥜</span>
               </div>
               <p class="product-card-desc">
                 Crisp, delicately sweet and salty traditional biscuits named after the last Nizam of Hyderabad. Perfect with Irani chai.
@@ -703,28 +877,56 @@
                   <span class="price-current">₹190</span>
                   <span class="price-original">₹210</span>
                 </div>
-                <button class="btn-add-cart" onclick="addToCart('Hyderabadi Osmania Biscuits (400g)', 190)">
+                <div class="product-card-buttons">
+                  <button type="button" class="btn-card-details" onclick="openProductDetail('p2', event)" title="View comprehensive ingredients, allergens & nutrition">
+                    👁️ Specs
+                  </button>
+                  <button class="btn-add-cart" onclick="addToCart('Hyderabadi Osmania Biscuits (400g)', 190)">
                   Add to Cart
                 </button>
+                </div>
               </div>
             </div>
           </article>
 
           <!-- Product 3: Biscuits -->
-          <article class="product-card" data-category="biscuits" data-tags="cashew pista butter rich crunch">
-            <span class="product-tag">Nutty Crunch</span>
+          <article class="product-card" 
+            data-id="p3"
+            data-category="biscuits" 
+            data-price="250" 
+            data-rating="4.8" 
+            data-rating-count="840" 
+            data-dietary="veg eggless" 
+            data-bestseller="5" 
+            data-name="Royal Cashew & Pista Butter Biscuits"
+            data-tags="cashew pista butter rich crunch royal cashew pista butter biscuits iranian pistachio">
+            <div class="product-card-top-bar">
+              <div class="product-tags-group">
+                <span class="product-tag">Nutty Crunch</span>
             <span class="product-tag dietary">Veg 🟢</span>
-            <div class="product-thumb">
+              </div>
+              <button type="button" class="btn-card-compare" data-compare-id="p3" onclick="toggleCompareItem('p3', this, event)" title="Compare specifications side-by-side">⚖️ Compare</button>
+            </div>
+            <div class="product-thumb" onclick="openProductDetail('p3', event)" title="Click to view full specifications, nutrition & ingredients">
               <span class="product-thumb-placeholder">🥜</span>
               <span class="thumb-badge">Pure Butter</span>
             </div>
             <div class="product-details">
+              <div class="product-rating">
+                <span class="star-icon">⭐</span>
+                <strong>4.8</strong>
+                <span class="rating-count">(840)</span>
+              </div>
               <span class="product-category-label">Signature Biscuit</span>
-              <h3 class="product-title">Royal Cashew & Pista Butter Biscuits</h3>
+              <h3 class="product-title" onclick="openProductDetail('p3', event)" title="Click to view full specifications, nutrition & ingredients">Royal Cashew & Pista Butter Biscuits</h3>
               <div class="product-specs">
                 <span>📦 350g Tin</span>
                 <span>•</span>
                 <span>⏳ 5 Months Shelf Life</span>
+              </div>
+              <div class="product-dietary-tags">
+                <span class="dietary-badge-pill veg">100% Veg 🟢</span>
+                <span class="dietary-badge-pill veg">Eggless</span>
               </div>
               <p class="product-card-desc">
                 Slow-baked with pure cream butter and roasted Iranian pistachios. Rich aroma and delicate crumbly texture.
@@ -734,28 +936,56 @@
                   <span class="price-current">₹250</span>
                   <span class="price-original">₹280</span>
                 </div>
-                <button class="btn-add-cart" onclick="addToCart('Royal Cashew & Pista Butter Biscuits (350g)', 250)">
+                <div class="product-card-buttons">
+                  <button type="button" class="btn-card-details" onclick="openProductDetail('p3', event)" title="View comprehensive ingredients, allergens & nutrition">
+                    👁️ Specs
+                  </button>
+                  <button class="btn-add-cart" onclick="addToCart('Royal Cashew & Pista Butter Biscuits (350g)', 250)">
                   Add to Cart
                 </button>
+                </div>
               </div>
             </div>
           </article>
 
           <!-- Product 4: Biscuits -->
-          <article class="product-card" data-category="biscuits" data-tags="rusk chai irani toast crispy breakfast">
-            <span class="product-tag">Tea Master</span>
+          <article class="product-card" 
+            data-id="p4"
+            data-category="biscuits" 
+            data-price="140" 
+            data-rating="4.7" 
+            data-rating-count="620" 
+            data-dietary="veg eggless nut-free" 
+            data-bestseller="6" 
+            data-name="Irani Chai Double-Baked Butter Rusk"
+            data-tags="rusk chai irani toast crispy breakfast double baked cardamom">
+            <div class="product-card-top-bar">
+              <div class="product-tags-group">
+                <span class="product-tag">Tea Master</span>
             <span class="product-tag dietary">Veg 🟢</span>
-            <div class="product-thumb">
+              </div>
+              <button type="button" class="btn-card-compare" data-compare-id="p4" onclick="toggleCompareItem('p4', this, event)" title="Compare specifications side-by-side">⚖️ Compare</button>
+            </div>
+            <div class="product-thumb" onclick="openProductDetail('p4', event)" title="Click to view full specifications, nutrition & ingredients">
               <span class="product-thumb-placeholder">🍞</span>
               <span class="thumb-badge">Double-Baked</span>
             </div>
             <div class="product-details">
+              <div class="product-rating">
+                <span class="star-icon">⭐</span>
+                <strong>4.7</strong>
+                <span class="rating-count">(620)</span>
+              </div>
               <span class="product-category-label">Breakfast & Chai</span>
-              <h3 class="product-title">Irani Chai Double-Baked Butter Rusk</h3>
+              <h3 class="product-title" onclick="openProductDetail('p4', event)" title="Click to view full specifications, nutrition & ingredients">Irani Chai Double-Baked Butter Rusk</h3>
               <div class="product-specs">
                 <span>📦 300g Pack</span>
                 <span>•</span>
                 <span>⏳ 6 Months Shelf Life</span>
+              </div>
+              <div class="product-dietary-tags">
+                <span class="dietary-badge-pill veg">100% Veg 🟢</span>
+                <span class="dietary-badge-pill nut-free">Nut-Free 🥜</span>
               </div>
               <p class="product-card-desc">
                 Double-baked golden rusks with subtle hints of green cardamom and butter. The quintessential dip for hot morning tea.
@@ -765,28 +995,56 @@
                   <span class="price-current">₹140</span>
                   <span class="price-original">₹160</span>
                 </div>
-                <button class="btn-add-cart" onclick="addToCart('Irani Chai Double-Baked Butter Rusk (300g)', 140)">
+                <div class="product-card-buttons">
+                  <button type="button" class="btn-card-details" onclick="openProductDetail('p4', event)" title="View comprehensive ingredients, allergens & nutrition">
+                    👁️ Specs
+                  </button>
+                  <button class="btn-add-cart" onclick="addToCart('Irani Chai Double-Baked Butter Rusk (300g)', 140)">
                   Add to Cart
                 </button>
+                </div>
               </div>
             </div>
           </article>
 
           <!-- Product 5: Cakes -->
-          <article class="product-card" data-category="cakes" data-tags="chocolate truffle dark cake bakery fresh celebration">
-            <span class="product-tag">Chef's Special</span>
+          <article class="product-card" 
+            data-id="p5"
+            data-category="cakes" 
+            data-price="550" 
+            data-rating="4.9" 
+            data-rating-count="1150" 
+            data-dietary="veg eggless nut-free" 
+            data-bestseller="3" 
+            data-name="Belgian Dark Chocolate Truffle Cake"
+            data-tags="chocolate truffle dark cake bakery fresh celebration belgian cocoa ganache">
+            <div class="product-card-top-bar">
+              <div class="product-tags-group">
+                <span class="product-tag">Chef's Special</span>
             <span class="product-tag dietary">Veg 🟢</span>
-            <div class="product-thumb">
+              </div>
+              <button type="button" class="btn-card-compare" data-compare-id="p5" onclick="toggleCompareItem('p5', this, event)" title="Compare specifications side-by-side">⚖️ Compare</button>
+            </div>
+            <div class="product-thumb" onclick="openProductDetail('p5', event)" title="Click to view full specifications, nutrition & ingredients">
               <span class="product-thumb-placeholder">🍫</span>
               <span class="thumb-badge">70% Cocoa</span>
             </div>
             <div class="product-details">
+              <div class="product-rating">
+                <span class="star-icon">⭐</span>
+                <strong>4.9</strong>
+                <span class="rating-count">(1,150)</span>
+              </div>
               <span class="product-category-label">Artisanal Cake</span>
-              <h3 class="product-title">Belgian Dark Chocolate Truffle Cake</h3>
+              <h3 class="product-title" onclick="openProductDetail('p5', event)" title="Click to view full specifications, nutrition & ingredients">Belgian Dark Chocolate Truffle Cake</h3>
               <div class="product-specs">
                 <span>📦 500g Fresh Bake</span>
                 <span>•</span>
                 <span>⏳ 3 Days (Chilled)</span>
+              </div>
+              <div class="product-dietary-tags">
+                <span class="dietary-badge-pill veg">100% Veg 🟢</span>
+                <span class="dietary-badge-pill nut-free">Nut-Free 🥜</span>
               </div>
               <p class="product-card-desc">
                 Silky 70% dark Belgian chocolate ganache layered with moist chocolate sponge and edible golden dust.
@@ -796,28 +1054,56 @@
                   <span class="price-current">₹550</span>
                   <span class="price-original">₹620</span>
                 </div>
-                <button class="btn-add-cart" onclick="addToCart('Belgian Dark Chocolate Truffle Cake (500g)', 550)">
+                <div class="product-card-buttons">
+                  <button type="button" class="btn-card-details" onclick="openProductDetail('p5', event)" title="View comprehensive ingredients, allergens & nutrition">
+                    👁️ Specs
+                  </button>
+                  <button class="btn-add-cart" onclick="addToCart('Belgian Dark Chocolate Truffle Cake (500g)', 550)">
                   Add to Cart
                 </button>
+                </div>
               </div>
             </div>
           </article>
 
           <!-- Product 6: Cakes -->
-          <article class="product-card" data-category="cakes" data-tags="plum cake christmas dry fruit spice classic">
-            <span class="product-tag">Festive Heritage</span>
+          <article class="product-card" 
+            data-id="p6"
+            data-category="cakes" 
+            data-price="420" 
+            data-rating="4.8" 
+            data-rating-count="510" 
+            data-dietary="veg eggless" 
+            data-bestseller="8" 
+            data-name="Heritage Rich Plum & Dry Fruit Cake"
+            data-tags="plum cake christmas dry fruit spice classic heritage rich plum orange peel">
+            <div class="product-card-top-bar">
+              <div class="product-tags-group">
+                <span class="product-tag">Festive Heritage</span>
             <span class="product-tag dietary">Veg 🟢</span>
-            <div class="product-thumb">
+              </div>
+              <button type="button" class="btn-card-compare" data-compare-id="p6" onclick="toggleCompareItem('p6', this, event)" title="Compare specifications side-by-side">⚖️ Compare</button>
+            </div>
+            <div class="product-thumb" onclick="openProductDetail('p6', event)" title="Click to view full specifications, nutrition & ingredients">
               <span class="product-thumb-placeholder">🍰</span>
               <span class="thumb-badge">Macerated Fruits</span>
             </div>
             <div class="product-details">
+              <div class="product-rating">
+                <span class="star-icon">⭐</span>
+                <strong>4.8</strong>
+                <span class="rating-count">(510)</span>
+              </div>
               <span class="product-category-label">Tea Cake</span>
-              <h3 class="product-title">Heritage Rich Plum & Dry Fruit Cake</h3>
+              <h3 class="product-title" onclick="openProductDetail('p6', event)" title="Click to view full specifications, nutrition & ingredients">Heritage Rich Plum & Dry Fruit Cake</h3>
               <div class="product-specs">
                 <span>📦 450g Pack</span>
                 <span>•</span>
                 <span>⏳ 45 Days Shelf Life</span>
+              </div>
+              <div class="product-dietary-tags">
+                <span class="dietary-badge-pill veg">100% Veg 🟢</span>
+                <span class="dietary-badge-pill veg">Eggless</span>
               </div>
               <p class="product-card-desc">
                 Infused with premium dry fruits, candied orange peel, cinnamon, and nutmeg. Rich, moist, and aromatic.
@@ -827,28 +1113,56 @@
                   <span class="price-current">₹420</span>
                   <span class="price-original">₹460</span>
                 </div>
-                <button class="btn-add-cart" onclick="addToCart('Heritage Rich Plum & Dry Fruit Cake (450g)', 420)">
+                <div class="product-card-buttons">
+                  <button type="button" class="btn-card-details" onclick="openProductDetail('p6', event)" title="View comprehensive ingredients, allergens & nutrition">
+                    👁️ Specs
+                  </button>
+                  <button class="btn-add-cart" onclick="addToCart('Heritage Rich Plum & Dry Fruit Cake (450g)', 420)">
                   Add to Cart
                 </button>
+                </div>
               </div>
             </div>
           </article>
 
           <!-- Product 7: Cakes -->
-          <article class="product-card" data-category="cakes" data-tags="red velvet pastry cream cheese dessert">
-            <span class="product-tag">Patisserie</span>
+          <article class="product-card" 
+            data-id="p7"
+            data-category="cakes" 
+            data-price="380" 
+            data-rating="4.7" 
+            data-rating-count="430" 
+            data-dietary="veg eggless nut-free" 
+            data-bestseller="9" 
+            data-name="Red Velvet & Cream Cheese Pastry Pack"
+            data-tags="red velvet pastry cream cheese dessert red velvet white chocolate">
+            <div class="product-card-top-bar">
+              <div class="product-tags-group">
+                <span class="product-tag">Patisserie</span>
             <span class="product-tag dietary">Veg 🟢</span>
-            <div class="product-thumb">
+              </div>
+              <button type="button" class="btn-card-compare" data-compare-id="p7" onclick="toggleCompareItem('p7', this, event)" title="Compare specifications side-by-side">⚖️ Compare</button>
+            </div>
+            <div class="product-thumb" onclick="openProductDetail('p7', event)" title="Click to view full specifications, nutrition & ingredients">
               <span class="product-thumb-placeholder">🧁</span>
               <span class="thumb-badge">Pastry Box</span>
             </div>
             <div class="product-details">
+              <div class="product-rating">
+                <span class="star-icon">⭐</span>
+                <strong>4.7</strong>
+                <span class="rating-count">(430)</span>
+              </div>
               <span class="product-category-label">Artisan Pastry</span>
-              <h3 class="product-title">Red Velvet & Cream Cheese Pastry Pack</h3>
+              <h3 class="product-title" onclick="openProductDetail('p7', event)" title="Click to view full specifications, nutrition & ingredients">Red Velvet & Cream Cheese Pastry Pack</h3>
               <div class="product-specs">
                 <span>📦 4 Pcs Luxury Box</span>
                 <span>•</span>
                 <span>⏳ 3 Days (Chilled)</span>
+              </div>
+              <div class="product-dietary-tags">
+                <span class="dietary-badge-pill veg">100% Veg 🟢</span>
+                <span class="dietary-badge-pill nut-free">Nut-Free 🥜</span>
               </div>
               <p class="product-card-desc">
                 Velvety crimson sponge layered with Philadelphia-style cream cheese frosting and white chocolate curls.
@@ -858,28 +1172,57 @@
                   <span class="price-current">₹380</span>
                   <span class="price-original">₹420</span>
                 </div>
-                <button class="btn-add-cart" onclick="addToCart('Red Velvet & Cream Cheese Pastry Pack (4 Pcs)', 380)">
+                <div class="product-card-buttons">
+                  <button type="button" class="btn-card-details" onclick="openProductDetail('p7', event)" title="View comprehensive ingredients, allergens & nutrition">
+                    👁️ Specs
+                  </button>
+                  <button class="btn-add-cart" onclick="addToCart('Red Velvet & Cream Cheese Pastry Pack (4 Pcs)', 380)">
                   Add to Cart
                 </button>
+                </div>
               </div>
             </div>
           </article>
 
           <!-- Product 8: Sweets -->
-          <article class="product-card" data-category="sweets" data-tags="kaju katli cashew sweet vark royal ghee">
-            <span class="product-tag">Pure Desi Ghee</span>
+          <article class="product-card" 
+            data-id="p8"
+            data-category="sweets" 
+            data-price="540" 
+            data-rating="4.9" 
+            data-rating-count="1680" 
+            data-dietary="veg eggless vegan gluten-free" 
+            data-bestseller="4" 
+            data-name="Royal Kaju Katli (Diamond Cut)"
+            data-tags="kaju katli cashew sweet vark royal ghee diamond cut pure whole cashews silver">
+            <div class="product-card-top-bar">
+              <div class="product-tags-group">
+                <span class="product-tag">Pure Desi Ghee</span>
             <span class="product-tag dietary">Veg 🟢</span>
-            <div class="product-thumb">
+              </div>
+              <button type="button" class="btn-card-compare" data-compare-id="p8" onclick="toggleCompareItem('p8', this, event)" title="Compare specifications side-by-side">⚖️ Compare</button>
+            </div>
+            <div class="product-thumb" onclick="openProductDetail('p8', event)" title="Click to view full specifications, nutrition & ingredients">
               <span class="product-thumb-placeholder">🍬</span>
               <span class="thumb-badge">Silver Vark</span>
             </div>
             <div class="product-details">
+              <div class="product-rating">
+                <span class="star-icon">⭐</span>
+                <strong>4.9</strong>
+                <span class="rating-count">(1,680)</span>
+              </div>
               <span class="product-category-label">Traditional Mithai</span>
-              <h3 class="product-title">Royal Kaju Katli (Diamond Cut)</h3>
+              <h3 class="product-title" onclick="openProductDetail('p8', event)" title="Click to view full specifications, nutrition & ingredients">Royal Kaju Katli (Diamond Cut)</h3>
               <div class="product-specs">
                 <span>📦 500g Luxury Box</span>
                 <span>•</span>
                 <span>⏳ 30 Days Shelf Life</span>
+              </div>
+              <div class="product-dietary-tags">
+                <span class="dietary-badge-pill veg">100% Veg 🟢</span>
+                <span class="dietary-badge-pill gluten-free">Gluten-Free 🌾</span>
+                <span class="dietary-badge-pill vegan">Vegan 🌿</span>
               </div>
               <p class="product-card-desc">
                 Pure whole Goan cashews grounded with delicate silver vark. Melt-in-mouth richness with zero adulteration.
@@ -889,28 +1232,57 @@
                   <span class="price-current">₹540</span>
                   <span class="price-original">₹580</span>
                 </div>
-                <button class="btn-add-cart" onclick="addToCart('Royal Kaju Katli (500g)', 540)">
+                <div class="product-card-buttons">
+                  <button type="button" class="btn-card-details" onclick="openProductDetail('p8', event)" title="View comprehensive ingredients, allergens & nutrition">
+                    👁️ Specs
+                  </button>
+                  <button class="btn-add-cart" onclick="addToCart('Royal Kaju Katli (500g)', 540)">
                   Add to Cart
                 </button>
+                </div>
               </div>
             </div>
           </article>
 
           <!-- Product 9: Sweets -->
-          <article class="product-card" data-category="sweets" data-tags="motichoor ladoo ghee saffron celebration">
-            <span class="product-tag">Festive Must-Have</span>
+          <article class="product-card" 
+            data-id="p9"
+            data-category="sweets" 
+            data-price="360" 
+            data-rating="4.8" 
+            data-rating-count="920" 
+            data-dietary="veg eggless gluten-free nut-free" 
+            data-bestseller="7" 
+            data-name="Pure Desi Ghee Motichoor Ladoo"
+            data-tags="motichoor ladoo ghee saffron celebration pure desi kesar melon seeds">
+            <div class="product-card-top-bar">
+              <div class="product-tags-group">
+                <span class="product-tag">Festive Must-Have</span>
             <span class="product-tag dietary">Veg 🟢</span>
-            <div class="product-thumb">
+              </div>
+              <button type="button" class="btn-card-compare" data-compare-id="p9" onclick="toggleCompareItem('p9', this, event)" title="Compare specifications side-by-side">⚖️ Compare</button>
+            </div>
+            <div class="product-thumb" onclick="openProductDetail('p9', event)" title="Click to view full specifications, nutrition & ingredients">
               <span class="product-thumb-placeholder">🟡</span>
               <span class="thumb-badge">Kashmiri Kesar</span>
             </div>
             <div class="product-details">
+              <div class="product-rating">
+                <span class="star-icon">⭐</span>
+                <strong>4.8</strong>
+                <span class="rating-count">(920)</span>
+              </div>
               <span class="product-category-label">Royal Mithai</span>
-              <h3 class="product-title">Pure Desi Ghee Motichoor Ladoo</h3>
+              <h3 class="product-title" onclick="openProductDetail('p9', event)" title="Click to view full specifications, nutrition & ingredients">Pure Desi Ghee Motichoor Ladoo</h3>
               <div class="product-specs">
                 <span>📦 500g Gift Box</span>
                 <span>•</span>
                 <span>⏳ 15 Days Shelf Life</span>
+              </div>
+              <div class="product-dietary-tags">
+                <span class="dietary-badge-pill veg">100% Veg 🟢</span>
+                <span class="dietary-badge-pill gluten-free">Gluten-Free 🌾</span>
+                <span class="dietary-badge-pill nut-free">Nut-Free 🥜</span>
               </div>
               <p class="product-card-desc">
                 Fine gram flour pearls slow-fried in pure desi ghee and infused with saffron strands and melon seeds.
@@ -920,28 +1292,56 @@
                   <span class="price-current">₹360</span>
                   <span class="price-original">₹400</span>
                 </div>
-                <button class="btn-add-cart" onclick="addToCart('Pure Desi Ghee Motichoor Ladoo (500g)', 360)">
+                <div class="product-card-buttons">
+                  <button type="button" class="btn-card-details" onclick="openProductDetail('p9', event)" title="View comprehensive ingredients, allergens & nutrition">
+                    👁️ Specs
+                  </button>
+                  <button class="btn-add-cart" onclick="addToCart('Pure Desi Ghee Motichoor Ladoo (500g)', 360)">
                   Add to Cart
                 </button>
+                </div>
               </div>
             </div>
           </article>
 
           <!-- Product 10: Sweets -->
-          <article class="product-card" data-category="sweets" data-tags="barfi badam anjeer almond fig dry fruit">
-            <span class="product-tag">No Added Sugar</span>
+          <article class="product-card" 
+            data-id="p10"
+            data-category="sweets" 
+            data-price="480" 
+            data-rating="4.9" 
+            data-rating-count="780" 
+            data-dietary="veg eggless sugar-free gluten-free" 
+            data-bestseller="10" 
+            data-name="Roasted Badam & Anjeer Royal Barfi"
+            data-tags="barfi badam anjeer almond fig dry fruit no added sugar roasted turkish figs">
+            <div class="product-card-top-bar">
+              <div class="product-tags-group">
+                <span class="product-tag">No Added Sugar</span>
             <span class="product-tag dietary">Veg 🟢</span>
-            <div class="product-thumb">
+              </div>
+              <button type="button" class="btn-card-compare" data-compare-id="p10" onclick="toggleCompareItem('p10', this, event)" title="Compare specifications side-by-side">⚖️ Compare</button>
+            </div>
+            <div class="product-thumb" onclick="openProductDetail('p10', event)" title="Click to view full specifications, nutrition & ingredients">
               <span class="product-thumb-placeholder">🌰</span>
               <span class="thumb-badge">Natural Figs</span>
             </div>
             <div class="product-details">
+              <div class="product-rating">
+                <span class="star-icon">⭐</span>
+                <strong>4.9</strong>
+                <span class="rating-count">(780)</span>
+              </div>
               <span class="product-category-label">Luxury Dry Fruit Sweet</span>
-              <h3 class="product-title">Roasted Badam & Anjeer Royal Barfi</h3>
+              <h3 class="product-title" onclick="openProductDetail('p10', event)" title="Click to view full specifications, nutrition & ingredients">Roasted Badam & Anjeer Royal Barfi</h3>
               <div class="product-specs">
                 <span>📦 400g Box</span>
                 <span>•</span>
                 <span>⏳ 25 Days Shelf Life</span>
+              </div>
+              <div class="product-dietary-tags">
+                <span class="dietary-badge-pill sugar-free">Sugar-Free 🍃</span>
+                <span class="dietary-badge-pill gluten-free">Gluten-Free 🌾</span>
               </div>
               <p class="product-card-desc">
                 Crafted from sun-dried Turkish figs, roasted almonds, and pistachios. Naturally sweetened with zero refined sugar.
@@ -951,28 +1351,56 @@
                   <span class="price-current">₹480</span>
                   <span class="price-original">₹520</span>
                 </div>
-                <button class="btn-add-cart" onclick="addToCart('Roasted Badam & Anjeer Royal Barfi (400g)', 480)">
+                <div class="product-card-buttons">
+                  <button type="button" class="btn-card-details" onclick="openProductDetail('p10', event)" title="View comprehensive ingredients, allergens & nutrition">
+                    👁️ Specs
+                  </button>
+                  <button class="btn-add-cart" onclick="addToCart('Roasted Badam & Anjeer Royal Barfi (400g)', 480)">
                   Add to Cart
                 </button>
+                </div>
               </div>
             </div>
           </article>
 
           <!-- Product 11: Hampers -->
-          <article class="product-card" data-category="hampers" data-tags="hamper gift tin nizam royal assorted">
-            <span class="product-tag">Collector's Edition</span>
+          <article class="product-card" 
+            data-id="p11"
+            data-category="hampers" 
+            data-price="750" 
+            data-rating="5.0" 
+            data-rating-count="1420" 
+            data-dietary="veg eggless" 
+            data-bestseller="1" 
+            data-name="Nizam's Royal Heritage 3-in-1 Tin"
+            data-tags="hamper gift tin nizam royal assorted keepsake 3 in 1 osmania fruit cashew">
+            <div class="product-card-top-bar">
+              <div class="product-tags-group">
+                <span class="product-tag">Collector's Edition</span>
             <span class="product-tag dietary">Veg 🟢</span>
-            <div class="product-thumb">
+              </div>
+              <button type="button" class="btn-card-compare" data-compare-id="p11" onclick="toggleCompareItem('p11', this, event)" title="Compare specifications side-by-side">⚖️ Compare</button>
+            </div>
+            <div class="product-thumb" onclick="openProductDetail('p11', event)" title="Click to view full specifications, nutrition & ingredients">
               <span class="product-thumb-placeholder">🎁</span>
               <span class="thumb-badge">3-in-1 Tin</span>
             </div>
             <div class="product-details">
+              <div class="product-rating">
+                <span class="star-icon">⭐</span>
+                <strong>5.0</strong>
+                <span class="rating-count">(1,420)</span>
+              </div>
               <span class="product-category-label">Heritage Gift Tin</span>
-              <h3 class="product-title">Nizam's Royal Heritage 3-in-1 Tin</h3>
+              <h3 class="product-title" onclick="openProductDetail('p11', event)" title="Click to view full specifications, nutrition & ingredients">Nizam's Royal Heritage 3-in-1 Tin</h3>
               <div class="product-specs">
                 <span>📦 800g Collectible Tin</span>
                 <span>•</span>
                 <span>⏳ 6 Months Shelf Life</span>
+              </div>
+              <div class="product-dietary-tags">
+                <span class="dietary-badge-pill veg">100% Veg 🟢</span>
+                <span class="dietary-badge-pill veg">Eggless</span>
               </div>
               <p class="product-card-desc">
                 The ultimate Hyderabad souvenir. Contains Karachi Fruit Biscuits, Royal Osmania, and Cashew Butter cookies.
@@ -982,28 +1410,56 @@
                   <span class="price-current">₹750</span>
                   <span class="price-original">₹850</span>
                 </div>
-                <button class="btn-add-cart" onclick="addToCart('Nizam\'s Royal Heritage 3-in-1 Tin (800g)', 750)">
+                <div class="product-card-buttons">
+                  <button type="button" class="btn-card-details" onclick="openProductDetail('p11', event)" title="View comprehensive ingredients, allergens & nutrition">
+                    👁️ Specs
+                  </button>
+                  <button class="btn-add-cart" onclick="addToCart('Nizam\'s Royal Heritage 3-in-1 Tin (800g)', 750)">
                   Add to Cart
                 </button>
+                </div>
               </div>
             </div>
           </article>
 
           <!-- Product 12: Hampers -->
-          <article class="product-card" data-category="hampers" data-tags="festive hamper gift basket celebration diwali">
-            <span class="product-tag">Celebration Special</span>
+          <article class="product-card" 
+            data-id="p12"
+            data-category="hampers" 
+            data-price="1299" 
+            data-rating="4.9" 
+            data-rating-count="670" 
+            data-dietary="veg eggless" 
+            data-bestseller="11" 
+            data-name="Vintage Hyderabad Festive Hamper"
+            data-tags="festive hamper gift basket celebration diwali vintage hyderabad wicker kaju katli plum cake">
+            <div class="product-card-top-bar">
+              <div class="product-tags-group">
+                <span class="product-tag">Celebration Special</span>
             <span class="product-tag dietary">Veg 🟢</span>
-            <div class="product-thumb">
+              </div>
+              <button type="button" class="btn-card-compare" data-compare-id="p12" onclick="toggleCompareItem('p12', this, event)" title="Compare specifications side-by-side">⚖️ Compare</button>
+            </div>
+            <div class="product-thumb" onclick="openProductDetail('p12', event)" title="Click to view full specifications, nutrition & ingredients">
               <span class="product-thumb-placeholder">🎀</span>
               <span class="thumb-badge">Artisan Basket</span>
             </div>
             <div class="product-details">
+              <div class="product-rating">
+                <span class="star-icon">⭐</span>
+                <strong>4.9</strong>
+                <span class="rating-count">(670)</span>
+              </div>
               <span class="product-category-label">Luxury Festive Hamper</span>
-              <h3 class="product-title">Vintage Hyderabad Festive Hamper</h3>
+              <h3 class="product-title" onclick="openProductDetail('p12', event)" title="Click to view full specifications, nutrition & ingredients">Vintage Hyderabad Festive Hamper</h3>
               <div class="product-specs">
                 <span>📦 1.2kg Grand Hamper</span>
                 <span>•</span>
                 <span>⏳ 4 Months Shelf Life</span>
+              </div>
+              <div class="product-dietary-tags">
+                <span class="dietary-badge-pill veg">100% Veg 🟢</span>
+                <span class="dietary-badge-pill veg">Eggless</span>
               </div>
               <p class="product-card-desc">
                 Handcrafted wicker basket featuring Fruit Biscuits, Kaju Katli, Roasted Cashews, Plum Cake, and silver diya.
@@ -1013,28 +1469,56 @@
                   <span class="price-current">₹1,299</span>
                   <span class="price-original">₹1,499</span>
                 </div>
-                <button class="btn-add-cart" onclick="addToCart('Vintage Hyderabad Festive Hamper (1.2kg)', 1299)">
+                <div class="product-card-buttons">
+                  <button type="button" class="btn-card-details" onclick="openProductDetail('p12', event)" title="View comprehensive ingredients, allergens & nutrition">
+                    👁️ Specs
+                  </button>
+                  <button class="btn-add-cart" onclick="addToCart('Vintage Hyderabad Festive Hamper (1.2kg)', 1299)">
                   Add to Cart
                 </button>
+                </div>
               </div>
             </div>
           </article>
 
           <!-- Product 13: Hampers -->
-          <article class="product-card" data-category="hampers" data-tags="corporate crate wooden gift premium bulk">
-            <span class="product-tag">Corporate Elite</span>
+          <article class="product-card" 
+            data-id="p13"
+            data-category="hampers" 
+            data-price="1850" 
+            data-rating="4.9" 
+            data-rating-count="340" 
+            data-dietary="veg eggless" 
+            data-bestseller="12" 
+            data-name="Corporate Executive Wooden Gift Crate"
+            data-tags="corporate crate wooden gift premium bulk pine executive corporate gifting">
+            <div class="product-card-top-bar">
+              <div class="product-tags-group">
+                <span class="product-tag">Corporate Elite</span>
             <span class="product-tag dietary">Veg 🟢</span>
-            <div class="product-thumb">
+              </div>
+              <button type="button" class="btn-card-compare" data-compare-id="p13" onclick="toggleCompareItem('p13', this, event)" title="Compare specifications side-by-side">⚖️ Compare</button>
+            </div>
+            <div class="product-thumb" onclick="openProductDetail('p13', event)" title="Click to view full specifications, nutrition & ingredients">
               <span class="product-thumb-placeholder">📦</span>
               <span class="thumb-badge">Pine Wood Crate</span>
             </div>
             <div class="product-details">
+              <div class="product-rating">
+                <span class="star-icon">⭐</span>
+                <strong>4.9</strong>
+                <span class="rating-count">(340)</span>
+              </div>
               <span class="product-category-label">Executive Crate</span>
-              <h3 class="product-title">Corporate Executive Wooden Gift Crate</h3>
+              <h3 class="product-title" onclick="openProductDetail('p13', event)" title="Click to view full specifications, nutrition & ingredients">Corporate Executive Wooden Gift Crate</h3>
               <div class="product-specs">
                 <span>📦 1.5kg Luxury Crate</span>
                 <span>•</span>
                 <span>⏳ 4 Months Shelf Life</span>
+              </div>
+              <div class="product-dietary-tags">
+                <span class="dietary-badge-pill veg">100% Veg 🟢</span>
+                <span class="dietary-badge-pill veg">Eggless</span>
               </div>
               <p class="product-card-desc">
                 Engraved pine wood crate filled with signature bakery tins, exotic dry fruits, and artisanal cookies.
@@ -1044,28 +1528,56 @@
                   <span class="price-current">₹1,850</span>
                   <span class="price-original">₹2,100</span>
                 </div>
-                <button class="btn-add-cart" onclick="addToCart('Corporate Executive Wooden Gift Crate (1.5kg)', 1850)">
+                <div class="product-card-buttons">
+                  <button type="button" class="btn-card-details" onclick="openProductDetail('p13', event)" title="View comprehensive ingredients, allergens & nutrition">
+                    👁️ Specs
+                  </button>
+                  <button class="btn-add-cart" onclick="addToCart('Corporate Executive Wooden Gift Crate (1.5kg)', 1850)">
                   Add to Cart
                 </button>
+                </div>
               </div>
             </div>
           </article>
 
           <!-- Product 14: Healthy & Savoury -->
-          <article class="product-card" data-category="healthy" data-tags="sugar free almond stevia diabetic diet healthy">
-            <span class="product-tag">Dietary Choice</span>
+          <article class="product-card" 
+            data-id="p14"
+            data-category="healthy" 
+            data-price="260" 
+            data-rating="4.8" 
+            data-rating-count="890" 
+            data-dietary="veg eggless sugar-free" 
+            data-bestseller="8" 
+            data-name="Sugar-Free Roasted Almond Cookies"
+            data-tags="sugar free almond stevia diabetic diet healthy roasted cookies wellness">
+            <div class="product-card-top-bar">
+              <div class="product-tags-group">
+                <span class="product-tag">Dietary Choice</span>
             <span class="product-tag dietary">Sugar-Free 🍃</span>
-            <div class="product-thumb">
+              </div>
+              <button type="button" class="btn-card-compare" data-compare-id="p14" onclick="toggleCompareItem('p14', this, event)" title="Compare specifications side-by-side">⚖️ Compare</button>
+            </div>
+            <div class="product-thumb" onclick="openProductDetail('p14', event)" title="Click to view full specifications, nutrition & ingredients">
               <span class="product-thumb-placeholder">🌾</span>
               <span class="thumb-badge">Stevia Sweetened</span>
             </div>
             <div class="product-details">
+              <div class="product-rating">
+                <span class="star-icon">⭐</span>
+                <strong>4.8</strong>
+                <span class="rating-count">(890)</span>
+              </div>
               <span class="product-category-label">Wellness Range</span>
-              <h3 class="product-title">Sugar-Free Roasted Almond Cookies</h3>
+              <h3 class="product-title" onclick="openProductDetail('p14', event)" title="Click to view full specifications, nutrition & ingredients">Sugar-Free Roasted Almond Cookies</h3>
               <div class="product-specs">
                 <span>📦 350g Pack</span>
                 <span>•</span>
                 <span>⏳ 4 Months Shelf Life</span>
+              </div>
+              <div class="product-dietary-tags">
+                <span class="dietary-badge-pill sugar-free">Sugar-Free 🍃</span>
+                <span class="dietary-badge-pill veg">100% Veg 🟢</span>
               </div>
               <p class="product-card-desc">
                 Zero added refined sugar, sweetened naturally with stevia extract, packed with whole roasted Californian almonds.
@@ -1075,28 +1587,57 @@
                   <span class="price-current">₹260</span>
                   <span class="price-original">₹290</span>
                 </div>
-                <button class="btn-add-cart" onclick="addToCart('Sugar-Free Roasted Almond Cookies (350g)', 260)">
+                <div class="product-card-buttons">
+                  <button type="button" class="btn-card-details" onclick="openProductDetail('p14', event)" title="View comprehensive ingredients, allergens & nutrition">
+                    👁️ Specs
+                  </button>
+                  <button class="btn-add-cart" onclick="addToCart('Sugar-Free Roasted Almond Cookies (350g)', 260)">
                   Add to Cart
                 </button>
+                </div>
               </div>
             </div>
           </article>
 
           <!-- Product 15: Healthy & Savoury -->
-          <article class="product-card" data-category="healthy" data-tags="millet jowar healthy crisp gluten free guilt free">
-            <span class="product-tag">Superfood Bake</span>
+          <article class="product-card" 
+            data-id="p15"
+            data-category="healthy" 
+            data-price="190" 
+            data-rating="4.7" 
+            data-rating-count="510" 
+            data-dietary="veg eggless vegan gluten-free sugar-free nut-free" 
+            data-bestseller="13" 
+            data-name="Roasted Jowar & Millet Superfood Crisp"
+            data-tags="millet jowar healthy crisp gluten free guilt free ancient grain roasted non-fried">
+            <div class="product-card-top-bar">
+              <div class="product-tags-group">
+                <span class="product-tag">Superfood Bake</span>
             <span class="product-tag dietary">Gluten-Free 🟢</span>
-            <div class="product-thumb">
+              </div>
+              <button type="button" class="btn-card-compare" data-compare-id="p15" onclick="toggleCompareItem('p15', this, event)" title="Compare specifications side-by-side">⚖️ Compare</button>
+            </div>
+            <div class="product-thumb" onclick="openProductDetail('p15', event)" title="Click to view full specifications, nutrition & ingredients">
               <span class="product-thumb-placeholder">🌱</span>
               <span class="thumb-badge">100% Roasted</span>
             </div>
             <div class="product-details">
+              <div class="product-rating">
+                <span class="star-icon">⭐</span>
+                <strong>4.7</strong>
+                <span class="rating-count">(510)</span>
+              </div>
               <span class="product-category-label">Ancient Grain Range</span>
-              <h3 class="product-title">Roasted Jowar & Millet Superfood Crisp</h3>
+              <h3 class="product-title" onclick="openProductDetail('p15', event)" title="Click to view full specifications, nutrition & ingredients">Roasted Jowar & Millet Superfood Crisp</h3>
               <div class="product-specs">
                 <span>📦 250g Pack</span>
                 <span>•</span>
                 <span>⏳ 3 Months Shelf Life</span>
+              </div>
+              <div class="product-dietary-tags">
+                <span class="dietary-badge-pill gluten-free">Gluten-Free 🌾</span>
+                <span class="dietary-badge-pill vegan">Vegan 🌿</span>
+                <span class="dietary-badge-pill nut-free">Nut-Free 🥜</span>
               </div>
               <p class="product-card-desc">
                 Zero maida, non-fried crisp made with nutrient-rich sorghum and foxtail millets seasoned with rock salt.
@@ -1106,28 +1647,56 @@
                   <span class="price-current">₹190</span>
                   <span class="price-original">₹220</span>
                 </div>
-                <button class="btn-add-cart" onclick="addToCart('Roasted Jowar & Millet Superfood Crisp (250g)', 190)">
+                <div class="product-card-buttons">
+                  <button type="button" class="btn-card-details" onclick="openProductDetail('p15', event)" title="View comprehensive ingredients, allergens & nutrition">
+                    👁️ Specs
+                  </button>
+                  <button class="btn-add-cart" onclick="addToCart('Roasted Jowar & Millet Superfood Crisp (250g)', 190)">
                   Add to Cart
                 </button>
+                </div>
               </div>
             </div>
           </article>
 
           <!-- Product 16: Healthy & Savoury -->
-          <article class="product-card" data-category="healthy" data-tags="namkeen mixture teekha spicy hyderabadi crunchy">
-            <span class="product-tag">Hyderabadi Crunch</span>
+          <article class="product-card" 
+            data-id="p16"
+            data-category="healthy" 
+            data-price="160" 
+            data-rating="4.8" 
+            data-rating-count="1310" 
+            data-dietary="veg eggless vegan" 
+            data-bestseller="5" 
+            data-name="Hyderabadi Royal Teekha Mixture"
+            data-tags="namkeen mixture teekha spicy hyderabadi crunchy royal authentic peanuts sev">
+            <div class="product-card-top-bar">
+              <div class="product-tags-group">
+                <span class="product-tag">Hyderabadi Crunch</span>
             <span class="product-tag dietary">Veg 🟢</span>
-            <div class="product-thumb">
+              </div>
+              <button type="button" class="btn-card-compare" data-compare-id="p16" onclick="toggleCompareItem('p16', this, event)" title="Compare specifications side-by-side">⚖️ Compare</button>
+            </div>
+            <div class="product-thumb" onclick="openProductDetail('p16', event)" title="Click to view full specifications, nutrition & ingredients">
               <span class="product-thumb-placeholder">🌶️</span>
               <span class="thumb-badge">Authentic Spices</span>
             </div>
             <div class="product-details">
+              <div class="product-rating">
+                <span class="star-icon">⭐</span>
+                <strong>4.8</strong>
+                <span class="rating-count">(1,310)</span>
+              </div>
               <span class="product-category-label">Traditional Namkeen</span>
-              <h3 class="product-title">Hyderabadi Royal Teekha Mixture</h3>
+              <h3 class="product-title" onclick="openProductDetail('p16', event)" title="Click to view full specifications, nutrition & ingredients">Hyderabadi Royal Teekha Mixture</h3>
               <div class="product-specs">
                 <span>📦 400g Pack</span>
                 <span>•</span>
                 <span>⏳ 4 Months Shelf Life</span>
+              </div>
+              <div class="product-dietary-tags">
+                <span class="dietary-badge-pill veg">100% Veg 🟢</span>
+                <span class="dietary-badge-pill vegan">Vegan 🌿</span>
               </div>
               <p class="product-card-desc">
                 Iconic spicy teatime snack blending gram sev, roasted peanuts, crispy curry leaves, and secret Hyderabadi masalas.
@@ -1137,12 +1706,84 @@
                   <span class="price-current">₹160</span>
                   <span class="price-original">₹180</span>
                 </div>
-                <button class="btn-add-cart" onclick="addToCart('Hyderabadi Royal Teekha Mixture (400g)', 160)">
+                <div class="product-card-buttons">
+                  <button type="button" class="btn-card-details" onclick="openProductDetail('p16', event)" title="View comprehensive ingredients, allergens & nutrition">
+                    👁️ Specs
+                  </button>
+                  <button class="btn-add-cart" onclick="addToCart('Hyderabadi Royal Teekha Mixture (400g)', 160)">
                   Add to Cart
                 </button>
+                </div>
               </div>
             </div>
           </article>
+
+          <!-- Zero-Results Fallback State (Directly Solves Problem #2 Dead-End) -->
+          <div class="zero-results-card" id="zeroResultsState" style="display: none;">
+            <div class="zero-results-icon">🔍🍪</div>
+            <h3 class="zero-results-title">No Delicacies Match Your Selected Filters</h3>
+            <p class="zero-results-desc">
+              We couldn't find any products matching your specific combination of category, dietary preferences, or price limit.
+            </p>
+            <div class="zero-results-suggestions">
+              <strong>Suggested Adjustments:</strong>
+              <ul>
+                <li>Try deselecting one or more dietary filters (e.g., <em>Nut-Free</em> or <em>Sugar-Free</em>)</li>
+                <li>Expand your maximum price budget slider above</li>
+                <li>Clear your search keywords to view all authentic treats</li>
+              </ul>
+            </div>
+            <button type="button" class="action-btn-primary zero-reset-btn" onclick="resetAllFilters()">
+              🔄 Reset All Filters (View All 16 Delicacies)
+            </button>
+
+            <!-- Recommended Bestseller Alternatives -->
+            <div class="zero-recommendations-section">
+              <h4 class="zero-rec-heading">👑 Or Try Hyderabad's Most-Loved Bestsellers:</h4>
+              <div class="zero-rec-grid">
+                <div class="zero-rec-card">
+                  <div class="zero-rec-thumb">🍪</div>
+                  <div class="zero-rec-info">
+                    <h5>Original Fruit Biscuits (400g)</h5>
+                    <span class="zero-rec-price">₹220</span>
+                  </div>
+                  <button type="button" class="btn-rec-add" onclick="addToCart('Original Hyderabad Fruit Biscuit (400g)', 220)">
+                    + Quick Add
+                  </button>
+                </div>
+                <div class="zero-rec-card">
+                  <div class="zero-rec-thumb">☕</div>
+                  <div class="zero-rec-info">
+                    <h5>Hyderabadi Osmania (400g)</h5>
+                    <span class="zero-rec-price">₹190</span>
+                  </div>
+                  <button type="button" class="btn-rec-add" onclick="addToCart('Hyderabadi Osmania Biscuits (400g)', 190)">
+                    + Quick Add
+                  </button>
+                </div>
+                <div class="zero-rec-card">
+                  <div class="zero-rec-thumb">🍬</div>
+                  <div class="zero-rec-info">
+                    <h5>Royal Kaju Katli (500g)</h5>
+                    <span class="zero-rec-price">₹540</span>
+                  </div>
+                  <button type="button" class="btn-rec-add" onclick="addToCart('Royal Kaju Katli (500g)', 540)">
+                    + Quick Add
+                  </button>
+                </div>
+                <div class="zero-rec-card">
+                  <div class="zero-rec-thumb">🍫</div>
+                  <div class="zero-rec-info">
+                    <h5>Belgian Dark Truffle Cake (500g)</h5>
+                    <span class="zero-rec-price">₹550</span>
+                  </div>
+                  <button type="button" class="btn-rec-add" onclick="addToCart('Belgian Dark Chocolate Truffle Cake (500g)', 550)">
+                    + Quick Add
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
 
         </div>
       </div>
@@ -1298,13 +1939,71 @@
 
     <div class="container footer-bottom">
       <div>
-        © 2026 Karachi Bakery Pvt. Ltd. All Rights Reserved. • Redesign Sprint (Day 2 of 10)
+        © 2026 Karachi Bakery Pvt. Ltd. All Rights Reserved. • Redesign Sprint (Day 5 of 10)
       </div>
       <div>
-        Designed for Excellence • Issues #1, #4 & #15 Addressed (5-Pillar Architecture & Visual Mega Menu)
-      </div>
+        Designed for Excellence • Issues #1, #2, #4, #7, #13, #14 & #15 Addressed (Taxonomy, Multi-Faceted Search, PDP Specs, Smart Recs & Comparison Matrix)</div>
     </div>
   </footer>
+
+  <!-- ==========================================================================
+       Day 4 Deliverable: Standardized Product Detail (PDP) Modal & Smart Recommendations
+       (Resolves Issues #7 & #14)
+       ========================================================================== -->
+  <div class="pdp-modal-backdrop" id="pdpModalBackdrop" style="display:none;" onclick="handleBackdropClick(event)">
+    <div class="pdp-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="pdpTitle">
+      <button type="button" class="pdp-modal-close" onclick="closeProductDetail()" aria-label="Close specifications modal">✕</button>
+      <div class="pdp-modal-content" id="pdpModalContent">
+        <!-- Dynamically rendered via app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       Day 5 Deliverable: Side-by-Side Product Comparison Bottom Dock & Matrix Modal
+       (Resolves Issue #13)
+       ========================================================================== -->
+  <!-- 1. Floating Bottom Comparison Dock (Visible when >= 1 item selected) -->
+  <aside class="comparison-dock" id="comparisonDock" style="display:none;" aria-label="Comparison Drawer">
+    <div class="dock-container">
+      <div class="dock-left">
+        <span class="dock-badge">⚖️ Comparison Dock</span>
+        <span class="dock-count-label" id="dockCountLabel"><strong>0</strong> of 4 selected</span>
+      </div>
+      <div class="dock-items-list" id="dockItemsList">
+        <!-- Thumbnail chips dynamically generated -->
+      </div>
+      <div class="dock-actions">
+        <button type="button" class="btn-dock-clear" onclick="clearAllCompare()">Clear</button>
+        <button type="button" class="btn-dock-launch" onclick="openCompareModal()">
+          <span>Compare Matrix</span> ⚖️
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- 2. Side-by-Side Comparison Matrix Modal -->
+  <div class="compare-modal-backdrop" id="compareModalBackdrop" style="display:none;" onclick="handleCompareBackdropClick(event)">
+    <div class="compare-modal-dialog" role="dialog" aria-modal="true">
+      <div class="compare-modal-header">
+        <div class="compare-modal-title-wrap">
+          <span class="compare-hub-icon">⚖️</span>
+          <div>
+            <h3>Side-by-Side Delicacy Comparison</h3>
+            <p>Compare specifications, nutritional values, allergens, shelf life & prices side-by-side</p>
+          </div>
+        </div>
+        <div class="compare-modal-header-actions">
+          <button type="button" class="btn-clear-matrix" onclick="clearAllCompare()">Clear All</button>
+          <button type="button" class="compare-modal-close" onclick="closeCompareModal()" aria-label="Close comparison matrix">✕</button>
+        </div>
+      </div>
+      <div class="compare-modal-body" id="compareModalBody">
+        <!-- Dynamically rendered Comparison Matrix Table via app.js -->
+      </div>
+    </div>
+  </div>
+
 
   <!-- ==========================================================================
        Notification Toast
@@ -1315,6 +2014,6 @@
   </div>
 
   <!-- Main JavaScript Logic -->
-  <script src="js/app.js?v=2.0.1"></script>
+  <script src="js/app.js?v=5.0.0"></script>
 </body>
 </html>
