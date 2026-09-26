@@ -1674,7 +1674,7 @@ function updateCompareUI() {
   }
 
   // 2. Update all card compare buttons in catalog
-  document.querySelectorAll('.btn-card-compare').forEach(btn => {
+  document.querySelectorAll('.btn-card-compare, .btn-card-compare-action').forEach(btn => {
     const cardId = btn.getAttribute('data-compare-id');
     if (AppState.compareItems.includes(cardId)) {
       btn.classList.add('active');
@@ -1728,13 +1728,15 @@ function updateCompareUI() {
 }
 
 function openCompareModal() {
-  if (AppState.compareItems.length === 0) {
-    showToast('Select at least 1 delicacy using the "⚖️ Compare" button to inspect specs side-by-side!', '⚖️');
-    return;
-  }
-
   const modal = document.getElementById('compareModalBackdrop');
   if (!modal) return;
+
+  // If user hasn't selected items yet, auto-select top 2 iconic bestsellers for instant preview!
+  if (AppState.compareItems.length === 0) {
+    AppState.compareItems = ['p1', 'p2'];
+    updateCompareUI();
+    showToast("Loaded Hyderabad's Top 2 Bestsellers for instant comparison! You can add or swap delicacies anytime.", "⚖️");
+  }
 
   renderCompareMatrix();
   modal.style.display = 'flex';
