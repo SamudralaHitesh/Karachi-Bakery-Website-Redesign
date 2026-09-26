@@ -4149,3 +4149,143 @@ button {
   color: var(--kb-burgundy-dark);
   box-shadow: 0 2px 8px rgba(201, 151, 38, 0.35);
 }
+
+
+/* ==========================================================================
+   Header Search Autocomplete Preview (Day 3 Feature - Issue #2)
+   ========================================================================== */
+.header-search {
+  position: relative;
+}
+
+.header-search-autocomplete {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border: 1.5px solid var(--kb-gold);
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  overflow: hidden;
+  animation: pdpFadeIn 0.2s ease-out;
+}
+
+.search-auto-header {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--kb-burgundy);
+  background: var(--kb-cream);
+  padding: 0.5rem 0.85rem;
+  border-bottom: 1px solid var(--kb-border);
+}
+
+.search-auto-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-auto-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid var(--kb-border);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.search-auto-item:last-child {
+  border-bottom: none;
+}
+
+.search-auto-item:hover {
+  background: var(--kb-gold-subtle);
+}
+
+.search-auto-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.search-auto-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.search-auto-meta strong {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--kb-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.search-auto-meta small {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--kb-text-muted);
+}
+
+.btn-auto-add {
+  background: var(--kb-burgundy);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-pill);
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+
+.btn-auto-add:hover {
+  background: var(--kb-burgundy-light);
+  transform: scale(1.05);
+}
+
+.search-auto-footer {
+  background: var(--kb-cream-card);
+  padding: 0.5rem 0.85rem;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--kb-burgundy);
+  cursor: pointer;
+  border-top: 1px solid var(--kb-border);
+  transition: background 0.15s ease;
+}
+
+.search-auto-footer:hover {
+  background: var(--kb-gold-subtle);
+  color: var(--kb-gold-dark);
+}
+
+.search-auto-empty {
+  padding: 1.25rem 1rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.search-auto-empty span {
+  font-size: 0.82rem;
+  color: var(--kb-text-muted);
+}
+
+.search-auto-empty button {
+  background: var(--kb-gold);
+  color: var(--kb-burgundy-dark);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-pill);
+  border: none;
+  cursor: pointer;
+}

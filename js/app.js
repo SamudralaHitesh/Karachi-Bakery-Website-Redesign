@@ -1060,12 +1060,16 @@ function applyAllFiltersAndSort() {
 
     let matchesSearch = true;
     if (searchQuery) {
-      const title = (card.querySelector('.product-title')?.textContent || '').toLowerCase();
-      const catLabel = (card.querySelector('.product-category-label')?.textContent || '').toLowerCase();
+      const cardText = (card.innerText || '').toLowerCase();
       const tags = (card.getAttribute('data-tags') || '').toLowerCase();
-      const desc = (card.querySelector('.product-card-desc')?.textContent || '').toLowerCase();
+      const dietaryAttr = (card.getAttribute('data-dietary') || '').toLowerCase();
+      const nameAttr = (card.getAttribute('data-name') || '').toLowerCase();
+      
+      const allText = `${cardText} ${tags} ${dietaryAttr} ${nameAttr}`;
+      const normQuery = searchQuery.replace(/-/g, ' ');
+      const normAllText = allText.replace(/-/g, ' ');
 
-      matchesSearch = (title.includes(searchQuery) || catLabel.includes(searchQuery) || tags.includes(searchQuery) || desc.includes(searchQuery));
+      matchesSearch = (allText.includes(searchQuery) || normAllText.includes(normQuery));
     }
 
     if (matchesCategory && matchesPrice && matchesDietary && matchesSearch) {
@@ -1255,7 +1259,54 @@ function resetAllFilters() {
 
 function initGlobalSearch() {
   const searchInput = document.getElementById('globalSearchInput');
+  const dropdown = document.getElementById('headerSearchAutocomplete');
   if (!searchInput) return;
+
+  const renderAutocomplete = (query) => {
+    if (!dropdown) return;
+    if (!query || query.length < 2) {
+      dropdown.style.display = 'none';
+      return;
+    }
+
+    const normQ = query.replace(/-/g, ' ');
+    const matches = Object.values(PRODUCT_CATALOG_DATA).filter(p => {
+      const text = `${p.name} ${p.categoryLabel} ${p.ingredients} ${p.dietary.join(' ')}`.toLowerCase().replace(/-/g, ' ');
+      return text.includes(normQ);
+    }).slice(0, 4);
+
+    if (matches.length === 0) {
+      dropdown.innerHTML = `
+        <div class="search-auto-empty">
+          <span>No delicacies matching "${query}"</span>
+          <button type="button" onclick="resetAllFilters(); document.getElementById('headerSearchAutocomplete').style.display='none';">View All 16 Delicacies</button>
+        </div>
+      `;
+    } else {
+      dropdown.innerHTML = `
+        <div class="search-auto-header">Matching Delicacies (${matches.length}):</div>
+        <div class="search-auto-list">
+          ${matches.map(m => `
+            <div class="search-auto-item" onclick="openProductDetail('${m.id}'); document.getElementById('headerSearchAutocomplete').style.display='none';">
+              <span class="search-auto-icon">${m.icon}</span>
+              <div class="search-auto-meta">
+                <strong>${m.name}</strong>
+                <small>${m.categoryLabel} • ₹${m.price}</small>
+              </div>
+              <button type="button" class="btn-auto-add" onclick="event.stopPropagation(); addToCart('${m.name} (${m.unit})', ${m.price});">
+                + Add
+              </button>
+            </div>
+          `).join('')}
+        </div>
+        <div class="search-auto-footer" onclick="document.getElementById('shopPreview').scrollIntoView({behavior:'smooth'}); document.getElementById('headerSearchAutocomplete').style.display='none';">
+          <span>View all results in catalog &rarr;</span>
+        </div>
+      `;
+    }
+
+    dropdown.style.display = 'block';
+  };
 
   searchInput.addEventListener('input', (e) => {
     const query = e.target.value.toLowerCase().trim();
@@ -1272,14 +1323,23 @@ function initGlobalSearch() {
     }
 
     applyAllFiltersAndSort();
+    renderAutocomplete(query);
   });
 
   searchInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
+      if (dropdown) dropdown.style.display = 'none';
       const shopSection = document.getElementById('shopPreview');
       if (shopSection) {
         shopSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
+    }
+  });
+
+  // Close dropdown on outside click
+  document.addEventListener('click', (e) => {
+    if (dropdown && !dropdown.contains(e.target) && e.target !== searchInput) {
+      dropdown.style.display = 'none';
     }
   });
 }
