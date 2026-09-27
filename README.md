@@ -3,7 +3,7 @@
 A comprehensive, modern redesign of the iconic **Karachi Bakery** web platform (Est. 1953, Hyderabad), resolving the **Top 15 UX and E-Commerce Architecture Problems**.
 
 ![Karachi Bakery Brand](https://img.shields.io/badge/Karachi%20Bakery-Est.%201953-8B0000?style=for-the-badge)
-![Status](https://img.shields.io/badge/Sprint%20Progress-Day%205%20of%2010-gold?style=for-the-badge)
+![Status](https://img.shields.io/badge/Sprint%20Progress-Day%208%20of%2010-gold?style=for-the-badge)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-karachi--bakery--website--redesign.vercel.app-000000?style=for-the-badge&logo=vercel)](https://karachi-bakery-website-redesign.vercel.app)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 
@@ -20,11 +20,52 @@ A comprehensive, modern redesign of the iconic **Karachi Bakery** web platform (
 | **Day 3** | **Multi-Faceted Search & Advanced Filtering** | ✅ **Completed** |
 | **Day 4** | **Standardized Product Detail (PDP) & Smart Recommendations** | ✅ **Completed** |
 | **Day 5** | **Side-by-Side Product Comparison Drawer & Matrix** | ✅ **Completed** |
-| **Day 6** | **Dedicated B2B & Corporate Bulk Order Suite** | ⏳ Upcoming |
-| **Day 7** | **Interactive Custom Cake & Celebration Builder** | ⏳ Upcoming |
-| **Day 8** | **Interactive Map-Based Store Locator** | ⏳ Upcoming |
+| **Day 6** | **Dedicated B2B & Corporate Bulk Order Suite** | ✅ **Completed** |
+| **Day 7** | **Interactive Custom Cake & Celebration Builder** | ✅ **Completed** |
+| **Day 8** | **Interactive Map-Based Store Locator** | ✅ **Completed** |
 | **Day 9** | **Pincode Delivery Estimator & Unified Checkout Cart** | ⏳ Upcoming |
 | **Day 10** | **Final Quality Assurance, Responsiveness & Final Report** | ⏳ Upcoming |
+
+---
+
+## 🚀 Day 8 Achievements
+
+- **Interactive National Store Locator Hub (Problems #5 & #6 Solved)**:
+  - **12-Outlet Multi-Metro Directory**: Verified landmark Karachi Bakery outlets across **Hyderabad (5)**, **Bengaluru (3)**, **Mumbai (2)**, and **Delhi NCR (2)**.
+  - **City & Type Filter Pills**: 1-click filtering by metro or outlet concept (*Heritage Flagships*, *Airport 24/7 Kiosks*, *Artisanal Cafes & Dine-In*, *Express Retail*).
+  - **Real-Time Live Status Engine**: Automatically computes whether an outlet is currently open based on user device time (`🟢 Open Now • Closes [Time]`, `✈️ Open 24 Hours`, or `🔴 Closed • Opens [Time]`).
+  - **Direct Actions**: 1-click `🗺️ Get Directions` (deep links to Google Maps coordinates), `📞 Call Outlet` (`tel:`), and `💬 Share via WhatsApp`.
+  - **Interactive Visual India Map Canvas**: Pulsing radar pins for Delhi NCR, Mumbai, Hyderabad, and Bengaluru with real-time selection synchronization.
+  - **Active Location Spotlight Card**: Dynamic showcase panel updating instantly as stores or pins are selected.
+
+For full technical details, see the [Day 8 Progress Report](docs/DAY-08-REPORT.md).
+
+---
+
+## 🚀 Day 7 Achievements
+
+- **Interactive Custom Cake & Celebration Studio (Problems #10 & #11 Solved)**:
+  - **4-Step Guided Customizer Wizard**: Replaced static, generic order forms with a guided 4-step builder:
+    1. *Flavor & Dietary Profile*: 6 gourmet artisan sponges (Belgian Dark Truffle, Butterscotch Crunch, Red Velvet & Cream Cheese, Fresh Fruit Custard, Nutella Hazelnut, Gulab Jamun Fusion) with 100% Eggless, Classic European, Sugar-Free Stevia, and Gluten-Free tags.
+    2. *Size, Tiers & Geometry*: 0.5 kg to 3.5 kg with single, dual-stack, or 3-tier grand celebration architectures and shape selectors (Round, Romantic Heart, Modern Square).
+    3. *Frosting & Gourmet Accents*: Whipped cream, Italian buttercream, Belgian ganache drips, mirror glazes, macarons, 24K gold leaf, fresh berries, and handcrafted fondant roses.
+    4. *Message Inscription & Bakery Timeslots*: Live message plaque typing with custom bakery kitchen dispatch scheduling (*Morning*, *Afternoon*, *Evening*, *Midnight Surprise*).
+  - **Dynamic 2D/3D Layer Cake Visualizer**: Renders cake colors, tier geometries (1, 2, or 3 tiers), and chocolate message plaque in real time.
+  - **Itemized Dynamic Price Engine & Direct Cart Booking**: Real-time cost updates and seamless 1-click addition to shopping cart with custom modal confirmation.
+
+For full technical details, see the [Day 7 Progress Report](docs/DAY-07-REPORT.md).
+
+---
+
+## 🚀 Day 6 Achievements
+
+- **Dedicated B2B & Corporate Bulk Order Suite (Problems #3, #7, #8, #9 Solved)**:
+  - **Interactive Volume Pricing Estimator**: Dynamic tier calculator for corporate gifting curations (25 to 1,500+ boxes) with 4 transparent discount tiers (10% to 30% OFF) and live per-box effective rate breakdown.
+  - **Corporate Co-Branding & Keepsake Tin Mockup Studio**: 3D-effect virtual tin visualizer with live company name embossing, custom tin finishes (Gold, Burgundy, Navy, Emerald), and company logo upload simulator.
+  - **Instant GST Pro-Forma Quotation Generator**: Formal tax invoice generator with 15-digit GSTIN format validation, HSN code classification, CGST/SGST tax split, formal legal terms, and 1-click "Print / Save PDF" output.
+  - **Executive Tasting Sample Kit**: Low-friction 4-sample luxury curation kit (₹499) with 100% refund credit towards future bulk orders.
+
+For full technical details, see the [Day 6 Progress Report](docs/DAY-06-REPORT.md).
 
 ---
 

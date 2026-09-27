@@ -698,6 +698,10 @@ document.addEventListener('DOMContentLoaded', () => {
   initMobileDrawer();
   initCompareSystem();
   initModalsAccessibility();
+  // Day 6 to 8 Suites:
+  initB2BSuite();
+  initCakeStudio();
+  initStoreLocator();
 });
 
 /**
@@ -736,14 +740,18 @@ function switchJourney(journeyId) {
     const b2b = document.getElementById('b2bHighlight');
     if (b2b) b2b.scrollIntoView({ behavior: 'smooth' });
     showToast('Switched to Corporate & Bulk Orders Suite (B2B Mode)', '🏢');
+  } else if (journeyId === 'b2b') {
+    const b2b = document.getElementById('b2bHighlight');
+    if (b2b) b2b.scrollIntoView({ behavior: 'smooth' });
+    showToast('Switched to Corporate B2B & Bulk Order Suite (Day 6 Deliverable)', '🏢');
   } else if (journeyId === 'custom') {
     const custom = document.getElementById('customCakeSection');
     if (custom) custom.scrollIntoView({ behavior: 'smooth' });
-    showToast('Custom Cake Studio is scheduled for Day 7 milestone!', '🎂');
+    showToast('Welcome to Artisanal Custom Cake Studio (Day 7 Deliverable)', '🎂');
   } else if (journeyId === 'stores') {
     const stores = document.getElementById('storesSection');
     if (stores) stores.scrollIntoView({ behavior: 'smooth' });
-    showToast('Interactive Store Locator is scheduled for Day 8 milestone!', '📍');
+    showToast('Browsing National Store Locator & Outlets (Day 8 Deliverable)', '📍');
   }
 }
 
@@ -2025,4 +2033,1212 @@ function showToast(message, icon = '✨') {
   toastTimeout = setTimeout(() => {
     toast.classList.remove('show');
   }, 3200);
+}
+
+
+/**
+ * ============================================================================
+ * Day 6 Deliverable: Dedicated B2B & Corporate Bulk Order Suite (Issues #3, #7, #8, #9)
+ * ============================================================================
+ */
+
+const B2B_STATE = {
+  selectedBasePrice: 650,
+  selectedProductName: "Royal Heritage Collectible Gold Tin",
+  selectedHsn: "1905",
+  quantity: 100,
+  tinFinish: 'gold',
+  companyName: 'Acme Enterprises',
+  tagline: 'Festive Celebrations 2026',
+  customLogoUrl: null,
+  activeQuote: null
+};
+
+function initB2BSuite() {
+  const dateInput = document.getElementById('rfqDeliveryDate');
+  if (dateInput) {
+    const targetDate = new Date();
+    targetDate.setDate(targetDate.getDate() + 7);
+    dateInput.value = targetDate.toISOString().split('T')[0];
+    dateInput.min = new Date().toISOString().split('T')[0];
+  }
+  calculateB2BQuote();
+}
+
+function handleB2BQtySlider(val) {
+  B2B_STATE.quantity = parseInt(val, 10);
+  const display = document.getElementById('b2bQtyDisplay');
+  if (display) display.textContent = B2B_STATE.quantity;
+  updateB2BChipSelection(B2B_STATE.quantity);
+  calculateB2BQuote();
+}
+
+function setB2BQuantity(qty) {
+  B2B_STATE.quantity = qty;
+  const slider = document.getElementById('b2bQtySlider');
+  const display = document.getElementById('b2bQtyDisplay');
+  if (slider) slider.value = qty;
+  if (display) display.textContent = qty;
+  updateB2BChipSelection(qty);
+  calculateB2BQuote();
+}
+
+function updateB2BChipSelection(qty) {
+  const chips = document.querySelectorAll('.b2b-qty-chip');
+  chips.forEach(chip => {
+    const text = chip.textContent;
+    if (text.includes(`${qty} Boxes`)) {
+      chip.classList.add('active');
+    } else {
+      chip.classList.remove('active');
+    }
+  });
+}
+
+function calculateB2BQuote() {
+  const select = document.getElementById('b2bProductSelect');
+  if (select) {
+    const option = select.options[select.selectedIndex];
+    B2B_STATE.selectedBasePrice = parseInt(option.value, 10);
+    B2B_STATE.selectedProductName = option.getAttribute('data-name');
+    B2B_STATE.selectedHsn = option.getAttribute('data-hsn');
+  }
+
+  const qty = B2B_STATE.quantity;
+  let discountPct = 0;
+  let perkText = '';
+  let tierLevel = 1;
+
+  if (qty < 25) {
+    discountPct = 0;
+    tierLevel = 0;
+    perkText = 'Minimum order quantity for volume corporate pricing is 25 boxes.';
+  } else if (qty >= 25 && qty < 100) {
+    discountPct = 0.10;
+    tierLevel = 1;
+    perkText = '🎁 <strong>Tier 1 Active:</strong> 10% Volume Discount on direct factory bakes!';
+  } else if (qty >= 100 && qty < 500) {
+    discountPct = 0.20;
+    tierLevel = 2;
+    perkText = '🎁 <strong>Tier 2 Unlocked:</strong> 20% Volume Discount + Complimentary Custom Gold Foil Ribbon!';
+  } else if (qty >= 500 && qty < 1000) {
+    discountPct = 0.25;
+    tierLevel = 3;
+    perkText = '👑 <strong>Tier 3 Unlocked:</strong> 25% Volume Discount + Complimentary Laser Tin Lid Logo Embossing!';
+  } else {
+    discountPct = 0.30;
+    tierLevel = 4;
+    perkText = '🏛️ <strong>Tier 4 Platinum:</strong> 30% Volume Discount + Free Pan-India Multi-Branch Logistics + Dedicated Key Account Manager!';
+  }
+
+  // Update tier milestone pills
+  for (let i = 1; i <= 4; i++) {
+    const pill = document.getElementById(`tierPill${i}`);
+    if (pill) {
+      if (i === tierLevel) {
+        pill.classList.add('active');
+      } else {
+        pill.classList.remove('active');
+      }
+    }
+  }
+
+  // Update unlocked perk callout
+  const perkEl = document.getElementById('b2bUnlockedPerk');
+  if (perkEl) perkEl.innerHTML = perkText;
+
+  // Financial Computations
+  const baseTotal = B2B_STATE.selectedBasePrice * qty;
+  const discountVal = Math.round(baseTotal * discountPct);
+  const discountedSubtotal = baseTotal - discountVal;
+  const gstVal = Math.round(discountedSubtotal * 0.05); // 5% GST on sweets & biscuits
+  const finalTotal = discountedSubtotal + gstVal;
+  const effectiveRate = (finalTotal / qty).toFixed(2);
+
+  // Update DOM labels
+  const baseTotalEl = document.getElementById('b2bBaseTotal');
+  const discountPctEl = document.getElementById('b2bDiscountPct');
+  const discountValEl = document.getElementById('b2bDiscountVal');
+  const taxValEl = document.getElementById('b2bTaxVal');
+  const finalTotalEl = document.getElementById('b2bFinalTotal');
+  const effectiveRateEl = document.getElementById('b2bEffectiveRate');
+
+  if (baseTotalEl) baseTotalEl.textContent = `₹${baseTotal.toLocaleString('en-IN')}`;
+  if (discountPctEl) discountPctEl.textContent = `${Math.round(discountPct * 100)}%`;
+  if (discountValEl) discountValEl.textContent = `-₹${discountVal.toLocaleString('en-IN')}`;
+  if (taxValEl) taxValEl.textContent = `₹${gstVal.toLocaleString('en-IN')}`;
+  if (finalTotalEl) finalTotalEl.textContent = `₹${finalTotal.toLocaleString('en-IN')}`;
+  if (effectiveRateEl) effectiveRateEl.textContent = `₹${effectiveRate} / box`;
+
+  B2B_STATE.activeQuote = {
+    baseTotal,
+    discountPct,
+    discountVal,
+    gstVal,
+    finalTotal,
+    effectiveRate
+  };
+}
+
+function updateTinBrandingPreview() {
+  const companyInput = document.getElementById('b2bCompanyNameInput');
+  const occasionInput = document.getElementById('b2bOccasionInput');
+  const embossName = document.getElementById('tinCompanyEmboss');
+  const embossTagline = document.getElementById('tinTaglineEmboss');
+  const ribbonText = document.getElementById('tinRibbonText');
+
+  const valName = companyInput ? companyInput.value.trim() : '';
+  const valOccasion = occasionInput ? occasionInput.value.trim() : '';
+
+  if (embossName) embossName.textContent = valName || 'YOUR COMPANY';
+  if (embossTagline) embossTagline.textContent = valOccasion || 'FESTIVE CELEBRATIONS 2026';
+  if (ribbonText) ribbonText.textContent = `Compliments from ${valName || 'Leadership Team'}`;
+
+  B2B_STATE.companyName = valName || 'Acme Enterprises';
+  B2B_STATE.tagline = valOccasion || 'Festive Celebrations 2026';
+}
+
+function changeTinFinish(finishName) {
+  B2B_STATE.tinFinish = finishName;
+  const tin = document.getElementById('tinMockupLid');
+  if (tin) {
+    tin.className = `tin-mockup ${finishName}`;
+  }
+
+  const swatches = document.querySelectorAll('.tin-swatch');
+  swatches.forEach(s => {
+    if (s.classList.contains(finishName)) {
+      s.classList.add('active');
+    } else {
+      s.classList.remove('active');
+    }
+  });
+
+  showToast(`Keepsake tin updated to ${finishName.toUpperCase()} finish!`, '🎨');
+}
+
+function handleLogoUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const container = document.getElementById('tinCoLogoContainer');
+    if (container) {
+      container.innerHTML = `<img src="${e.target.result}" alt="Corporate Logo" style="width:100%; height:100%; object-fit:contain;">`;
+    }
+    B2B_STATE.customLogoUrl = e.target.result;
+    showToast('Corporate logo embossed onto gift tin mockup!', '🏢');
+  };
+  reader.readAsDataURL(file);
+}
+
+function validateGSTINFormat(gstin) {
+  const badge = document.getElementById('gstStatusBadge');
+  if (!badge) return;
+
+  const clean = gstin.trim().toUpperCase();
+  const gstRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
+
+  if (gstRegex.test(clean)) {
+    badge.className = 'gst-badge-pill valid';
+    badge.textContent = '✓ Verified Format';
+  } else if (clean.length > 0) {
+    badge.className = 'gst-badge-pill invalid';
+    badge.textContent = `${clean.length}/15 Digits`;
+  } else {
+    badge.className = 'gst-badge-pill';
+    badge.textContent = 'Format Check';
+  }
+}
+
+function generateCorporateQuotation() {
+  const contact = document.getElementById('rfqContactPerson')?.value.trim();
+  const email = document.getElementById('rfqEmail')?.value.trim();
+  const phone = document.getElementById('rfqPhone')?.value.trim();
+  const gstin = document.getElementById('rfqGstin')?.value.trim() || '36AAACK1234F1Z5';
+  const deliveryDate = document.getElementById('rfqDeliveryDate')?.value;
+  const dispatchScope = document.getElementById('rfqDispatchScope')?.value || 'single';
+
+  if (!contact || !email) {
+    showToast('Please enter your Contact Person name and Corporate Email to generate quotation.', '⚠️');
+    return;
+  }
+
+  const quoteNumber = `KB-CORP-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+  const quoteModal = document.getElementById('b2bQuoteModalBackdrop');
+  const quoteContent = document.getElementById('b2bQuoteModalContent');
+
+  if (!quoteModal || !quoteContent) return;
+
+  const quote = B2B_STATE.activeQuote;
+  const scopeLabel = dispatchScope === 'single' ? 'Single Central Corporate HQ' : (dispatchScope === 'multi-branch' ? 'Multi-Branch Pan-India Dispatch' : 'Employee Home Delivery (CSV)');
+
+  quoteContent.innerHTML = `
+    <div class="b2b-invoice-paper">
+      <!-- Invoice Header -->
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.5rem; padding-bottom:1.25rem; border-bottom:2px solid var(--kb-burgundy);">
+        <div>
+          <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.35rem;">
+            <span style="background:var(--kb-burgundy); color:#fff; font-weight:800; padding:0.25rem 0.5rem; border-radius:4px; font-size:0.9rem;">KB</span>
+            <h2 style="font-family:var(--font-serif); color:var(--kb-burgundy); margin-bottom:0; font-size:1.5rem;">Karachi Bakery Pvt. Ltd.</h2>
+          </div>
+          <p style="font-size:0.8rem; color:var(--kb-text-secondary); margin-bottom:0.2rem;">Head Office: Mozamjahi Market, Abids, Hyderabad - 500001, Telangana</p>
+          <p style="font-size:0.8rem; color:var(--kb-text-secondary); margin-bottom:0.2rem;">GSTIN: 36AAACK1953B1Z9 • FSSAI Lic: 13615015000254</p>
+          <p style="font-size:0.8rem; color:var(--kb-text-secondary); margin-bottom:0;">Corporate Desk: b2b@karachibakery.com | +91 40 6666 2222</p>
+        </div>
+        <div style="text-align:right;">
+          <span style="display:inline-block; background:var(--kb-gold-subtle); color:var(--kb-burgundy); font-weight:800; padding:0.35rem 0.75rem; border-radius:6px; font-size:0.85rem; border:1px solid var(--kb-border-gold); margin-bottom:0.4rem;">
+            FORMAL PRO-FORMA INVOICE
+          </span>
+          <div style="font-size:0.85rem; color:var(--kb-text-primary); font-weight:700;">Quote Ref: ${quoteNumber}</div>
+          <div style="font-size:0.8rem; color:var(--kb-text-muted);">Date: ${new Date().toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' })}</div>
+          <div style="font-size:0.8rem; color:var(--kb-success); font-weight:600;">Valid for: 30 Calendar Days</div>
+        </div>
+      </div>
+
+      <!-- Billed To & Logistics Info -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:1.5rem; background:var(--kb-cream); padding:1rem; border-radius:8px;">
+        <div>
+          <h4 style="font-size:0.85rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--kb-burgundy); margin-bottom:0.35rem;">Billed To (Corporate Client):</h4>
+          <strong style="display:block; font-size:0.95rem; color:var(--kb-text-primary);">${B2B_STATE.companyName}</strong>
+          <span style="display:block; font-size:0.82rem; color:var(--kb-text-secondary);">Attn: ${contact} (${email})</span>
+          <span style="display:block; font-size:0.82rem; color:var(--kb-text-secondary);">Phone: ${phone || 'Provided upon callback'}</span>
+          <span style="display:block; font-size:0.82rem; color:var(--kb-text-secondary);">Client GSTIN: <strong>${gstin}</strong></span>
+        </div>
+        <div>
+          <h4 style="font-size:0.85rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--kb-burgundy); margin-bottom:0.35rem;">Order Specifications:</h4>
+          <span style="display:block; font-size:0.82rem; color:var(--kb-text-secondary);">Target Delivery Date: <strong>${deliveryDate || 'Within 7 Business Days'}</strong></span>
+          <span style="display:block; font-size:0.82rem; color:var(--kb-text-secondary);">Dispatch Logistics: <strong>${scopeLabel}</strong></span>
+          <span style="display:block; font-size:0.82rem; color:var(--kb-text-secondary);">Keepsake Tin Finish: <strong>${B2B_STATE.tinFinish.toUpperCase()} Collection</strong></span>
+          <span style="display:block; font-size:0.82rem; color:var(--kb-text-secondary);">Custom Branding: <strong>Laser Embossed Logo + Satin Ribbon</strong></span>
+        </div>
+      </div>
+
+      <!-- Itemized Table -->
+      <table style="width:100%; border-collapse:collapse; margin-bottom:1.5rem; font-size:0.85rem;">
+        <thead>
+          <tr style="background:var(--kb-burgundy); color:#fff; text-align:left;">
+            <th style="padding:0.65rem 0.85rem; border-radius:6px 0 0 0;">Item Description</th>
+            <th style="padding:0.65rem; text-align:center;">HSN</th>
+            <th style="padding:0.65rem; text-align:center;">Qty</th>
+            <th style="padding:0.65rem; text-align:right;">Base Rate</th>
+            <th style="padding:0.65rem; text-align:right;">Volume Disc.</th>
+            <th style="padding:0.65rem 0.85rem; text-align:right; border-radius:0 6px 0 0;">Taxable Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--kb-border);">
+            <td style="padding:0.85rem;">
+              <strong>${B2B_STATE.selectedProductName}</strong>
+              <small style="display:block; color:var(--kb-text-muted); font-size:0.75rem;">Includes customized company lid branding and airtight hermetic sealing</small>
+            </td>
+            <td style="padding:0.85rem; text-align:center;">${B2B_STATE.selectedHsn}</td>
+            <td style="padding:0.85rem; text-align:center; font-weight:700;">${B2B_STATE.quantity}</td>
+            <td style="padding:0.85rem; text-align:right;">₹${B2B_STATE.selectedBasePrice}</td>
+            <td style="padding:0.85rem; text-align:right; color:var(--kb-success); font-weight:700;">${Math.round(quote.discountPct * 100)}%</td>
+            <td style="padding:0.85rem; text-align:right; font-weight:700;">₹${(quote.baseTotal - quote.discountVal).toLocaleString('en-IN')}</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--kb-border);">
+            <td style="padding:0.65rem 0.85rem;">
+              <strong>Laser Tin Lid Tooling & Custom Foil Ribbon</strong>
+            </td>
+            <td style="padding:0.65rem; text-align:center;">9983</td>
+            <td style="padding:0.65rem; text-align:center;">1 Job</td>
+            <td style="padding:0.65rem; text-align:right;">₹2,500</td>
+            <td style="padding:0.65rem; text-align:right; color:var(--kb-success); font-weight:700;">100% OFF</td>
+            <td style="padding:0.65rem 0.85rem; text-align:right; font-weight:700; color:var(--kb-success);">₹0.00 (Free)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Totals & Payment Summary -->
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.5rem;">
+        <div style="max-width:380px; font-size:0.78rem; color:var(--kb-text-muted);">
+          <strong>Terms & Conditions:</strong>
+          <ul style="margin:0.25rem 0 0 1rem; line-height:1.4;">
+            <li>Payment Terms: 50% advance on PO confirmation, balance 50% prior to dispatch.</li>
+            <li>Shelf Life: 6 months guaranteed from production date.</li>
+            <li>Delivery: Insured express transit across all designated recipient branches.</li>
+          </ul>
+        </div>
+        <div style="min-width:260px; background:var(--kb-gold-subtle); padding:1rem; border-radius:8px; border:1px solid var(--kb-border-gold);">
+          <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.35rem;">
+            <span>Subtotal:</span>
+            <span>₹${(quote.baseTotal - quote.discountVal).toLocaleString('en-IN')}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.35rem;">
+            <span>CGST (2.5%):</span>
+            <span>₹${Math.round(quote.gstVal / 2).toLocaleString('en-IN')}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.5rem;">
+            <span>SGST (2.5%):</span>
+            <span>₹${Math.round(quote.gstVal / 2).toLocaleString('en-IN')}</span>
+          </div>
+          <div style="height:1px; background:var(--kb-border-gold); margin-bottom:0.5rem;"></div>
+          <div style="display:flex; justify-content:space-between; font-size:1.15rem; font-weight:800; color:var(--kb-burgundy);">
+            <span>Grand Total:</span>
+            <span>₹${quote.finalTotal.toLocaleString('en-IN')}</span>
+          </div>
+          <div style="font-size:0.75rem; text-align:right; color:var(--kb-text-muted); margin-top:0.25rem;">
+            Effective Rate: <strong>₹${quote.effectiveRate} / box</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Footer -->
+      <div style="display:flex; justify-content:space-between; align-items:center; padding-top:1rem; border-top:1px dashed var(--kb-border);">
+        <span style="font-size:0.8rem; color:var(--kb-text-muted);">Authorized Signatory: Karachi Bakery Corporate Institutional Sales</span>
+        <button type="button" class="action-btn-primary" style="padding:0.6rem 1.25rem; font-size:0.85rem;" onclick="confirmB2BQuoteBooking('${quoteNumber}')">
+          Accept Quote & Proceed to PO
+        </button>
+      </div>
+    </div>
+  `;
+
+  quoteModal.style.display = 'flex';
+  showToast(`Formal Quotation ${quoteNumber} generated!`, '📄');
+}
+
+function confirmB2BQuoteBooking(quoteNum) {
+  closeB2BQuoteModal();
+  AppState.cartItems.push({
+    name: `Corporate Bulk Order (${quoteNum}) - ${B2B_STATE.quantity}x ${B2B_STATE.selectedProductName}`,
+    price: B2B_STATE.activeQuote ? B2B_STATE.activeQuote.finalTotal : 54600
+  });
+  const cartBadge = document.getElementById('cartCount');
+  if (cartBadge) {
+    cartBadge.textContent = AppState.cartItems.length;
+    cartBadge.classList.add('bump');
+    setTimeout(() => cartBadge.classList.remove('bump'), 300);
+  }
+  showToast(`Quotation ${quoteNum} accepted and added to your Cart!`, '🛒');
+}
+
+function closeB2BQuoteModal() {
+  const quoteModal = document.getElementById('b2bQuoteModalBackdrop');
+  if (quoteModal) quoteModal.style.display = 'none';
+}
+
+function handleB2BQuoteBackdrop(event) {
+  if (event.target.id === 'b2bQuoteModalBackdrop') {
+    closeB2BQuoteModal();
+  }
+}
+
+function printB2BQuotation() {
+  window.print();
+}
+
+function orderB2BSampleKit() {
+  addToCart('Karachi Bakery Executive 4-Sample Tasting Kit (Fruit Biscuits, Osmania, Kaju Katli, Truffle)', 499);
+  showToast('Executive Tasting Sample Kit added! (₹499 - 100% refundable upon bulk order)', '📦');
+}
+
+function requestAccountManagerCallback() {
+  const phone = document.getElementById('rfqPhone')?.value.trim();
+  const contact = document.getElementById('rfqContactPerson')?.value.trim();
+  showToast(`Thank you ${contact || ''}! A Key Account Manager will contact you at ${phone || 'your number'} within 2 hours.`, '📞');
+}
+
+
+/**
+ * ============================================================================
+ * Day 7 Deliverable: Artisanal Custom Cake & Celebration Studio (Issues #10 & #11)
+ * ============================================================================
+ */
+
+const CAKE_STUDIO_STATE = {
+  step: 1,
+  flavor: 'belgian_truffle',
+  flavorName: 'Belgian Dark Chocolate Truffle',
+  flavorPricePerKg: 1200,
+  primaryColor: '#3D1C06',
+  secondaryColor: '#261104',
+  diet: 'eggless',
+  dietLabel: '🌱 100% Eggless',
+  weightKg: 1.0,
+  tiers: 1,
+  serves: '8 – 12 Servings',
+  weightCostAdjustment: 0,
+  shape: 'round',
+  shapeName: 'Classic Round',
+  shapeSurcharge: 0,
+  frosting: 'whipped',
+  frostingName: 'Whipped Dairy Cream',
+  frostingSurcharge: 0,
+  toppings: new Map(),
+  message: 'Happy Birthday Priya! 🎉',
+  deliveryDate: '',
+  timeslot: 'morning',
+  timeslotName: 'Morning Fresh (9:00 AM – 12:00 PM)',
+  timeslotCost: 0,
+  specialNotes: ''
+};
+
+function initCakeStudio() {
+  const dateInput = document.getElementById('cakeDeliveryDate');
+  if (dateInput) {
+    const tmrw = new Date();
+    tmrw.setDate(tmrw.getDate() + 1);
+    dateInput.value = tmrw.toISOString().split('T')[0];
+    dateInput.min = new Date().toISOString().split('T')[0];
+    CAKE_STUDIO_STATE.deliveryDate = dateInput.value;
+  }
+  updateCakeCustomization();
+}
+
+function switchCakeStep(stepNum) {
+  CAKE_STUDIO_STATE.step = stepNum;
+
+  // Update step navigation tabs
+  for (let i = 1; i <= 4; i++) {
+    const tab = document.getElementById(`cakeTab${i}`);
+    const panel = document.getElementById(`cakePanel${i}`);
+    if (tab) {
+      if (i === stepNum) tab.classList.add('active');
+      else tab.classList.remove('active');
+    }
+    if (panel) {
+      if (i === stepNum) {
+        panel.style.display = 'block';
+        panel.classList.add('active');
+      } else {
+        panel.style.display = 'none';
+        panel.classList.remove('active');
+      }
+    }
+  }
+}
+
+function handleCakeDietChange(dietVal) {
+  CAKE_STUDIO_STATE.diet = dietVal;
+  const dietLabels = {
+    eggless: '🌱 100% Eggless',
+    egg: '🥚 Classic European',
+    sugarfree: '🍃 Sugar-Free Stevia',
+    glutenfree: '🌾 Gluten-Free'
+  };
+  CAKE_STUDIO_STATE.dietLabel = dietLabels[dietVal] || 'Vegetarian';
+  
+  const dietPills = document.querySelectorAll('.cake-diet-chip');
+  dietPills.forEach(pill => {
+    const input = pill.querySelector('input');
+    if (input && input.value === dietVal) {
+      pill.classList.add('active');
+    } else {
+      pill.classList.remove('active');
+    }
+  });
+
+  const summaryDiet = document.getElementById('cakeSummaryDiet');
+  if (summaryDiet) summaryDiet.textContent = CAKE_STUDIO_STATE.dietLabel;
+}
+
+function selectCakeFlavor(id, pricePerKg, name, color1, color2) {
+  CAKE_STUDIO_STATE.flavor = id;
+  CAKE_STUDIO_STATE.flavorPricePerKg = pricePerKg;
+  CAKE_STUDIO_STATE.flavorName = name;
+  CAKE_STUDIO_STATE.primaryColor = color1;
+  CAKE_STUDIO_STATE.secondaryColor = color2;
+
+  // Update active cards
+  document.querySelectorAll('.flavor-card').forEach(c => c.classList.remove('active'));
+  const card = document.getElementById(`flavorCard_${id}`);
+  if (card) card.classList.add('active');
+
+  // Update cake stage visual tiers color
+  const tiers = document.querySelectorAll('.cake-tier');
+  tiers.forEach(tier => {
+    tier.style.background = `linear-gradient(135deg, ${color1} 0%, ${color2} 100%)`;
+  });
+
+  // Update chocolate plaque color
+  const plaque = document.getElementById('cakeEdiblePlaque');
+  if (plaque) plaque.style.background = color2;
+
+  const summaryFlavor = document.getElementById('cakeSummaryFlavor');
+  if (summaryFlavor) summaryFlavor.textContent = name;
+
+  updateCakeCustomization();
+  showToast(`Selected flavor: ${name}`, '🎂');
+}
+
+function selectCakeSize(weight, tiers, serves, surcharge) {
+  CAKE_STUDIO_STATE.weightKg = weight;
+  CAKE_STUDIO_STATE.tiers = tiers;
+  CAKE_STUDIO_STATE.serves = serves;
+  CAKE_STUDIO_STATE.weightCostAdjustment = surcharge;
+
+  // Update active size cards
+  document.querySelectorAll('.size-card').forEach(c => c.classList.remove('active'));
+  const key = weight.toString().replace('.', '_');
+  const card = document.getElementById(`sizeCard_${key}`);
+  if (card) card.classList.add('active');
+
+  // Update tier visibility on stage visualizer
+  const t1 = document.getElementById('cakeTier1');
+  const t2 = document.getElementById('cakeTier2');
+  const t3 = document.getElementById('cakeTier3');
+
+  if (tiers === 1) {
+    if (t2) t2.style.display = 'none';
+    if (t3) t3.style.display = 'none';
+  } else if (tiers === 2) {
+    if (t2) t2.style.display = 'block';
+    if (t3) t3.style.display = 'none';
+  } else if (tiers === 3) {
+    if (t2) t2.style.display = 'block';
+    if (t3) t3.style.display = 'block';
+  }
+
+  const summarySize = document.getElementById('cakeSummarySize');
+  if (summarySize) summarySize.textContent = `${weight} kg (${serves}) • ${tiers}-Tier`;
+
+  updateCakeCustomization();
+}
+
+function selectCakeShape(shape, surcharge, btn) {
+  CAKE_STUDIO_STATE.shape = shape;
+  CAKE_STUDIO_STATE.shapeSurcharge = surcharge;
+  CAKE_STUDIO_STATE.shapeName = shape === 'round' ? 'Classic Round' : (shape === 'heart' ? 'Romantic Heart' : 'Modern Square');
+
+  document.querySelectorAll('.cake-shape-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  updateCakeCustomization();
+}
+
+function selectCakeFrosting(frosting, surcharge) {
+  CAKE_STUDIO_STATE.frosting = frosting;
+  CAKE_STUDIO_STATE.frostingSurcharge = surcharge;
+  
+  const frostingNames = {
+    whipped: 'Whipped Dairy Cream',
+    buttercream: 'Italian Meringue Buttercream',
+    ganache_drip: 'Belgian Ganache Cascading Drip',
+    mirror_glaze: 'Saffron & Gold Mirror Glaze'
+  };
+  CAKE_STUDIO_STATE.frostingName = frostingNames[frosting] || frosting;
+
+  document.querySelectorAll('.frosting-card').forEach(c => {
+    const input = c.querySelector('input');
+    if (input && input.value === frosting) c.classList.add('active');
+    else c.classList.remove('active');
+  });
+
+  const summaryFrosting = document.getElementById('cakeSummaryFrosting');
+  if (summaryFrosting) summaryFrosting.textContent = CAKE_STUDIO_STATE.frostingName;
+
+  updateCakeCustomization();
+}
+
+function toggleCakeTopping(checkbox) {
+  const key = checkbox.value;
+  const price = parseInt(checkbox.getAttribute('data-price'), 10);
+  const label = checkbox.getAttribute('data-label');
+
+  if (checkbox.checked) {
+    CAKE_STUDIO_STATE.toppings.set(key, { label, price });
+  } else {
+    CAKE_STUDIO_STATE.toppings.delete(key);
+  }
+
+  const row = document.getElementById('cakeSummaryToppingsRow');
+  const summaryToppings = document.getElementById('cakeSummaryToppings');
+
+  if (CAKE_STUDIO_STATE.toppings.size > 0) {
+    if (row) row.style.display = 'flex';
+    const names = Array.from(CAKE_STUDIO_STATE.toppings.values()).map(t => t.label).join(', ');
+    if (summaryToppings) summaryToppings.textContent = names;
+  } else {
+    if (row) row.style.display = 'none';
+  }
+
+  updateCakeCustomization();
+}
+
+function updateCakeMessagePreview(text) {
+  CAKE_STUDIO_STATE.message = text;
+  const display = document.getElementById('plaqueTextDisplay');
+  if (display) {
+    display.textContent = text.trim() ? text : 'Your Message Here';
+  }
+}
+
+function selectCakeTimeslot(slot, cost) {
+  CAKE_STUDIO_STATE.timeslot = slot;
+  CAKE_STUDIO_STATE.timeslotCost = cost;
+  
+  const slotNames = {
+    morning: 'Morning Fresh (9 AM – 12 PM)',
+    afternoon: 'Afternoon Treat (1 PM – 4 PM)',
+    evening: 'Evening Party (5 PM – 8 PM)',
+    midnight: 'Midnight Surprise (11:30 PM – 12:15 AM)'
+  };
+  CAKE_STUDIO_STATE.timeslotName = slotNames[slot] || slot;
+
+  document.querySelectorAll('.timeslot-chip').forEach(c => {
+    const input = c.querySelector('input');
+    if (input && input.value === slot) c.classList.add('active');
+    else c.classList.remove('active');
+  });
+
+  const summaryTimeslot = document.getElementById('cakeSummaryTimeslot');
+  if (summaryTimeslot) summaryTimeslot.textContent = CAKE_STUDIO_STATE.timeslotName;
+
+  updateCakeCustomization();
+}
+
+function updateCakeCustomization() {
+  const baseRate = CAKE_STUDIO_STATE.flavorPricePerKg + CAKE_STUDIO_STATE.weightCostAdjustment;
+  const shapeCost = CAKE_STUDIO_STATE.shapeSurcharge;
+  
+  let toppingsCost = CAKE_STUDIO_STATE.frostingSurcharge;
+  CAKE_STUDIO_STATE.toppings.forEach(t => {
+    toppingsCost += t.price;
+  });
+
+  const slotCost = CAKE_STUDIO_STATE.timeslotCost;
+  const total = baseRate + shapeCost + toppingsCost + slotCost;
+
+  const basePriceEl = document.getElementById('cakeBasePrice');
+  const shapeSurchargeEl = document.getElementById('cakeShapeSurcharge');
+  const toppingsCostEl = document.getElementById('cakeToppingsCost');
+  const timeslotCostEl = document.getElementById('cakeTimeslotCost');
+  const finalPriceEl = document.getElementById('cakeFinalPrice');
+
+  if (basePriceEl) basePriceEl.textContent = `₹${baseRate.toLocaleString('en-IN')}`;
+  if (shapeSurchargeEl) shapeSurchargeEl.textContent = shapeCost > 0 ? `+₹${shapeCost}` : '+₹0';
+  if (toppingsCostEl) toppingsCostEl.textContent = toppingsCost > 0 ? `+₹${toppingsCost}` : '+₹0';
+  if (timeslotCostEl) timeslotCostEl.textContent = slotCost > 0 ? `+₹${slotCost}` : 'FREE';
+  if (finalPriceEl) finalPriceEl.textContent = `₹${total.toLocaleString('en-IN')}`;
+
+  CAKE_STUDIO_STATE.calculatedTotal = total;
+}
+
+function bookCustomCake() {
+  const notes = document.getElementById('cakeSpecialNotes')?.value.trim();
+  const dateVal = document.getElementById('cakeDeliveryDate')?.value;
+  if (dateVal) CAKE_STUDIO_STATE.deliveryDate = dateVal;
+
+  const total = CAKE_STUDIO_STATE.calculatedTotal || 1200;
+  const cakeTitle = `Bespoke ${CAKE_STUDIO_STATE.flavorName} (${CAKE_STUDIO_STATE.weightKg}kg • ${CAKE_STUDIO_STATE.tiers}-Tier)`;
+
+  // Add to main shopping cart
+  addToCart(cakeTitle, total);
+
+  // Render Confirmation Modal
+  const modal = document.getElementById('cakeModalBackdrop');
+  const body = document.getElementById('cakeModalBody');
+
+  if (modal && body) {
+    const toppingsList = Array.from(CAKE_STUDIO_STATE.toppings.values()).map(t => t.label).join(', ') || 'Standard Artisan Garnish';
+    
+    body.innerHTML = `
+      <div style="background:var(--kb-cream); padding:1.25rem; border-radius:12px; margin-bottom:1.25rem; border:1px solid var(--kb-border);">
+        <h4 style="font-family:var(--font-serif); font-size:1.15rem; color:var(--kb-burgundy); margin-bottom:0.5rem;">${cakeTitle}</h4>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; font-size:0.85rem; color:var(--kb-text-secondary);">
+          <div>Dietary: <strong>${CAKE_STUDIO_STATE.dietLabel}</strong></div>
+          <div>Geometry: <strong>${CAKE_STUDIO_STATE.shapeName}</strong></div>
+          <div>Frosting: <strong>${CAKE_STUDIO_STATE.frostingName}</strong></div>
+          <div>Servings: <strong>${CAKE_STUDIO_STATE.serves}</strong></div>
+          <div>Delivery Date: <strong>${CAKE_STUDIO_STATE.deliveryDate || 'Tomorrow'}</strong></div>
+          <div>Timeslot: <strong>${CAKE_STUDIO_STATE.timeslotName}</strong></div>
+        </div>
+        <div style="margin-top:0.75rem; padding-top:0.75rem; border-top:1px dashed var(--kb-border); font-size:0.85rem;">
+          <div>Inscribed Plaque: <strong style="color:var(--kb-burgundy); font-family:var(--font-serif);">"${CAKE_STUDIO_STATE.message}"</strong></div>
+          <div>Gourmet Accents: <strong>${toppingsList}</strong></div>
+          ${notes ? `<div>Kitchen Notes: <em>"${notes}"</em></div>` : ''}
+        </div>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:1.2rem; font-weight:800; color:var(--kb-burgundy);">Total: ₹${total.toLocaleString('en-IN')}</span>
+        <button type="button" class="action-btn-primary" onclick="closeCakeModal()" style="padding:0.6rem 1.5rem;">Continue Shopping</button>
+      </div>
+    `;
+    modal.style.display = 'flex';
+  }
+
+  showToast('Custom Celebration Cake successfully booked & added to Cart!', '🎂');
+}
+
+function closeCakeModal() {
+  const modal = document.getElementById('cakeModalBackdrop');
+  if (modal) modal.style.display = 'none';
+}
+
+function handleCakeModalBackdrop(event) {
+  if (event.target.id === 'cakeModalBackdrop') {
+    closeCakeModal();
+  }
+}
+
+
+/**
+ * ============================================================================
+ * Day 8 Deliverable: National Store Locator & Interactive Outlets Hub (Issues #5 & #6)
+ * ============================================================================
+ */
+
+const STORE_LOCATIONS_DATA = [
+  {
+    id: 'hyd-1',
+    name: 'Mozamjahi Market Flagship (Est. 1953)',
+    city: 'hyderabad',
+    cityLabel: 'Hyderabad, Telangana',
+    type: 'flagship',
+    typeLabel: '🏛️ Heritage Flagship',
+    address: 'MJ Market, Abids, Hyderabad - 500001 (Opp. Heritage Clock Tower)',
+    hours: '9:00 AM – 10:30 PM',
+    openHour: 9,
+    closeHour: 22.5,
+    is24Hours: false,
+    phone: '+91 40 2461 4872',
+    amenities: ['☕ Cafe & Tea Bar', '🎂 Custom Cake Counter', '🚗 Valet Parking', '📶 Free Wi-Fi'],
+    mapsUrl: 'https://maps.google.com/?q=Karachi+Bakery+Mozamjahi+Market+Hyderabad'
+  },
+  {
+    id: 'hyd-2',
+    name: 'Banjara Hills Bistro & Bakery',
+    city: 'hyderabad',
+    cityLabel: 'Hyderabad, Telangana',
+    type: 'cafe',
+    typeLabel: '☕ Cafe & Dine-In',
+    address: 'Road No. 1, Opp. Taj Krishna, Banjara Hills, Hyderabad - 500034',
+    hours: '9:00 AM – 11:00 PM',
+    openHour: 9,
+    closeHour: 23,
+    is24Hours: false,
+    phone: '+91 40 6666 2222',
+    amenities: ['☕ Continental Cafe', '🍕 Woodfired Pizza', '🎂 Cake Studio', '🚗 Valet Parking'],
+    mapsUrl: 'https://maps.google.com/?q=Karachi+Bakery+Banjara+Hills+Hyderabad'
+  },
+  {
+    id: 'hyd-3',
+    name: 'Cyberabad Hitec City Tech Hub',
+    city: 'hyderabad',
+    cityLabel: 'Hyderabad, Telangana',
+    type: 'express',
+    typeLabel: '🛍️ Express Retail',
+    address: 'Opp. Bio-Diversity Complex, Gachibowli Main Road, Hyderabad - 500081',
+    hours: '8:30 AM – 11:30 PM',
+    openHour: 8.5,
+    closeHour: 23.5,
+    is24Hours: false,
+    phone: '+91 40 2988 5678',
+    amenities: ['🏢 Corporate Gifting Desk', '🎂 Cake Counter', '⚡ Quick Takeaway'],
+    mapsUrl: 'https://maps.google.com/?q=Karachi+Bakery+Gachibowli+Hyderabad'
+  },
+  {
+    id: 'hyd-4',
+    name: 'RGI Airport Domestic Terminal 1',
+    city: 'hyderabad',
+    cityLabel: 'Hyderabad, Telangana',
+    type: 'airport',
+    typeLabel: '✈️ Airport 24/7',
+    address: 'Shaheed Bhagat Singh Domestic Departures, Shamshabad - 500409',
+    hours: 'Open 24 Hours • 7 Days a Week',
+    openHour: 0,
+    closeHour: 24,
+    is24Hours: true,
+    phone: '+91 40 6697 5000',
+    amenities: ['✈️ Travel Sealed Tins', '🎁 Gift Packing', '⚡ 24/7 Open Counter'],
+    mapsUrl: 'https://maps.google.com/?q=Karachi+Bakery+Rajiv+Gandhi+Airport+Hyderabad'
+  },
+  {
+    id: 'hyd-5',
+    name: 'Secunderabad Heritage Clock Tower',
+    city: 'hyderabad',
+    cityLabel: 'Hyderabad, Telangana',
+    type: 'flagship',
+    typeLabel: '🏛️ Heritage Flagship',
+    address: 'Sarojini Devi Road, Near Clock Tower, Secunderabad - 500003',
+    hours: '9:30 AM – 10:00 PM',
+    openHour: 9.5,
+    closeHour: 22,
+    is24Hours: false,
+    phone: '+91 40 2780 4321',
+    amenities: ['🍬 Pure Mithai Counter', '🍪 Fresh Bakes', '☕ Irani Chai Bar'],
+    mapsUrl: 'https://maps.google.com/?q=Karachi+Bakery+Secunderabad'
+  },
+  {
+    id: 'blr-1',
+    name: 'Bengaluru Indiranagar 100ft Road',
+    city: 'bengaluru',
+    cityLabel: 'Bengaluru, Karnataka',
+    type: 'cafe',
+    typeLabel: '☕ Cafe & Dine-In',
+    address: '777-H, 100 Feet Road, HAL 2nd Stage, Indiranagar, Bengaluru - 560038',
+    hours: '9:00 AM – 10:30 PM',
+    openHour: 9,
+    closeHour: 22.5,
+    is24Hours: false,
+    phone: '+91 80 4112 8899',
+    amenities: ['☕ Artisan Cafe', '🎂 Bespoke Pastries', '📶 High Speed Wi-Fi'],
+    mapsUrl: 'https://maps.google.com/?q=Karachi+Bakery+Indiranagar+Bengaluru'
+  },
+  {
+    id: 'blr-2',
+    name: 'Kempegowda Airport (BLR) T2 Departures',
+    city: 'bengaluru',
+    cityLabel: 'Bengaluru, Karnataka',
+    type: 'airport',
+    typeLabel: '✈️ Airport 24/7',
+    address: 'Terminal 2 Garden Terminal, Security Hold Area, Devanahalli - 560300',
+    hours: 'Open 24 Hours • 7 Days a Week',
+    openHour: 0,
+    closeHour: 24,
+    is24Hours: true,
+    phone: '+91 80 6678 2000',
+    amenities: ['✈️ Flight Safe Packing', '🎁 Travel Tin Curations', '⚡ 24/7 Service'],
+    mapsUrl: 'https://maps.google.com/?q=Karachi+Bakery+BLR+Airport+Terminal+2'
+  },
+  {
+    id: 'blr-3',
+    name: 'Bengaluru Koramangala 5th Block',
+    city: 'bengaluru',
+    cityLabel: 'Bengaluru, Karnataka',
+    type: 'cafe',
+    typeLabel: '☕ Cafe & Dine-In',
+    address: '80 Feet Road, 5th Block, Koramangala, Bengaluru - 560095',
+    hours: '10:00 AM – 11:00 PM',
+    openHour: 10,
+    closeHour: 23,
+    is24Hours: false,
+    phone: '+91 80 4099 3344',
+    amenities: ['☕ Youth Lounge', '🍪 Signature Biscuits', '🎂 Quick Cake Delivery'],
+    mapsUrl: 'https://maps.google.com/?q=Karachi+Bakery+Koramangala+Bengaluru'
+  },
+  {
+    id: 'mum-1',
+    name: 'Mumbai Bandra Linking Road',
+    city: 'mumbai',
+    cityLabel: 'Mumbai, Maharashtra',
+    type: 'flagship',
+    typeLabel: '🏛️ Heritage Flagship',
+    address: 'Corner of Linking Road & 24th Road, Bandra West, Mumbai - 400050',
+    hours: '9:30 AM – 10:30 PM',
+    openHour: 9.5,
+    closeHour: 22.5,
+    is24Hours: false,
+    phone: '+91 22 2640 1234',
+    amenities: ['🎁 Luxury Hampers', '🍪 Fresh Fruit Biscuit Cans', '🎂 Custom Celebration Bakes'],
+    mapsUrl: 'https://maps.google.com/?q=Karachi+Bakery+Bandra+Mumbai'
+  },
+  {
+    id: 'mum-2',
+    name: 'Mumbai CSMI Airport (BOM) T2',
+    city: 'mumbai',
+    cityLabel: 'Mumbai, Maharashtra',
+    type: 'airport',
+    typeLabel: '✈️ Airport 24/7',
+    address: 'Terminal 2 Domestic Departures, Chhatrapati Shivaji Airport, Andheri East - 400099',
+    hours: 'Open 24 Hours • 7 Days a Week',
+    openHour: 0,
+    closeHour: 24,
+    is24Hours: true,
+    phone: '+91 22 6685 1000',
+    amenities: ['✈️ Air Travel Packs', '🎁 Keepsake Gift Tins', '⚡ 24/7 Open'],
+    mapsUrl: 'https://maps.google.com/?q=Karachi+Bakery+Mumbai+Airport+T2'
+  },
+  {
+    id: 'del-1',
+    name: 'Delhi NCR Connaught Place Flagship',
+    city: 'delhi',
+    cityLabel: 'New Delhi, Delhi NCR',
+    type: 'flagship',
+    typeLabel: '🏛️ Heritage Flagship',
+    address: 'Outer Circle, Block L, Connaught Place, New Delhi - 110001',
+    hours: '9:30 AM – 10:30 PM',
+    openHour: 9.5,
+    closeHour: 22.5,
+    is24Hours: false,
+    phone: '+91 11 2341 5678',
+    amenities: ['🏛️ Heritage Parlour', '🍬 Royal Mithai', '☕ High Tea Counter'],
+    mapsUrl: 'https://maps.google.com/?q=Karachi+Bakery+Connaught+Place+Delhi'
+  },
+  {
+    id: 'del-2',
+    name: 'Delhi IGI Airport (DEL) T3 Departures',
+    city: 'delhi',
+    cityLabel: 'New Delhi, Delhi NCR',
+    type: 'airport',
+    typeLabel: '✈️ Airport 24/7',
+    address: 'Terminal 3 International & Domestic Departures, IGI Airport - 110037',
+    hours: 'Open 24 Hours • 7 Days a Week',
+    openHour: 0,
+    closeHour: 24,
+    is24Hours: true,
+    phone: '+91 11 4963 8000',
+    amenities: ['✈️ Duty Free Area Adjacent', '🎁 Export Quality Tins', '⚡ 24/7 Service'],
+    mapsUrl: 'https://maps.google.com/?q=Karachi+Bakery+IGI+Airport+Terminal+3'
+  }
+];
+
+const StoreLocatorState = {
+  activeCity: 'all',
+  activeType: 'all',
+  searchQuery: '',
+  selectedStoreId: 'hyd-1'
+};
+
+function initStoreLocator() {
+  renderStoreCards(STORE_LOCATIONS_DATA);
+  selectStoreSpotlight('hyd-1');
+
+  // Update clock pill
+  const clockEl = document.getElementById('liveClockPill');
+  if (clockEl) {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+    clockEl.textContent = `🕒 Outlets Status: Checked at ${timeStr}`;
+  }
+}
+
+function calculateStoreLiveStatus(store) {
+  if (store.is24Hours) {
+    return { statusText: '✈️ Open 24 Hours', pillClass: 'airport24' };
+  }
+
+  const now = new Date();
+  const currentHours = now.getHours() + now.getMinutes() / 60;
+
+  if (currentHours >= store.openHour && currentHours < store.closeHour) {
+    const closeTimeStr = store.hours.includes('–') ? store.hours.split('–')[1].trim() : 'Evening';
+    return { statusText: `🟢 Open Now • Closes ${closeTimeStr}`, pillClass: 'open' };
+  } else {
+    const openTimeStr = store.hours.includes('–') ? store.hours.split('–')[0].trim() : 'Morning';
+    return { statusText: `🔴 Closed • Opens ${openTimeStr}`, pillClass: 'closed' };
+  }
+}
+
+function renderStoreCards(stores) {
+  const container = document.getElementById('storeCardsList');
+  const countEl = document.getElementById('storeCountDisplay');
+  if (!container) return;
+
+  if (countEl) {
+    countEl.innerHTML = `Showing <strong>${stores.length}</strong> verified outlets across India`;
+  }
+
+  if (stores.length === 0) {
+    container.innerHTML = `
+      <div style="text-align:center; padding:3rem 1.5rem; background:#fff; border-radius:12px; border:1px dashed var(--kb-border);">
+        <span style="font-size:2.5rem; display:block; margin-bottom:0.5rem;">🔍</span>
+        <h4 style="color:var(--kb-burgundy); margin-bottom:0.25rem;">No Outlets Found</h4>
+        <p style="font-size:0.85rem; color:var(--kb-text-muted); margin-bottom:1rem;">We couldn't find an outlet matching your search criteria.</p>
+        <button type="button" class="action-btn-primary" onclick="clearStoreSearch()" style="padding:0.4rem 1rem; font-size:0.8rem;">View All 12 Outlets</button>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = stores.map(store => {
+    const liveStatus = calculateStoreLiveStatus(store);
+    const isSelected = store.id === StoreLocatorState.selectedStoreId ? 'selected' : '';
+
+    return `
+      <div class="store-card ${isSelected}" id="storeCard_${store.id}" onclick="selectStoreSpotlight('${store.id}')">
+        <div class="store-card-header">
+          <div class="store-badge-row">
+            <span class="store-badge ${store.type}">${store.typeLabel}</span>
+            <span class="store-badge" style="background:#F3F4F6; color:var(--kb-text-muted);">${store.cityLabel.split(',')[0]}</span>
+          </div>
+          <span class="store-status-pill ${liveStatus.pillClass}">${liveStatus.statusText}</span>
+        </div>
+        <h3 class="store-name">${store.name}</h3>
+        <p class="store-address">📍 ${store.address}</p>
+        <div class="store-meta-row">
+          <span>🕒 <strong>${store.hours}</strong></span>
+          <span>📞 <a href="tel:${store.phone.replace(/\s+/g, '')}" onclick="event.stopPropagation()">${store.phone}</a></span>
+        </div>
+        <div class="store-amenities-row">
+          ${store.amenities.map(a => `<span class="store-amenity-chip">${a}</span>`).join('')}
+        </div>
+        <div class="store-card-actions">
+          <a href="${store.mapsUrl}" target="_blank" rel="noopener noreferrer" class="btn-store-action primary" onclick="event.stopPropagation()">
+            <span>🗺️ Get Directions</span>
+          </a>
+          <a href="tel:${store.phone.replace(/\s+/g, '')}" class="btn-store-action" onclick="event.stopPropagation()">
+            <span>📞 Call</span>
+          </a>
+          <button type="button" class="btn-store-action" onclick="shareStoreWhatsApp('${store.id}'); event.stopPropagation();">
+            <span>💬 Share</span>
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function filterStoresByCity(city, btn) {
+  StoreLocatorState.activeCity = city;
+  
+  document.querySelectorAll('.city-pill').forEach(p => p.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  applyStoreFilters();
+
+  // Highlight map pin
+  highlightMapPin(city);
+}
+
+function filterStoresByType(type, btn) {
+  StoreLocatorState.activeType = type;
+
+  document.querySelectorAll('.type-pill').forEach(p => p.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  applyStoreFilters();
+}
+
+function filterStores() {
+  const input = document.getElementById('storeSearchInput');
+  const clearBtn = document.getElementById('btnStoreSearchClear');
+  
+  if (input) {
+    StoreLocatorState.searchQuery = input.value.trim().toLowerCase();
+    if (clearBtn) clearBtn.style.display = StoreLocatorState.searchQuery ? 'flex' : 'none';
+  }
+
+  applyStoreFilters();
+}
+
+function clearStoreSearch() {
+  const input = document.getElementById('storeSearchInput');
+  const clearBtn = document.getElementById('btnStoreSearchClear');
+  if (input) input.value = '';
+  if (clearBtn) clearBtn.style.display = 'none';
+
+  StoreLocatorState.searchQuery = '';
+  StoreLocatorState.activeCity = 'all';
+  StoreLocatorState.activeType = 'all';
+
+  document.querySelectorAll('.city-pill').forEach(p => {
+    if (p.getAttribute('data-city') === 'all') p.classList.add('active');
+    else p.classList.remove('active');
+  });
+
+  document.querySelectorAll('.type-pill').forEach(p => {
+    if (p.getAttribute('data-type') === 'all') p.classList.add('active');
+    else p.classList.remove('active');
+  });
+
+  highlightMapPin('hyderabad');
+  applyStoreFilters();
+}
+
+function applyStoreFilters() {
+  let filtered = STORE_LOCATIONS_DATA;
+
+  // City filter
+  if (StoreLocatorState.activeCity !== 'all') {
+    filtered = filtered.filter(s => s.city === StoreLocatorState.activeCity);
+  }
+
+  // Type filter
+  if (StoreLocatorState.activeType !== 'all') {
+    filtered = filtered.filter(s => s.type === StoreLocatorState.activeType);
+  }
+
+  // Text search filter
+  if (StoreLocatorState.searchQuery) {
+    const q = StoreLocatorState.searchQuery;
+    filtered = filtered.filter(s => 
+      s.name.toLowerCase().includes(q) ||
+      s.address.toLowerCase().includes(q) ||
+      s.cityLabel.toLowerCase().includes(q) ||
+      s.amenities.some(a => a.toLowerCase().includes(q))
+    );
+  }
+
+  renderStoreCards(filtered);
+
+  if (filtered.length > 0) {
+    selectStoreSpotlight(filtered[0].id);
+  }
+}
+
+function selectStoreSpotlight(storeId) {
+  StoreLocatorState.selectedStoreId = storeId;
+  const store = STORE_LOCATIONS_DATA.find(s => s.id === storeId);
+  if (!store) return;
+
+  // Highlight card
+  document.querySelectorAll('.store-card').forEach(c => c.classList.remove('selected'));
+  const card = document.getElementById(`storeCard_${storeId}`);
+  if (card) {
+    card.classList.add('selected');
+  }
+
+  // Update spotlight panel
+  const badgeEl = document.getElementById('spotlightBadge');
+  const statusEl = document.getElementById('spotlightStatus');
+  const nameEl = document.getElementById('spotlightName');
+  const cityEl = document.getElementById('spotlightCity');
+  const addressEl = document.getElementById('spotlightAddress');
+  const hoursEl = document.getElementById('spotlightHours');
+  const phoneEl = document.getElementById('spotlightPhone');
+  const amenitiesEl = document.getElementById('spotlightAmenities');
+  const directionsEl = document.getElementById('spotlightDirectionsLink');
+  const callEl = document.getElementById('spotlightCallLink');
+
+  const liveStatus = calculateStoreLiveStatus(store);
+
+  if (badgeEl) badgeEl.textContent = store.typeLabel;
+  if (statusEl) {
+    statusEl.textContent = liveStatus.statusText;
+    statusEl.style.color = liveStatus.pillClass === 'closed' ? '#B91C1C' : '#15803D';
+  }
+  if (nameEl) nameEl.textContent = store.name;
+  if (cityEl) cityEl.textContent = store.cityLabel;
+  if (addressEl) addressEl.textContent = store.address;
+  if (hoursEl) hoursEl.textContent = store.hours;
+  if (phoneEl) phoneEl.textContent = store.phone;
+  if (amenitiesEl) {
+    amenitiesEl.innerHTML = store.amenities.map(a => `<span class="amenity-chip">${a}</span>`).join('');
+  }
+  if (directionsEl) directionsEl.href = store.mapsUrl;
+  if (callEl) callEl.href = `tel:${store.phone.replace(/\s+/g, '')}`;
+
+  highlightMapPin(store.city);
+}
+
+function selectMapPin(city) {
+  filterStoresByCity(city);
+  const cityPill = document.querySelector(`.city-pill[data-city="${city}"]`);
+  if (cityPill) {
+    document.querySelectorAll('.city-pill').forEach(p => p.classList.remove('active'));
+    cityPill.classList.add('active');
+  }
+  showToast(`Filtered outlets for ${city.toUpperCase()}`, '📍');
+}
+
+function highlightMapPin(city) {
+  document.querySelectorAll('.map-marker-pin').forEach(pin => {
+    if (city === 'all') {
+      pin.classList.remove('active');
+    } else if (pin.classList.contains(`marker-${city}`)) {
+      pin.classList.add('active');
+    } else {
+      pin.classList.remove('active');
+    }
+  });
+}
+
+function findNearestStore() {
+  selectStoreSpotlight('hyd-1');
+  const card = document.getElementById('storeCard_hyd-1');
+  if (card) {
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  showToast('Located nearest flagship outlet: Mozamjahi Market (Est. 1953)!', '📍');
+}
+
+function shareStoreWhatsApp(storeId) {
+  const store = STORE_LOCATIONS_DATA.find(s => s.id === storeId);
+  if (!store) return;
+  const msg = encodeURIComponent(`Karachi Bakery Outlet: ${store.name}\nAddress: ${store.address}\nHours: ${store.hours}\nPhone: ${store.phone}\nDirections: ${store.mapsUrl}`);
+  window.open(`https://api.whatsapp.com/send?text=${msg}`, '_blank');
 }

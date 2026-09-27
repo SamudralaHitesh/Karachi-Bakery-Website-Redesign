@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
   
   <!-- Main Design System CSS -->
-  <link rel="stylesheet" href="styles/main.css?v=5.2.0">
+  <link rel="stylesheet" href="styles/main.css?v=8.0.0">
 </head>
 <body>
 
@@ -1810,99 +1810,815 @@
          Eliminates confusing B2B pricing from retail shoppers while providing
          dedicated corporate inquiries, MOQ, and sample ordering.
          ========================================================================== -->
+        <!-- ==========================================================================
+         Day 6 Deliverable: Dedicated B2B & Corporate Bulk Order Suite
+         (Resolves Issues #3, #7, #8, #9)
+         ========================================================================== -->
     <section class="b2b-highlight-strip" id="b2bHighlight">
-      <div class="container b2b-strip-grid">
-        <div class="b2b-content">
-          <div class="hero-badge-tag" style="background:rgba(201,151,38,0.2); border-color:var(--kb-gold); color:var(--kb-gold-light);">
-            🏢 Corporate & Bulk Ordering Suite
+      <div class="container">
+        <!-- Section Header -->
+        <div class="b2b-suite-header">
+          <div class="hero-badge-tag" style="background:rgba(201,151,38,0.2); border-color:var(--kb-gold); color:var(--kb-gold-light); margin-bottom:0.75rem;">
+            🏢 Day 6 Deliverable • Dedicated Corporate & Bulk Order Suite
           </div>
-          <h3>Dedicated Bulk Orders for <span>Festivals, Weddings & Enterprises</span></h3>
-          <p>
-            No more confusing MOQ mixed with retail prices. Karachi Bakery's dedicated B2B division delivers customized corporate hampers, custom co-branded gift tins, and GST invoices with tiered volume discounts.
+          <h2 class="b2b-suite-title">Corporate Gifting & Bulk Order Suite</h2>
+          <p class="b2b-suite-desc">
+            Direct factory volume pricing for festivals, client appreciation, weddings, and annual summits. Includes custom laser tin embossing, co-branded greeting ribbons, GST-compliant invoicing, and pan-India multi-branch logistics.
+          </p>
+          
+          <!-- Corporate Trust Credentials Bar -->
+          <div class="b2b-metrics-bar">
+            <div class="b2b-metric-item">
+              <span class="b2b-metric-num">1,500+</span>
+              <span class="b2b-metric-label">Corporate Clients</span>
+            </div>
+            <div class="b2b-metric-item">
+              <span class="b2b-metric-num">10% – 30%</span>
+              <span class="b2b-metric-label">Tiered Bulk Savings</span>
+            </div>
+            <div class="b2b-metric-item">
+              <span class="b2b-metric-num">100%</span>
+              <span class="b2b-metric-label">GST Tax Compliance</span>
+            </div>
+            <div class="b2b-metric-item">
+              <span class="b2b-metric-num">19,000+</span>
+              <span class="b2b-metric-label">Pincodes Dispatched</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2-Column Corporate Suite Layout -->
+        <div class="b2b-suite-grid">
+          <!-- Column 1: Live Interactive Volume Estimator & Tier Calculator (Issue #3) -->
+          <div class="b2b-calculator-card">
+            <div class="b2b-card-heading">
+              <span class="b2b-calc-icon">📊</span>
+              <div>
+                <h3>Interactive Volume Pricing Estimator</h3>
+                <p>Calculate instant volume savings and price-per-unit</p>
+              </div>
+            </div>
+
+            <!-- 1. Product Selection -->
+            <div class="b2b-form-group">
+              <label for="b2bProductSelect">Select Corporate Gift Curation:</label>
+              <select id="b2bProductSelect" class="b2b-select" onchange="calculateB2BQuote()">
+                <option value="450" data-name="Nizam's 3-in-1 Celebration Box" data-hsn="1905">Nizam's 3-in-1 Celebration Box — ₹450 / box (Base)</option>
+                <option value="650" data-name="Royal Heritage Collectible Gold Tin" data-hsn="1905" selected>Royal Heritage Collectible Gold Tin — ₹650 / box (Base)</option>
+                <option value="850" data-name="Assorted Premium Biscuits Quad Crate" data-hsn="1905">Assorted Premium Biscuits Quad Crate — ₹850 / box (Base)</option>
+                <option value="1250" data-name="Executive Dry Fruit & Pure Mithai Trunk" data-hsn="2106">Executive Dry Fruit & Pure Mithai Trunk — ₹1,250 / box (Base)</option>
+              </select>
+            </div>
+
+            <!-- 2. Quantity Slider & Number Input -->
+            <div class="b2b-form-group">
+              <div class="b2b-qty-header">
+                <label for="b2bQtyInput">Order Quantity (Boxes):</label>
+                <span class="b2b-qty-display"><strong id="b2bQtyDisplay">100</strong> Units</span>
+              </div>
+              <input type="range" id="b2bQtySlider" min="25" max="1500" step="5" value="100" class="b2b-slider" oninput="handleB2BQtySlider(this.value)">
+              
+              <!-- Quick Select Buttons -->
+              <div class="b2b-qty-chips">
+                <button type="button" class="b2b-qty-chip" onclick="setB2BQuantity(50)">50 Boxes</button>
+                <button type="button" class="b2b-qty-chip active" onclick="setB2BQuantity(100)">100 Boxes</button>
+                <button type="button" class="b2b-qty-chip" onclick="setB2BQuantity(250)">250 Boxes</button>
+                <button type="button" class="b2b-qty-chip" onclick="setB2BQuantity(500)">500 Boxes</button>
+                <button type="button" class="b2b-qty-chip" onclick="setB2BQuantity(1000)">1,000 Boxes</button>
+              </div>
+            </div>
+
+            <!-- 3. Dynamic Tier Status Indicator Bar -->
+            <div class="b2b-tier-milestones">
+              <div class="tier-pill" id="tierPill1">
+                <span class="tier-name">Tier 1 (25–99)</span>
+                <span class="tier-val">10% OFF</span>
+              </div>
+              <div class="tier-pill active" id="tierPill2">
+                <span class="tier-name">Tier 2 (100–499)</span>
+                <span class="tier-val">20% OFF</span>
+              </div>
+              <div class="tier-pill" id="tierPill3">
+                <span class="tier-name">Tier 3 (500–999)</span>
+                <span class="tier-val">25% OFF</span>
+              </div>
+              <div class="tier-pill" id="tierPill4">
+                <span class="tier-name">Tier 4 (1,000+)</span>
+                <span class="tier-val">30% OFF</span>
+              </div>
+            </div>
+
+            <!-- Tier Perks Dynamic Callout -->
+            <div class="b2b-unlocked-perk" id="b2bUnlockedPerk">
+              🎁 <strong>Tier 2 Unlocked:</strong> 20% Volume Discount + Complimentary Custom Gold Foil Ribbon!
+            </div>
+
+            <!-- Financial Calculation Table -->
+            <div class="b2b-calc-summary">
+              <div class="b2b-summary-row">
+                <span>Base Catalogue Price:</span>
+                <span id="b2bBaseTotal">₹65,000</span>
+              </div>
+              <div class="b2b-summary-row discount">
+                <span>Volume Savings (<span id="b2bDiscountPct">20%</span>):</span>
+                <span id="b2bDiscountVal">-₹13,000</span>
+              </div>
+              <div class="b2b-summary-row">
+                <span>Custom Co-Branding Addon:</span>
+                <span id="b2bBrandingVal" style="color:var(--kb-success); font-weight:700;">FREE (Volume Perk)</span>
+              </div>
+              <div class="b2b-summary-row">
+                <span>GST (5% Compliant HSN):</span>
+                <span id="b2bTaxVal">₹2,600</span>
+              </div>
+              <div class="b2b-summary-divider"></div>
+              <div class="b2b-summary-row total">
+                <span>Estimated Quotation Total:</span>
+                <strong id="b2bFinalTotal">₹54,600</strong>
+              </div>
+              <div class="b2b-unit-rate">
+                Effective Rate: <strong id="b2bEffectiveRate">₹546.00 / box</strong> (All Taxes Included)
+              </div>
+            </div>
+
+            <!-- Sample Kit Quick Order Action -->
+            <div class="b2b-sample-box-card">
+              <div class="sample-box-content">
+                <strong>📦 Need to Sample Before Ordering 100+ Boxes?</strong>
+                <p>Order our Executive 4-Sample Tasting Kit (Fruit Biscuits, Osmania, Kaju Katli, Truffle) for ₹499. Fully refunded upon placing your bulk order!</p>
+              </div>
+              <button type="button" class="btn-order-sample" onclick="orderB2BSampleKit()">
+                Order Sample Kit (₹499)
+              </button>
+            </div>
+          </div>
+
+          <!-- Column 2: Co-Branding Mockup Studio (Issue #9) & Instant RFQ Generator (Issue #8) -->
+          <div class="b2b-branding-card">
+            <div class="b2b-card-heading">
+              <span class="b2b-calc-icon">🎨</span>
+              <div>
+                <h3>Corporate Co-Branding & Mockup Studio</h3>
+                <p>Visualize your company branding on Karachi Bakery's keepsake tins</p>
+              </div>
+            </div>
+
+            <!-- Live 3D-Style Tin Mockup Visualizer -->
+            <div class="b2b-tin-visualizer-wrap">
+              <div class="tin-mockup gold" id="tinMockupLid">
+                <div class="tin-emboss-ring"></div>
+                <div class="tin-brand-center">
+                  <div class="tin-kb-badge">KARACHI BAKERY • EST. 1953</div>
+                  <div class="tin-co-logo-container" id="tinCoLogoContainer">
+                    <span class="tin-co-placeholder-icon">🏢</span>
+                  </div>
+                  <div class="tin-company-name-emboss" id="tinCompanyEmboss">ACME ENTERPRISES</div>
+                  <div class="tin-tagline-emboss" id="tinTaglineEmboss">FESTIVE CELEBRATIONS 2026</div>
+                </div>
+                <div class="tin-ribbon-satin">
+                  <span id="tinRibbonText">Handcrafted Pure Desi Ghee & Fresh Bakes</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Co-Branding Interactive Controls -->
+            <div class="b2b-customizer-controls">
+              <div class="customizer-row">
+                <div class="customizer-field">
+                  <label for="b2bCompanyNameInput">Company / Organization Name:</label>
+                  <input type="text" id="b2bCompanyNameInput" class="b2b-input" value="Acme Enterprises" placeholder="e.g. Google India, Infosys, Deloitte" oninput="updateTinBrandingPreview()">
+                </div>
+                <div class="customizer-field">
+                  <label>Keepsake Tin Finish:</label>
+                  <div class="tin-color-swatches">
+                    <button type="button" class="tin-swatch gold active" title="Royal Heritage Gold" onclick="changeTinFinish('gold')"></button>
+                    <button type="button" class="tin-swatch burgundy" title="Karachi Imperial Burgundy" onclick="changeTinFinish('burgundy')"></button>
+                    <button type="button" class="tin-swatch navy" title="Nizam Navy Blue" onclick="changeTinFinish('navy')"></button>
+                    <button type="button" class="tin-swatch emerald" title="Emerald Green" onclick="changeTinFinish('emerald')"></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="customizer-row">
+                <div class="customizer-field">
+                  <label for="b2bOccasionInput">Custom Greeting Sleeve Message:</label>
+                  <input type="text" id="b2bOccasionInput" class="b2b-input" value="With Best Compliments from Leadership Team" oninput="updateTinBrandingPreview()">
+                </div>
+                <div class="customizer-field">
+                  <label for="b2bLogoUpload">Upload Company Logo (PNG / SVG):</label>
+                  <input type="file" id="b2bLogoUpload" class="b2b-file-input" accept="image/*" onchange="handleLogoUpload(event)">
+                </div>
+              </div>
+            </div>
+
+            <!-- Corporate RFQ & GST Compliance Form (Issue #8) -->
+            <div class="b2b-rfq-form">
+              <h4 class="rfq-title">📋 Instant Pro-Forma Quotation Request</h4>
+              <p class="rfq-desc">Enter corporate tax billing details to generate an instant printable GST quotation.</p>
+
+              <div class="rfq-grid">
+                <div class="rfq-field">
+                  <label for="rfqContactPerson">Contact Person *</label>
+                  <input type="text" id="rfqContactPerson" class="b2b-input" placeholder="e.g. Ramesh Sharma (Head of HR)">
+                </div>
+                <div class="rfq-field">
+                  <label for="rfqEmail">Corporate Work Email *</label>
+                  <input type="email" id="rfqEmail" class="b2b-input" placeholder="procurement@acme.com">
+                </div>
+                <div class="rfq-field">
+                  <label for="rfqPhone">Official Contact Number *</label>
+                  <input type="tel" id="rfqPhone" class="b2b-input" placeholder="+91 98765 43210">
+                </div>
+                <div class="rfq-field">
+                  <label for="rfqGstin">Corporate GSTIN (15 Digits) *</label>
+                  <div class="gst-input-wrap">
+                    <input type="text" id="rfqGstin" class="b2b-input" placeholder="36AAACK1234F1Z5" maxlength="15" oninput="validateGSTINFormat(this.value)">
+                    <span id="gstStatusBadge" class="gst-badge-pill">Format Check</span>
+                  </div>
+                </div>
+                <div class="rfq-field">
+                  <label for="rfqDeliveryDate">Required Delivery Date *</label>
+                  <input type="date" id="rfqDeliveryDate" class="b2b-input">
+                </div>
+                <div class="rfq-field">
+                  <label for="rfqDispatchScope">Pan-India Dispatch Scope *</label>
+                  <select id="rfqDispatchScope" class="b2b-select">
+                    <option value="single">Single Central Corporate HQ Delivery</option>
+                    <option value="multi-branch">Multi-Branch Dispatch (Across 5+ Cities)</option>
+                    <option value="wfh-csv">Individual Employee Home Delivery (via CSV Address Upload)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="rfq-actions">
+                <button type="button" class="btn-generate-quote" onclick="generateCorporateQuotation()">
+                  <span>📄 Generate Instant GST Pro-Forma Quote</span>
+                </button>
+                <button type="button" class="btn-b2b-callback" onclick="requestAccountManagerCallback()">
+                  <span>📞 Request Account Manager Callback</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         Day 7 Deliverable: Interactive Custom Cake & Celebration Studio
+         (Resolves Issues #10 & #11)
+         ========================================================================== -->
+    <section class="custom-cake-section" id="customCakeSection">
+      <div class="container">
+        <!-- Section Header -->
+        <div class="cake-studio-header">
+          <div class="hero-badge-tag" style="background:rgba(201,151,38,0.15); border-color:var(--kb-gold); color:var(--kb-burgundy); margin-bottom:0.75rem;">
+            🎂 Day 7 Deliverable • Artisanal Celebration Cake Studio
+          </div>
+          <h2 class="cake-studio-title">Custom Cake & Celebration Builder</h2>
+          <p class="cake-studio-desc">
+            No more generic order forms. Design your bespoke centerpiece cake in 4 guided steps. Handcrafted from scratch with 100% pure butter sponge, artisanal Belgian chocolate, and same-day express kitchen delivery in Hyderabad.
           </p>
 
-          <div class="b2b-perks">
-            <div class="b2b-perk-item">
-              <span>✔</span> Custom Logo Packaging & Ribbon Foil
-            </div>
-            <div class="b2b-perk-item">
-              <span>✔</span> Tiered Volume Discounts (10% to 30%)
-            </div>
-            <div class="b2b-perk-item">
-              <span>✔</span> Pan-India Multi-Address Employee Delivery
-            </div>
-            <div class="b2b-perk-item">
-              <span>✔</span> Dedicated Account Manager & Sample Box
-            </div>
-          </div>
-
-          <div class="b2b-actions">
-            <button class="btn-b2b-primary" onclick="showToast('Corporate RFQ Portal will unlock on Day 6 milestone!')">
-              Request Corporate Catalog (RFQ)
+          <!-- 4-Step Navigation Tabs -->
+          <div class="cake-step-tabs" role="tablist">
+            <button type="button" class="cake-step-tab active" id="cakeTab1" onclick="switchCakeStep(1)">
+              <span class="step-num">1</span>
+              <span class="step-label">Flavor & Diet</span>
             </button>
-            <button class="btn-b2b-outline" onclick="showToast('Sample box request registered!')">
-              Order Tasting Sample Kit
+            <button type="button" class="cake-step-tab" id="cakeTab2" onclick="switchCakeStep(2)">
+              <span class="step-num">2</span>
+              <span class="step-label">Size & Tiers</span>
+            </button>
+            <button type="button" class="cake-step-tab" id="cakeTab3" onclick="switchCakeStep(3)">
+              <span class="step-num">3</span>
+              <span class="step-label">Frosting & Decor</span>
+            </button>
+            <button type="button" class="cake-step-tab" id="cakeTab4" onclick="switchCakeStep(4)">
+              <span class="step-num">4</span>
+              <span class="step-label">Message & Slot</span>
             </button>
           </div>
         </div>
 
-        <div class="b2b-card-preview">
-          <h4>B2B Instant Volume Estimator</h4>
-          <p>Transparent corporate bulk tiers for Diwali & New Year</p>
-          <div style="background:rgba(0,0,0,0.2); border-radius:var(--radius-sm); padding:1rem; margin-bottom:1rem; text-align:left;">
-            <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem; font-size:0.85rem;">
-              <span>Tier 1 (25 – 99 Boxes):</span>
-              <strong style="color:var(--kb-gold-light);">10% OFF</strong>
+        <!-- 2-Column Customizer Studio Layout -->
+        <div class="cake-studio-grid">
+          <!-- Column 1: Step-by-Step Customizer Wizard -->
+          <div class="cake-wizard-card">
+            <!-- Step 1: Gourmet Flavor & Dietary Profile -->
+            <div class="cake-step-panel active" id="cakePanel1">
+              <h3 class="panel-step-heading">Step 1: Choose Your Signature Sponge & Flavor</h3>
+              <p class="panel-step-desc">Baked fresh to order using time-honored European and Nizami baking traditions.</p>
+              
+              <!-- Dietary Preference Selector -->
+              <div class="cake-diet-chips">
+                <label class="cake-diet-chip active" id="dietChipEggless">
+                  <input type="radio" name="cakeDiet" value="eggless" checked onchange="handleCakeDietChange(this.value)">
+                  <span>🌱 100% Eggless (Vegetarian)</span>
+                </label>
+                <label class="cake-diet-chip" id="dietChipEgg">
+                  <input type="radio" name="cakeDiet" value="egg" onchange="handleCakeDietChange(this.value)">
+                  <span>🥚 Classic European (With Egg)</span>
+                </label>
+                <label class="cake-diet-chip" id="dietChipSugarFree">
+                  <input type="radio" name="cakeDiet" value="sugarfree" onchange="handleCakeDietChange(this.value)">
+                  <span>🍃 Sugar-Free (Stevia Blend)</span>
+                </label>
+                <label class="cake-diet-chip" id="dietChipGlutenFree">
+                  <input type="radio" name="cakeDiet" value="glutenfree" onchange="handleCakeDietChange(this.value)">
+                  <span>🌾 Gluten-Free Sponge</span>
+                </label>
+              </div>
+
+              <!-- 6 Gourmet Flavors Selection Grid -->
+              <div class="cake-flavor-grid">
+                <div class="flavor-card active" id="flavorCard_belgian_truffle" onclick="selectCakeFlavor('belgian_truffle', 1200, 'Belgian Dark Chocolate Truffle', '#3D1C06', '#261104')">
+                  <div class="flavor-icon">🍫</div>
+                  <div class="flavor-info">
+                    <h4>Belgian Dark Chocolate Truffle</h4>
+                    <p>70% dark chocolate ganache with moist cocoa sponge</p>
+                    <span class="flavor-price">₹1,200 / kg</span>
+                  </div>
+                </div>
+
+                <div class="flavor-card" id="flavorCard_butterscotch" onclick="selectCakeFlavor('butterscotch', 1050, 'Hyderabadi Butterscotch Crunch', '#D49A3D', '#F4D06F')">
+                  <div class="flavor-icon">🍯</div>
+                  <div class="flavor-info">
+                    <h4>Hyderabadi Butterscotch Crunch</h4>
+                    <p>Caramel praline with golden roasted cashew brittle</p>
+                    <span class="flavor-price">₹1,050 / kg</span>
+                  </div>
+                </div>
+
+                <div class="flavor-card" id="flavorCard_red_velvet" onclick="selectCakeFlavor('red_velvet', 1300, 'Royal Red Velvet & Cream Cheese', '#8B1E2F', '#F9EAE1')">
+                  <div class="flavor-icon">❤️</div>
+                  <div class="flavor-info">
+                    <h4>Royal Red Velvet & Cream Cheese</h4>
+                    <p>Crimson cocoa sponge paired with tangy Philadelphia cream</p>
+                    <span class="flavor-price">₹1,300 / kg</span>
+                  </div>
+                </div>
+
+                <div class="flavor-card" id="flavorCard_fresh_fruit" onclick="selectCakeFlavor('fresh_fruit', 1250, 'Exotic Fresh Fruit & Custard', '#E3A857', '#FFF3D6')">
+                  <div class="flavor-icon">🍓</div>
+                  <div class="flavor-info">
+                    <h4>Exotic Fresh Fruit & Custard</h4>
+                    <p>Light vanilla bean sponge laden with kiwi, berries & grapes</p>
+                    <span class="flavor-price">₹1,250 / kg</span>
+                  </div>
+                </div>
+
+                <div class="flavor-card" id="flavorCard_nutella_hazelnut" onclick="selectCakeFlavor('nutella_hazelnut', 1400, 'Roasted Hazelnut Nutella Crunch', '#5C3826', '#EAD5C3')">
+                  <div class="flavor-icon">🌰</div>
+                  <div class="flavor-info">
+                    <h4>Roasted Hazelnut Nutella Crunch</h4>
+                    <p>Toasted Piedmont hazelnuts layered with silky Nutella</p>
+                    <span class="flavor-price">₹1,400 / kg</span>
+                  </div>
+                </div>
+
+                <div class="flavor-card" id="flavorCard_gulab_jamun" onclick="selectCakeFlavor('gulab_jamun', 1350, 'Nizam Gulab Jamun Fusion', '#C98B26', '#FFF0D4')">
+                  <div class="flavor-icon">✨</div>
+                  <div class="flavor-info">
+                    <h4>Nizam Gulab Jamun Fusion</h4>
+                    <p>Cardamom sponge infused with saffron syrup and mini jamuns</p>
+                    <span class="flavor-price">₹1,350 / kg</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="wizard-nav-btns">
+                <button type="button" class="btn-wizard-next" onclick="switchCakeStep(2)">Proceed to Size & Tiers →</button>
+              </div>
             </div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem; font-size:0.85rem;">
-              <span>Tier 2 (100 – 499 Boxes):</span>
-              <strong style="color:var(--kb-gold-light);">20% OFF</strong>
+
+            <!-- Step 2: Weight, Servings & Tier Architecture -->
+            <div class="cake-step-panel" id="cakePanel2" style="display:none;">
+              <h3 class="panel-step-heading">Step 2: Choose Size, Tiers & Geometry</h3>
+              <p class="panel-step-desc">Pick the right cake weight for your celebration party size.</p>
+
+              <!-- Size & Tiers Grid -->
+              <div class="cake-size-grid">
+                <div class="size-card active" id="sizeCard_1_0" onclick="selectCakeSize(1.0, 1, '8 – 12 Servings', 0)">
+                  <span class="size-weight">1.0 kg</span>
+                  <strong class="size-tier">1-Tier Classic</strong>
+                  <span class="size-serves">Serves 8 – 12 Guests</span>
+                  <span class="size-surcharge">Standard Tier</span>
+                </div>
+
+                <div class="size-card" id="sizeCard_0_5" onclick="selectCakeSize(0.5, 1, '4 – 6 Servings', -400)">
+                  <span class="size-weight">0.5 kg</span>
+                  <strong class="size-tier">1-Tier Petite</strong>
+                  <span class="size-serves">Serves 4 – 6 Guests</span>
+                  <span class="size-surcharge">-₹400 adjustment</span>
+                </div>
+
+                <div class="size-card" id="sizeCard_1_5" onclick="selectCakeSize(1.5, 1, '14 – 18 Servings', 500)">
+                  <span class="size-weight">1.5 kg</span>
+                  <strong class="size-tier">1-Tier Grand</strong>
+                  <span class="size-serves">Serves 14 – 18 Guests</span>
+                  <span class="size-surcharge">+₹500 adjustment</span>
+                </div>
+
+                <div class="size-card" id="sizeCard_2_0" onclick="selectCakeSize(2.0, 2, '20 – 25 Servings', 1100)">
+                  <span class="size-weight">2.0 kg</span>
+                  <strong class="size-tier">👑 2-Tier Grand Celebration</strong>
+                  <span class="size-serves">Serves 20 – 25 Guests</span>
+                  <span class="size-surcharge">+₹1,100 (Dual Stack Structure)</span>
+                </div>
+
+                <div class="size-card" id="sizeCard_3_5" onclick="selectCakeSize(3.5, 3, '35 – 40 Servings', 2600)">
+                  <span class="size-weight">3.5 kg</span>
+                  <strong class="size-tier">🏛️ 3-Tier Royal Wedding / Jubilee</strong>
+                  <span class="size-serves">Serves 35 – 40 Guests</span>
+                  <span class="size-surcharge">+₹2,600 (Triple Stack Structure)</span>
+                </div>
+              </div>
+
+              <!-- Shape Selection -->
+              <h4 style="margin:1.5rem 0 0.5rem; font-size:1rem; color:var(--kb-burgundy);">Cake Geometry / Shape</h4>
+              <div class="cake-shape-row">
+                <button type="button" class="cake-shape-btn active" id="shapeBtn_round" onclick="selectCakeShape('round', 0, this)">
+                  ⭕ Classic Round (Included)
+                </button>
+                <button type="button" class="cake-shape-btn" id="shapeBtn_heart" onclick="selectCakeShape('heart', 100, this)">
+                  💖 Romantic Heart (+₹100)
+                </button>
+                <button type="button" class="cake-shape-btn" id="shapeBtn_square" onclick="selectCakeShape('square', 100, this)">
+                  ⬛ Modern Square (+₹100)
+                </button>
+              </div>
+
+              <div class="wizard-nav-btns">
+                <button type="button" class="btn-wizard-back" onclick="switchCakeStep(1)">← Back to Flavor</button>
+                <button type="button" class="btn-wizard-next" onclick="switchCakeStep(3)">Proceed to Frosting & Decor →</button>
+              </div>
             </div>
-            <div style="display:flex; justify-content:space-between; font-size:0.85rem;">
-              <span>Tier 3 (500+ Boxes):</span>
-              <strong style="color:var(--kb-gold-light);">30% OFF + Free Branding</strong>
+
+            <!-- Step 3: Frosting Style & Gourmet Edible Decor -->
+            <div class="cake-step-panel" id="cakePanel3" style="display:none;">
+              <h3 class="panel-step-heading">Step 3: Frosting Artistry & Decorative Accents</h3>
+              <p class="panel-step-desc">Choose your outer finish and edible handcrafted embellishments.</p>
+
+              <!-- Frosting Selection -->
+              <h4 style="font-size:0.95rem; color:var(--kb-burgundy); margin-bottom:0.5rem;">Outer Frosting Technique:</h4>
+              <div class="frosting-options-grid">
+                <label class="frosting-card active">
+                  <input type="radio" name="cakeFrosting" value="whipped" checked onchange="selectCakeFrosting('whipped', 0)">
+                  <div>
+                    <strong>Whipped Dairy Cream</strong>
+                    <p>Light, airy, and delicately sweetened</p>
+                    <span class="cost-tag">Included</span>
+                  </div>
+                </label>
+                <label class="frosting-card">
+                  <input type="radio" name="cakeFrosting" value="buttercream" onchange="selectCakeFrosting('buttercream', 80)">
+                  <div>
+                    <strong>Italian Meringue Buttercream</strong>
+                    <p>Silky, structured, and luxurious</p>
+                    <span class="cost-tag">+₹80</span>
+                  </div>
+                </label>
+                <label class="frosting-card">
+                  <input type="radio" name="cakeFrosting" value="ganache_drip" onchange="selectCakeFrosting('ganache_drip', 150)">
+                  <div>
+                    <strong>Belgian Ganache Cascading Drip</strong>
+                    <p>Glossy molten chocolate over smooth frosting</p>
+                    <span class="cost-tag">+₹150</span>
+                  </div>
+                </label>
+                <label class="frosting-card">
+                  <input type="radio" name="cakeFrosting" value="mirror_glaze" onchange="selectCakeFrosting('mirror_glaze', 180)">
+                  <div>
+                    <strong>Saffron & Gold Mirror Glaze</strong>
+                    <p>High-gloss reflective confectionery glaze</p>
+                    <span class="cost-tag">+₹180</span>
+                  </div>
+                </label>
+              </div>
+
+              <!-- Gourmet Toppings Selection -->
+              <h4 style="margin:1.5rem 0 0.5rem; font-size:0.95rem; color:var(--kb-burgundy);">Gourmet Toppings & Embellishments:</h4>
+              <div class="toppings-check-grid">
+                <label class="topping-check-pill">
+                  <input type="checkbox" value="macarons" data-price="180" data-label="French Macarons & 24K Gold Leaf" onchange="toggleCakeTopping(this)">
+                  <span>French Macarons & 24K Gold Leaf (+₹180)</span>
+                </label>
+                <label class="topping-check-pill">
+                  <input type="checkbox" value="berries" data-price="200" data-label="Imported Fresh Strawberries & Blueberries" onchange="toggleCakeTopping(this)">
+                  <span>Fresh Strawberries & Blueberries (+₹200)</span>
+                </label>
+                <label class="topping-check-pill">
+                  <input type="checkbox" value="fondant_roses" data-price="250" data-label="Handcrafted Fondant Sugar Roses" onchange="toggleCakeTopping(this)">
+                  <span>Handcrafted Sugar Fondant Roses (+₹250)</span>
+                </label>
+                <label class="topping-check-pill">
+                  <input type="checkbox" value="chocolate_curls" data-price="120" data-label="Belgian Dark Chocolate Curls & Pearls" onchange="toggleCakeTopping(this)">
+                  <span>Belgian Chocolate Curls & Pearls (+₹120)</span>
+                </label>
+              </div>
+
+              <div class="wizard-nav-btns">
+                <button type="button" class="btn-wizard-back" onclick="switchCakeStep(2)">← Back to Size</button>
+                <button type="button" class="btn-wizard-next" onclick="switchCakeStep(4)">Proceed to Inscription & Slot →</button>
+              </div>
+            </div>
+
+            <!-- Step 4: Message Inscription & Express Delivery Slot -->
+            <div class="cake-step-panel" id="cakePanel4" style="display:none;">
+              <h3 class="panel-step-heading">Step 4: Personal Message & Bakery Delivery Slot</h3>
+              <p class="panel-step-desc">Customize your celebration plaque and reserve a fresh bake kitchen slot.</p>
+
+              <!-- Inscription on Cake -->
+              <div class="b2b-form-group">
+                <label for="cakeMessageInput">Message to Inscribe on Cake Plaque (Max 35 chars):</label>
+                <input type="text" id="cakeMessageInput" class="b2b-input" maxlength="35" value="Happy Birthday Priya! 🎉" placeholder="e.g. Happy 25th Anniversary Mom & Dad!" oninput="updateCakeMessagePreview(this.value)">
+                <small style="color:var(--kb-text-muted); display:block; margin-top:0.25rem;">Watch your message appear live on the cake preview plaque!</small>
+              </div>
+
+              <!-- Delivery Date & Slot Selection (Issue #11) -->
+              <div class="customizer-row">
+                <div class="customizer-field">
+                  <label for="cakeDeliveryDate">Celebration Delivery Date *</label>
+                  <input type="date" id="cakeDeliveryDate" class="b2b-input" onchange="updateCakeCustomization()">
+                </div>
+                <div class="customizer-field">
+                  <label>Bakery Kitchen Dispatch Timeslot *</label>
+                  <div class="timeslot-radio-grid">
+                    <label class="timeslot-chip active">
+                      <input type="radio" name="cakeTimeslot" value="morning" checked onchange="selectCakeTimeslot('morning', 0)">
+                      <span>🌅 Morning Fresh<br><small>9:00 AM – 12:00 PM</small></span>
+                    </label>
+                    <label class="timeslot-chip">
+                      <input type="radio" name="cakeTimeslot" value="afternoon" onchange="selectCakeTimeslot('afternoon', 0)">
+                      <span>☀️ Afternoon Treat<br><small>1:00 PM – 4:00 PM</small></span>
+                    </label>
+                    <label class="timeslot-chip">
+                      <input type="radio" name="cakeTimeslot" value="evening" onchange="selectCakeTimeslot('evening', 0)">
+                      <span>🌆 Evening Party<br><small>5:00 PM – 8:00 PM</small></span>
+                    </label>
+                    <label class="timeslot-chip">
+                      <input type="radio" name="cakeTimeslot" value="midnight" onchange="selectCakeTimeslot('midnight', 150)">
+                      <span>🌙 Midnight Surprise (+₹150)<br><small>11:30 PM – 12:15 AM</small></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Special Instructions -->
+              <div class="b2b-form-group" style="margin-top:1rem;">
+                <label for="cakeSpecialNotes">Kitchen Notes & Special Requests (Optional):</label>
+                <input type="text" id="cakeSpecialNotes" class="b2b-input" placeholder="e.g. Less sugar in cream, include 5 golden birthday candles & knife">
+              </div>
+
+              <div class="wizard-nav-btns">
+                <button type="button" class="btn-wizard-back" onclick="switchCakeStep(3)">← Back to Decor</button>
+                <button type="button" class="btn-book-cake-final" onclick="bookCustomCake()">
+                  🎂 Confirm & Add Bespoke Cake to Cart
+                </button>
+              </div>
             </div>
           </div>
-          <div class="b2b-stats-row">
-            <div class="b2b-stat">
-              <strong>1,500+</strong>
-              <span>Corporate Clients</span>
+
+          <!-- Column 2: Live Dynamic Visual Cake Canvas & Price Summary (Issue #10) -->
+          <div class="cake-preview-card">
+            <div class="cake-preview-badge">Live Interactive Cake Visualizer</div>
+
+            <!-- Virtual 2D/3D Cake Canvas -->
+            <div class="cake-stage-container" id="cakeStageContainer">
+              <!-- Animated Cake Layers Dynamically Controlled by JS -->
+              <div class="cake-model-assembly" id="cakeModelAssembly">
+                <!-- Tier 3 (Top tier if 3-tier) -->
+                <div class="cake-tier tier-top" id="cakeTier3" style="display:none;">
+                  <div class="tier-frosting-layer"></div>
+                  <div class="tier-toppings-spot" id="cakeTopToppings"></div>
+                </div>
+                <!-- Tier 2 (Middle tier if 2-tier or 3-tier) -->
+                <div class="cake-tier tier-mid" id="cakeTier2" style="display:none;">
+                  <div class="tier-frosting-layer"></div>
+                </div>
+                <!-- Tier 1 (Base tier - Always visible) -->
+                <div class="cake-tier tier-base" id="cakeTier1">
+                  <div class="tier-frosting-layer"></div>
+                  <!-- Custom Inscribed Chocolate Plaque -->
+                  <div class="cake-edible-plaque" id="cakeEdiblePlaque">
+                    <span id="plaqueTextDisplay">Happy Birthday Priya! 🎉</span>
+                  </div>
+                </div>
+                <!-- Silver Presentation Stand -->
+                <div class="cake-silver-platter"></div>
+              </div>
             </div>
-            <div class="b2b-stat">
-              <strong>100%</strong>
-              <span>Timely Delivery</span>
+
+            <!-- Customizer Dynamic Specs Summary & Price Breakdown -->
+            <div class="cake-live-specs">
+              <div class="cake-specs-header">
+                <h4 id="cakeSummaryFlavor">Belgian Dark Chocolate Truffle</h4>
+                <span class="diet-spec-pill" id="cakeSummaryDiet">🌱 100% Eggless</span>
+              </div>
+              <div class="cake-specs-row">
+                <span>Architecture & Servings:</span>
+                <strong id="cakeSummarySize">1.0 kg (Serves 8 – 12) • 1-Tier</strong>
+              </div>
+              <div class="cake-specs-row">
+                <span>Frosting Style:</span>
+                <strong id="cakeSummaryFrosting">Whipped Dairy Cream</strong>
+              </div>
+              <div class="cake-specs-row" id="cakeSummaryToppingsRow" style="display:none;">
+                <span>Selected Decor:</span>
+                <strong id="cakeSummaryToppings">None</strong>
+              </div>
+              <div class="cake-specs-row">
+                <span>Delivery Timeslot:</span>
+                <strong id="cakeSummaryTimeslot">Morning (9 AM – 12 PM)</strong>
+              </div>
+
+              <!-- Price Breakdown -->
+              <div class="cake-price-box">
+                <div class="cake-price-row">
+                  <span>Base Weight Rate:</span>
+                  <span id="cakeBasePrice">₹1,200</span>
+                </div>
+                <div class="cake-price-row">
+                  <span>Structure & Shape:</span>
+                  <span id="cakeShapeSurcharge">+₹0</span>
+                </div>
+                <div class="cake-price-row">
+                  <span>Frosting & Toppings:</span>
+                  <span id="cakeToppingsCost">+₹0</span>
+                </div>
+                <div class="cake-price-row">
+                  <span>Timeslot Dispatch:</span>
+                  <span id="cakeTimeslotCost">FREE</span>
+                </div>
+                <div class="b2b-summary-divider"></div>
+                <div class="cake-price-row total">
+                  <span>Total Celebration Cake:</span>
+                  <strong id="cakeFinalPrice">₹1,200</strong>
+                </div>
+              </div>
+
+              <!-- Action Trigger -->
+              <button type="button" class="btn-book-cake" onclick="bookCustomCake()">
+                <span>🎂 Book & Add Bespoke Cake to Cart</span>
+              </button>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Custom Cakes & Celebration Studio Placeholder (Issue #10) -->
-    <section class="container" id="customCakeSection" style="padding: 3rem 1.5rem; text-align:center; background:#fff; border-radius:var(--radius-lg); margin-bottom:4rem; border:1px solid var(--kb-border);">
-      <span class="section-sub">Celebration Studio</span>
-      <h2 class="section-title">Custom Cake & Celebration Ordering</h2>
-      <p class="section-desc" style="max-width:600px; margin:0 auto 1.5rem;">
-        Say goodbye to generic order forms. Our guided step-by-step custom cake builder helps you pick flavours, upload photo references, and select delivery slots.
-      </p>
-      <div style="display:inline-flex; gap:1rem; align-items:center; background:var(--kb-gold-subtle); padding:0.75rem 1.5rem; border-radius:var(--radius-pill); border:1px solid var(--kb-border-gold);">
-        <span>🎂 Scheduled for <strong>Day 7 Milestone</strong></span>
-        <button class="action-btn-primary" style="padding:0.4rem 1rem; font-size:0.8rem;" onclick="showToast('Custom Cake Studio wizard launches on Day 7!')">Preview Wizard</button>
-      </div>
-    </section>
+    <!-- ==========================================================================
+         Day 8 Deliverable: Interactive Map-Based Store Locator
+         (Resolves Issues #5 & #6)
+         ========================================================================== -->
+    <section class="store-locator-section" id="storesSection">
+      <div class="container">
+        <!-- Section Header -->
+        <div class="locator-header">
+          <div class="hero-badge-tag" style="background:rgba(2,106,167,0.15); border-color:#026AA7; color:#026AA7; margin-bottom:0.75rem;">
+            📍 Day 8 Deliverable • National Store Locator & Outlets
+          </div>
+          <h2 class="locator-title">Karachi Bakery Outlets Across India</h2>
+          <p class="locator-desc">
+            Explore 50+ iconic flagship bakeries, airport 24/7 express kiosks, and artisanal dining cafes across Hyderabad, Bengaluru, Mumbai, and Delhi NCR. Check real-time operating hours, amenities, and get 1-click Google Maps directions.
+          </p>
+        </div>
 
-    <!-- Store Locator Section Placeholder (Issue #5 & #6) -->
-    <section class="container" id="storesSection" style="padding: 3rem 1.5rem; text-align:center; background:var(--kb-cream-card); border-radius:var(--radius-lg); margin-bottom:4rem; border:1px solid var(--kb-border);">
-      <span class="section-sub">Outlets Across India</span>
-      <h2 class="section-title">Interactive Store Locator</h2>
-      <p class="section-desc" style="max-width:600px; margin:0 auto 1.5rem;">
-        No more scrolling through endless addresses. Search by city, find live open hours, get direct Google Map directions, and see outlet specialties.
-      </p>
-      <div style="display:inline-flex; gap:1rem; align-items:center; background:#E1F0FA; padding:0.75rem 1.5rem; border-radius:var(--radius-pill); border:1px solid #BEE3F8;">
-        <span>📍 Scheduled for <strong>Day 8 Milestone</strong> (Map & City Search)</span>
-        <button class="action-btn-primary" style="background:#026AA7; padding:0.4rem 1rem; font-size:0.8rem;" onclick="showToast('Interactive Store Locator launches on Day 8!')">Explore Locations</button>
+        <!-- Locator Controls & Search Bar (Issue #5) -->
+        <div class="locator-controls-bar">
+          <div class="locator-search-wrap">
+            <span class="locator-search-icon">🔍</span>
+            <input type="text" id="storeSearchInput" class="locator-search-input" placeholder="Search by city, area, landmark (e.g. Banjara Hills, Airport, Indiranagar)..." oninput="filterStores()">
+            <button type="button" class="btn-locator-clear" id="btnStoreSearchClear" onclick="clearStoreSearch()" style="display:none;">✕</button>
+          </div>
+          <button type="button" class="btn-locate-nearest" onclick="findNearestStore()">
+            <span>📍 Find Nearest Store to Me</span>
+          </button>
+        </div>
+
+        <!-- City & Outlet Type Filter Tabs -->
+        <div class="locator-filters-row">
+          <!-- City Filter Pills -->
+          <div class="store-city-pills" role="tablist" aria-label="City Filter">
+            <button type="button" class="city-pill active" data-city="all" onclick="filterStoresByCity('all', this)">All Cities (12)</button>
+            <button type="button" class="city-pill" data-city="hyderabad" onclick="filterStoresByCity('hyderabad', this)">Hyderabad (5)</button>
+            <button type="button" class="city-pill" data-city="bengaluru" onclick="filterStoresByCity('bengaluru', this)">Bengaluru (3)</button>
+            <button type="button" class="city-pill" data-city="mumbai" onclick="filterStoresByCity('mumbai', this)">Mumbai (2)</button>
+            <button type="button" class="city-pill" data-city="delhi" onclick="filterStoresByCity('delhi', this)">Delhi NCR (2)</button>
+          </div>
+
+          <!-- Outlet Type Pills -->
+          <div class="store-type-pills">
+            <button type="button" class="type-pill active" data-type="all" onclick="filterStoresByType('all', this)">All Outlets</button>
+            <button type="button" class="type-pill" data-type="flagship" onclick="filterStoresByType('flagship', this)">🏛️ Heritage Flagship</button>
+            <button type="button" class="type-pill" data-type="airport" onclick="filterStoresByType('airport', this)">✈️ Airport 24/7</button>
+            <button type="button" class="type-pill" data-type="cafe" onclick="filterStoresByType('cafe', this)">☕ Cafe & Dine-In</button>
+          </div>
+        </div>
+
+        <!-- Results Counter & Status Summary -->
+        <div class="locator-results-bar">
+          <span id="storeCountDisplay">Showing <strong>12</strong> verified outlets across India</span>
+          <span class="live-clock-pill" id="liveClockPill">🕒 Checking outlet hours...</span>
+        </div>
+
+        <!-- 2-Column Store Explorer Layout -->
+        <div class="locator-explorer-grid">
+          <!-- Column 1: Scrollable Store Cards Directory (Issue #5 & #6) -->
+          <div class="store-cards-list" id="storeCardsList">
+            <!-- Dynamically populated via app.js -->
+          </div>
+
+          <!-- Column 2: Interactive Visual National Map Hub & Active Spotlight -->
+          <div class="store-map-hub">
+            <!-- Stylized Interactive Map Canvas -->
+            <div class="india-map-canvas" id="indiaMapCanvas">
+              <div class="map-bg-texture"></div>
+              
+              <!-- Metro City Map Markers with Pulse Animation -->
+              <div class="map-marker-pin marker-delhi" onclick="selectMapPin('delhi')" title="Delhi NCR Outlets">
+                <div class="pin-ring"></div>
+                <div class="pin-dot"></div>
+                <span class="pin-label">Delhi NCR (2)</span>
+              </div>
+
+              <div class="map-marker-pin marker-mumbai" onclick="selectMapPin('mumbai')" title="Mumbai Outlets">
+                <div class="pin-ring"></div>
+                <div class="pin-dot"></div>
+                <span class="pin-label">Mumbai (2)</span>
+              </div>
+
+              <div class="map-marker-pin marker-hyderabad active" onclick="selectMapPin('hyderabad')" title="Hyderabad Heritage Outlets">
+                <div class="pin-ring"></div>
+                <div class="pin-dot"></div>
+                <span class="pin-label">👑 Hyderabad (5)</span>
+              </div>
+
+              <div class="map-marker-pin marker-bengaluru" onclick="selectMapPin('bengaluru')" title="Bengaluru Outlets">
+                <div class="pin-ring"></div>
+                <div class="pin-dot"></div>
+                <span class="pin-label">Bengaluru (3)</span>
+              </div>
+            </div>
+
+            <!-- Active Store Spotlight Card -->
+            <div class="store-spotlight-card" id="storeSpotlightCard">
+              <div class="spotlight-top">
+                <span class="spotlight-badge" id="spotlightBadge">👑 Heritage Flagship</span>
+                <span class="spotlight-status" id="spotlightStatus">🟢 Open Now</span>
+              </div>
+              <h3 class="spotlight-name" id="spotlightName">Mozamjahi Market Flagship (Est. 1953)</h3>
+              <p class="spotlight-city" id="spotlightCity">Hyderabad, Telangana</p>
+              <p class="spotlight-address" id="spotlightAddress">MJ Market, Abids, Hyderabad - 500001 (Opposite Heritage Clock Tower)</p>
+              
+              <div class="spotlight-meta-grid">
+                <div class="spotlight-meta">
+                  <span class="meta-label">Hours:</span>
+                  <strong id="spotlightHours">9:00 AM – 10:30 PM</strong>
+                </div>
+                <div class="spotlight-meta">
+                  <span class="meta-label">Direct Phone:</span>
+                  <strong id="spotlightPhone">+91 40 2461 4872</strong>
+                </div>
+              </div>
+
+              <div class="spotlight-amenities" id="spotlightAmenities">
+                <span class="amenity-chip">☕ Cafe & Tea Bar</span>
+                <span class="amenity-chip">🎂 Custom Cake Counter</span>
+                <span class="amenity-chip">🚗 Valet Parking</span>
+                <span class="amenity-chip">📶 Free Wi-Fi</span>
+              </div>
+
+              <div class="spotlight-actions">
+                <a href="https://maps.google.com/?q=Karachi+Bakery+Mozamjahi+Market+Hyderabad" target="_blank" rel="noopener noreferrer" class="btn-spotlight-directions" id="spotlightDirectionsLink">
+                  <span>🗺️ Open in Google Maps</span>
+                </a>
+                <a href="tel:+914024614872" class="btn-spotlight-call" id="spotlightCallLink">
+                  <span>📞 Call Outlet</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Network Reach Quick Summary -->
+            <div class="locator-stats-strip">
+              <div class="stat-pill">
+                <strong>50+</strong> Outlets Nationwide
+              </div>
+              <div class="stat-pill">
+                <strong>6</strong> Airport Terminals
+              </div>
+              <div class="stat-pill">
+                <strong>Est. 1953</strong> Hyderabad Heritage
+              </div>
+            </div>
+
+          </div>
+        </div>
       </div>
     </section>
-  </main>
+</main>
 
   <!-- ==========================================================================
        Site Footer
@@ -1955,10 +2671,10 @@
 
     <div class="container footer-bottom">
       <div>
-        © 2026 Karachi Bakery Pvt. Ltd. All Rights Reserved. • Redesign Sprint (Day 5 of 10)
+        © 2026 Karachi Bakery Pvt. Ltd. All Rights Reserved. • Redesign Sprint (Day 8 of 10)
       </div>
       <div>
-        Designed for Excellence • Issues #1, #2, #4, #7, #13, #14 & #15 Addressed (Taxonomy, Multi-Faceted Search, PDP Specs, Smart Recs & Comparison Matrix)</div>
+        Designed for Excellence • Issues #1, #2, #3, #4, #5, #6, #7, #8, #9, #10, #11, #13, #14 & #15 Addressed (Enterprise B2B, Custom Cake Studio, Store Locator, Search, PDP Specs & Comparison Matrix)</div>
     </div>
   </footer>
 
@@ -2024,12 +2740,57 @@
   <!-- ==========================================================================
        Notification Toast
        ========================================================================== -->
-  <div class="toast-notice" id="toastNotice" role="alert" aria-live="polite">
+    <!-- ==========================================================================
+       Day 6 Deliverable: Corporate RFQ & GST Pro-Forma Invoice Modal (Issue #8)
+       ========================================================================== -->
+  <div class="b2b-quote-modal-backdrop" id="b2bQuoteModalBackdrop" style="display:none;" onclick="handleB2BQuoteBackdrop(event)">
+    <div class="b2b-quote-dialog" role="dialog" aria-modal="true" aria-labelledby="b2bQuoteModalTitle">
+      <div class="b2b-quote-header">
+        <div class="b2b-quote-title-wrap">
+          <span class="quote-modal-icon">📄</span>
+          <div>
+            <h3 id="b2bQuoteModalTitle">Corporate Tax Invoice & Formal Quotation</h3>
+            <p>Official Karachi Bakery GST Pro-Forma Quote (Valid for 30 Days)</p>
+          </div>
+        </div>
+        <div class="b2b-quote-header-actions">
+          <button type="button" class="btn-print-quote" onclick="printB2BQuotation()">🖨️ Print / Save PDF</button>
+          <button type="button" class="b2b-modal-close" onclick="closeB2BQuoteModal()" aria-label="Close Quotation Modal">✕</button>
+        </div>
+      </div>
+      <div class="b2b-quote-body" id="b2bQuoteModalContent">
+        <!-- Dynamically rendered via app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       Day 7 Deliverable: Bespoke Cake Order Confirmation Modal (Issue #10)
+       ========================================================================== -->
+  <div class="cake-modal-backdrop" id="cakeModalBackdrop" style="display:none;" onclick="handleCakeModalBackdrop(event)">
+    <div class="cake-modal-dialog" role="dialog" aria-modal="true">
+      <div class="cake-modal-header">
+        <div style="display:flex; align-items:center; gap:0.75rem;">
+          <span style="font-size:2rem;">🎂</span>
+          <div>
+            <h3>Bespoke Celebration Cake Booked!</h3>
+            <p>Your custom celebration specifications have been saved and added to cart.</p>
+          </div>
+        </div>
+        <button type="button" class="pdp-modal-close" onclick="closeCakeModal()">✕</button>
+      </div>
+      <div class="cake-modal-body" id="cakeModalBody">
+        <!-- Dynamically rendered via app.js -->
+      </div>
+    </div>
+  </div>
+
+<div class="toast-notice" id="toastNotice" role="alert" aria-live="polite">
     <span id="toastIcon">✨</span>
     <span id="toastMessage">Action completed successfully</span>
   </div>
 
   <!-- Main JavaScript Logic -->
-  <script src="js/app.js?v=5.2.0"></script>
+  <script src="js/app.js?v=8.0.0"></script>
 </body>
 </html>
