@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
   
   <!-- Main Design System CSS -->
-  <link rel="stylesheet" href="styles/main.css?v=8.0.0">
+  <link rel="stylesheet" href="styles/main.css?v=8.1.0">
 </head>
 <body>
 
@@ -88,7 +88,7 @@
         <!-- Main Navigation with Visual Mega Menu (Day 2: Resolves Issue #1 & #15) -->
         <ul class="nav-links">
           <li class="has-mega-menu">
-            <button class="nav-link nav-mega-trigger" id="btnMegaMenu" aria-expanded="false" aria-controls="megaMenuDropdown">
+            <button class="nav-link nav-mega-trigger" id="btnMegaMenu" aria-expanded="false" aria-controls="megaMenuDropdown" onclick="toggleMegaMenu(event)">
               Categories <span class="mega-arrow">▾</span>
             </button>
           </li>
@@ -105,7 +105,7 @@
             <span class="badge-count" id="compareCount">0</span>
           </button>
           
-          <button class="action-btn action-btn-primary" id="btnCartDrawer" title="View Cart">
+          <button class="action-btn action-btn-primary" id="btnCartDrawer" title="View Cart" onclick="openCartDrawer()">
             🛒 <span class="action-text">Cart</span>
             <span class="badge-count" id="cartCount">0</span>
           </button>
@@ -2785,12 +2785,49 @@
     </div>
   </div>
 
+  <!-- ==========================================================================
+       Interactive Slide-Out Shopping Cart Drawer & Checkout Hub (Issue #4 & #12)
+       ========================================================================== -->
+  <div class="cart-drawer-backdrop" id="cartDrawerBackdrop" style="display:none;" onclick="handleCartBackdropClick(event)">
+    <aside class="cart-drawer" id="cartDrawer" role="dialog" aria-modal="true" aria-labelledby="cartDrawerHeading">
+      <div class="cart-drawer-header">
+        <div class="cart-header-title-wrap">
+          <span class="cart-header-icon">🛒</span>
+          <div>
+            <h3 id="cartDrawerHeading">Your Shopping Cart</h3>
+            <span class="cart-header-count" id="cartHeaderCount">0 Items</span>
+          </div>
+        </div>
+        <button type="button" class="btn-cart-close" onclick="closeCartDrawer()" aria-label="Close Shopping Cart">✕</button>
+      </div>
+
+      <!-- Pincode Express Delivery Ribbon -->
+      <div class="cart-express-ribbon">
+        <div style="display:flex; align-items:center; gap:0.4rem;">
+          <span>🚚</span>
+          <span id="cartDeliveryNotice">Shipping across <strong>19,000+ Indian Pincodes</strong></span>
+        </div>
+        <span class="cart-free-tag">FREE Delivery</span>
+      </div>
+
+      <!-- Scrollable Cart Items Container -->
+      <div class="cart-items-body" id="cartItemsList">
+        <!-- Dynamically rendered via app.js -->
+      </div>
+
+      <!-- Cart Bottom Sticky Summary & Checkout Deck -->
+      <div class="cart-drawer-bottom" id="cartDrawerBottom">
+        <!-- Dynamically rendered summary & checkout buttons -->
+      </div>
+    </aside>
+  </div>
+
 <div class="toast-notice" id="toastNotice" role="alert" aria-live="polite">
     <span id="toastIcon">✨</span>
     <span id="toastMessage">Action completed successfully</span>
   </div>
 
   <!-- Main JavaScript Logic -->
-  <script src="js/app.js?v=8.0.0"></script>
+  <script src="js/app.js?v=8.1.0"></script>
 </body>
 </html>

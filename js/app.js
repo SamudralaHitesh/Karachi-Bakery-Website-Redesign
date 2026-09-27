@@ -798,38 +798,69 @@ function verifyPincode(pincode) {
 
 let megaMenuTimer;
 function initMegaMenu() {
-  const trigger = document.getElementById('navItemCategories');
+  const trigger = document.getElementById('btnMegaMenu') || document.getElementById('navItemCategories') || document.querySelector('.has-mega-menu');
   const dropdown = document.getElementById('megaMenuDropdown');
 
-  if (!trigger || !dropdown) return;
+  if (!dropdown) return;
 
-  trigger.addEventListener('mouseenter', () => {
-    clearTimeout(megaMenuTimer);
-    dropdown.classList.add('visible');
-    trigger.setAttribute('aria-expanded', 'true');
-  });
+  if (trigger) {
+    const parentLi = trigger.closest('.has-mega-menu') || trigger;
 
-  trigger.addEventListener('mouseleave', () => {
-    megaMenuTimer = setTimeout(() => {
-      dropdown.classList.remove('visible');
-      trigger.setAttribute('aria-expanded', 'false');
-    }, 280);
-  });
+    // Hover open on desktop
+    parentLi.addEventListener('mouseenter', () => {
+      clearTimeout(megaMenuTimer);
+      dropdown.classList.add('visible');
+      dropdown.classList.add('open');
+      dropdown.setAttribute('aria-hidden', 'false');
+      trigger.setAttribute('aria-expanded', 'true');
+    });
+
+    parentLi.addEventListener('mouseleave', () => {
+      megaMenuTimer = setTimeout(() => {
+        dropdown.classList.remove('visible');
+        dropdown.classList.remove('open');
+        dropdown.setAttribute('aria-hidden', 'true');
+        trigger.setAttribute('aria-expanded', 'false');
+      }, 280);
+    });
+  }
 
   dropdown.addEventListener('mouseenter', () => clearTimeout(megaMenuTimer));
   dropdown.addEventListener('mouseleave', () => {
     megaMenuTimer = setTimeout(() => {
       dropdown.classList.remove('visible');
-      trigger.setAttribute('aria-expanded', 'false');
+      dropdown.classList.remove('open');
+      dropdown.setAttribute('aria-hidden', 'true');
     }, 280);
   });
 
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && dropdown.classList.contains('visible')) {
+    if (e.key === 'Escape') {
       dropdown.classList.remove('visible');
-      trigger.setAttribute('aria-expanded', 'false');
+      dropdown.classList.remove('open');
+      dropdown.setAttribute('aria-hidden', 'true');
     }
   });
+}
+
+function toggleMegaMenu(event) {
+  if (event) event.preventDefault();
+  const dropdown = document.getElementById('megaMenuDropdown');
+  const trigger = document.getElementById('btnMegaMenu');
+  if (!dropdown) return;
+
+  const isOpen = dropdown.classList.contains('visible') || dropdown.classList.contains('open');
+  if (isOpen) {
+    dropdown.classList.remove('visible');
+    dropdown.classList.remove('open');
+    dropdown.setAttribute('aria-hidden', 'true');
+    if (trigger) trigger.setAttribute('aria-expanded', 'false');
+  } else {
+    dropdown.classList.add('visible');
+    dropdown.classList.add('open');
+    dropdown.setAttribute('aria-hidden', 'false');
+    if (trigger) trigger.setAttribute('aria-expanded', 'true');
+  }
 }
 
 function selectCategoryFromMega(category, subquery = '') {
@@ -3241,4 +3272,208 @@ function shareStoreWhatsApp(storeId) {
   if (!store) return;
   const msg = encodeURIComponent(`Karachi Bakery Outlet: ${store.name}\nAddress: ${store.address}\nHours: ${store.hours}\nPhone: ${store.phone}\nDirections: ${store.mapsUrl}`);
   window.open(`https://api.whatsapp.com/send?text=${msg}`, '_blank');
+}
+
+
+/**
+ * ============================================================================
+ * Shopping Cart Drawer & Checkout Hub Logic (Issue #4 & #12)
+ * ============================================================================
+ */
+
+function openCartDrawer() {
+  const backdrop = document.getElementById('cartDrawerBackdrop');
+  if (!backdrop) return;
+
+  renderCartDrawerContent();
+  backdrop.style.display = 'flex';
+  // Small delay for CSS transition
+  requestAnimationFrame(() => {
+    backdrop.classList.add('active');
+  });
+}
+
+function closeCartDrawer() {
+  const backdrop = document.getElementById('cartDrawerBackdrop');
+  if (!backdrop) return;
+
+  backdrop.classList.remove('active');
+  setTimeout(() => {
+    backdrop.style.display = 'none';
+  }, 320);
+}
+
+function handleCartBackdropClick(event) {
+  if (event.target.id === 'cartDrawerBackdrop') {
+    closeCartDrawer();
+  }
+}
+
+function renderCartDrawerContent() {
+  const container = document.getElementById('cartItemsList');
+  const footer = document.getElementById('cartDrawerBottom');
+  const headerCount = document.getElementById('cartHeaderCount');
+  const cartBadge = document.getElementById('cartCount');
+
+  if (!container || !footer) return;
+
+  const items = AppState.cartItems || [];
+  const totalCount = items.length;
+
+  if (headerCount) headerCount.textContent = `${totalCount} ${totalCount === 1 ? 'Item' : 'Items'}`;
+  if (cartBadge) cartBadge.textContent = totalCount;
+
+  if (totalCount === 0) {
+    container.innerHTML = `
+      <div class="cart-empty-state">
+        <div class="cart-empty-icon">🛒</div>
+        <h4 class="cart-empty-title">Your Cart is Empty</h4>
+        <p class="cart-empty-desc">Explore Hyderabad's iconic Fruit Biscuits, Royal Osmania, and Handcrafted Mithai.</p>
+        <button type="button" class="btn-start-shopping" onclick="closeCartDrawer(); document.getElementById('shopPreview').scrollIntoView({ behavior: 'smooth' });">
+          Explore Delicacies 🍪
+        </button>
+      </div>
+    `;
+    footer.innerHTML = `
+      <div style="text-align:center; font-size:0.8rem; color:var(--kb-text-muted);">
+        ✨ Free shipping across Hyderabad on orders above ₹499
+      </div>
+    `;
+    return;
+  }
+
+  // Aggregate items by name to allow quantity adjustments
+  const aggregated = new Map();
+  items.forEach((item, originalIndex) => {
+    const key = item.name;
+    if (aggregated.has(key)) {
+      const existing = aggregated.get(key);
+      existing.qty += 1;
+      existing.indices.push(originalIndex);
+    } else {
+      aggregated.set(key, {
+        name: item.name,
+        price: item.price,
+        qty: 1,
+        indices: [originalIndex]
+      });
+    }
+  });
+
+  let subtotal = 0;
+  let itemsHtml = '';
+
+  aggregated.forEach((item, name) => {
+    const itemTotal = item.price * item.qty;
+    subtotal += itemTotal;
+
+    // Detect item icon
+    let icon = '🍪';
+    if (name.toLowerCase().includes('cake') || name.toLowerCase().includes('pastry')) icon = '🎂';
+    else if (name.toLowerCase().includes('katli') || name.toLowerCase().includes('ladoo') || name.toLowerCase().includes('barfi')) icon = '🍬';
+    else if (name.toLowerCase().includes('hamper') || name.toLowerCase().includes('crate') || name.toLowerCase().includes('tin')) icon = '🎁';
+    else if (name.toLowerCase().includes('tasting') || name.toLowerCase().includes('sample')) icon = '📦';
+
+    itemsHtml += `
+      <div class="cart-item-card">
+        <div class="cart-item-icon">${icon}</div>
+        <div class="cart-item-details">
+          <h4 class="cart-item-title" title="${item.name}">${item.name}</h4>
+          <span class="cart-item-price">₹${item.price} each</span>
+        </div>
+        <div class="cart-qty-ctrls">
+          <button type="button" class="cart-qty-btn" onclick="decrementCartItem('${encodeURIComponent(item.name)}')">−</button>
+          <span class="cart-qty-num">${item.qty}</span>
+          <button type="button" class="cart-qty-btn" onclick="incrementCartItem('${encodeURIComponent(item.name)}')">+</button>
+        </div>
+        <div style="text-align:right; min-width:60px;">
+          <strong style="display:block; font-size:0.88rem; color:var(--kb-burgundy);">₹${itemTotal.toLocaleString('en-IN')}</strong>
+          <button type="button" class="cart-btn-del" onclick="deleteCartItemGroup('${encodeURIComponent(item.name)}')" title="Remove Item">🗑️</button>
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = itemsHtml;
+
+  const gst = Math.round(subtotal * 0.05); // 5% GST
+  const grandTotal = subtotal + gst;
+
+  footer.innerHTML = `
+    <div class="cart-bill-row">
+      <span>Subtotal (${totalCount} ${totalCount === 1 ? 'item' : 'items'}):</span>
+      <span>₹${subtotal.toLocaleString('en-IN')}</span>
+    </div>
+    <div class="cart-bill-row">
+      <span>Estimated GST (5% Food HSN):</span>
+      <span>₹${gst.toLocaleString('en-IN')}</span>
+    </div>
+    <div class="cart-bill-row">
+      <span>Express Shipping:</span>
+      <span style="color:var(--kb-success); font-weight:700;">FREE (Promo)</span>
+    </div>
+    <div class="cart-bill-row total">
+      <span>Total Amount:</span>
+      <strong>₹${grandTotal.toLocaleString('en-IN')}</strong>
+    </div>
+
+    <button type="button" class="btn-checkout-primary" onclick="proceedToCheckout(${grandTotal})">
+      <span>Proceed to Secure Checkout (₹${grandTotal.toLocaleString('en-IN')})</span> →
+    </button>
+
+    <div class="cart-bottom-actions">
+      <button type="button" class="btn-clear-cart-link" onclick="clearCart()">Empty Cart</button>
+      <span class="cart-security-note">🔒 256-Bit SSL Encrypted</span>
+    </div>
+  `;
+}
+
+function incrementCartItem(encodedName) {
+  const name = decodeURIComponent(encodedName);
+  const found = AppState.cartItems.find(i => i.name === name);
+  if (found) {
+    AppState.cartItems.push({ name: found.name, price: found.price });
+    updateCartBadge();
+    renderCartDrawerContent();
+  }
+}
+
+function decrementCartItem(encodedName) {
+  const name = decodeURIComponent(encodedName);
+  const index = AppState.cartItems.findIndex(i => i.name === name);
+  if (index !== -1) {
+    AppState.cartItems.splice(index, 1);
+    updateCartBadge();
+    renderCartDrawerContent();
+  }
+}
+
+function deleteCartItemGroup(encodedName) {
+  const name = decodeURIComponent(encodedName);
+  AppState.cartItems = AppState.cartItems.filter(i => i.name !== name);
+  updateCartBadge();
+  renderCartDrawerContent();
+  showToast(`Removed all units of "${name}" from cart.`, '🗑️');
+}
+
+function clearCart() {
+  AppState.cartItems = [];
+  updateCartBadge();
+  renderCartDrawerContent();
+  showToast('Your shopping cart has been cleared.', '🧹');
+}
+
+function updateCartBadge() {
+  const count = (AppState.cartItems || []).length;
+  const cartBadge = document.getElementById('cartCount');
+  if (cartBadge) {
+    cartBadge.textContent = count;
+    cartBadge.classList.add('bump');
+    setTimeout(() => cartBadge.classList.remove('bump'), 300);
+  }
+}
+
+function proceedToCheckout(amount) {
+  closeCartDrawer();
+  showToast(`Proceeding to Secure Gateway for ₹${amount.toLocaleString('en-IN')}! Thank you for ordering from Karachi Bakery.`, '🎉');
 }
