@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
   
   <!-- Main Design System CSS -->
-  <link rel="stylesheet" href="styles/main.css?v=8.1.0">
+  <link rel="stylesheet" href="styles/main.css?v=10.0.0">
 </head>
 <body>
 
@@ -2671,10 +2671,10 @@
 
     <div class="container footer-bottom">
       <div>
-        © 2026 Karachi Bakery Pvt. Ltd. All Rights Reserved. • Redesign Sprint (Day 8 of 10)
+        © 2026 Karachi Bakery Pvt. Ltd. All Rights Reserved. • Redesign Sprint (Day 10 of 10 — 100% Completed 🏁)
       </div>
       <div>
-        Designed for Excellence • Issues #1, #2, #3, #4, #5, #6, #7, #8, #9, #10, #11, #13, #14 & #15 Addressed (Enterprise B2B, Custom Cake Studio, Store Locator, Search, PDP Specs & Comparison Matrix)</div>
+        Designed for Excellence • All 15 Website Architecture & UX Problems Fully Resolved (Unified Portal, Taxonomy, Search Hub, PDP Specs, Comparison Matrix, B2B Suite, Cake Studio, Store Locator, Pincode Estimator & Checkout Gateways)</div>
     </div>
   </footer>
 
@@ -2822,12 +2822,395 @@
     </aside>
   </div>
 
+  <!-- ==========================================================================
+       Day 9 Deliverable: Unified Multi-Step Checkout Modal (Issue #4 & #12)
+       ========================================================================== -->
+  <div class="checkout-modal-backdrop" id="checkoutModalBackdrop" style="display:none;" onclick="handleCheckoutBackdropClick(event)">
+    <div class="checkout-dialog" role="dialog" aria-modal="true" aria-labelledby="checkoutModalTitle">
+      <!-- Checkout Header -->
+      <div class="checkout-header">
+        <div class="checkout-title-wrap">
+          <div class="brand-emblem" style="width:34px; height:34px; font-size:0.95rem;">KB</div>
+          <div>
+            <h3 id="checkoutModalTitle">Karachi Bakery Express Checkout</h3>
+            <span class="checkout-security-tag">🔒 256-Bit SSL Encrypted • 100% Safe Payments</span>
+          </div>
+        </div>
+        <button type="button" class="btn-checkout-close" onclick="closeCheckoutModal()" aria-label="Close Checkout">✕</button>
+      </div>
+
+      <!-- 3-Step Wizard Indicator -->
+      <div class="checkout-steps-bar">
+        <div class="checkout-step-indicator active" id="chkStepInd1">
+          <span class="step-badge">1</span>
+          <span class="step-text">Shipping Address</span>
+        </div>
+        <div class="checkout-step-line"></div>
+        <div class="checkout-step-indicator" id="chkStepInd2">
+          <span class="step-badge">2</span>
+          <span class="step-text">Shipping Transit</span>
+        </div>
+        <div class="checkout-step-line"></div>
+        <div class="checkout-step-indicator" id="chkStepInd3">
+          <span class="step-badge">3</span>
+          <span class="step-text">Payment Gateway</span>
+        </div>
+      </div>
+
+      <div class="checkout-body-grid">
+        <!-- Left: Multi-Step Forms -->
+        <div class="checkout-main-panel">
+          <!-- Step 1: Shipping Address & Pincode Lookup (Issue #12) -->
+          <div class="checkout-step-content active" id="chkStepContent1">
+            <div class="checkout-panel-header">
+              <h4>1. Delivery Address & Contact Details</h4>
+              <button type="button" class="btn-autofill-demo" onclick="autofillDemoAddress()">⚡ 1-Click Demo Address</button>
+            </div>
+
+            <div class="checkout-form-grid">
+              <div class="form-group span-2">
+                <label for="chkFullName">Full Recipient Name *</label>
+                <input type="text" id="chkFullName" class="chk-input" placeholder="e.g. Samudrala Hitesh">
+              </div>
+
+              <div class="form-group">
+                <label for="chkPhone">Mobile Number (10 Digits) *</label>
+                <div class="phone-prefix-wrap">
+                  <span class="phone-prefix">+91</span>
+                  <input type="tel" id="chkPhone" class="chk-input with-prefix" placeholder="98765 43210" maxlength="10">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="chkEmail">Email Address *</label>
+                <input type="email" id="chkEmail" class="chk-input" placeholder="hitesh@example.com">
+              </div>
+
+              <div class="form-group span-2">
+                <label for="chkAddress">House / Flat No., Apartment / Building Name *</label>
+                <input type="text" id="chkAddress" class="chk-input" placeholder="Flat 402, Nizam Heritage Towers, Road No. 12">
+              </div>
+
+              <div class="form-group">
+                <label for="chkArea">Street / Landmark / Area *</label>
+                <input type="text" id="chkArea" class="chk-input" placeholder="Opposite City Center Mall, Banjara Hills">
+              </div>
+
+              <!-- Pincode with Real-time Delivery Serviceability (Issue #12) -->
+              <div class="form-group">
+                <label for="chkPincode">Delivery Postal Pincode (6 Digits) *</label>
+                <div class="pincode-calc-wrap">
+                  <input type="text" id="chkPincode" class="chk-input" placeholder="e.g. 500034" maxlength="6" oninput="calculatePincodeShipping(this.value)">
+                  <span class="pincode-status-tag" id="chkPincodeStatus">6-Digit Check</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="chkCity">City</label>
+                <input type="text" id="chkCity" class="chk-input" value="Hyderabad" readonly>
+              </div>
+
+              <div class="form-group">
+                <label for="chkState">State</label>
+                <input type="text" id="chkState" class="chk-input" value="Telangana" readonly>
+              </div>
+
+              <!-- Gift Packaging Option -->
+              <div class="form-group span-2">
+                <label class="gift-checkbox-label">
+                  <input type="checkbox" id="chkIsGift" onchange="toggleGiftOptions(this.checked)">
+                  <span>🎁 This order is a festive / celebration gift (Include luxury gold keepsake wrapping + gift message card)</span>
+                </label>
+                <div class="gift-msg-wrap" id="giftMsgWrap" style="display:none; margin-top:0.6rem;">
+                  <input type="text" id="chkGiftMessage" class="chk-input" placeholder="Type personal gift greeting (e.g. Wishing you sweetness and joy! — Hitesh)">
+                </div>
+              </div>
+            </div>
+
+            <!-- Real-time Serviceability Callout -->
+            <div class="serviceability-callout" id="serviceabilityCallout">
+              🚚 Enter a 6-digit Indian pincode above to calculate exact delivery transit times and shipping rates.
+            </div>
+
+            <div class="checkout-nav-footer">
+              <button type="button" class="btn-chk-back" onclick="closeCheckoutModal()">Cancel</button>
+              <button type="button" class="btn-chk-next" onclick="proceedToCheckoutStep(2)">Proceed to Shipping Speed →</button>
+            </div>
+          </div>
+
+          <!-- Step 2: Shipping Transit & Speed Selection (Issue #12) -->
+          <div class="checkout-step-content" id="chkStepContent2" style="display:none;">
+            <div class="checkout-panel-header">
+              <h4>2. Select Transit Speed & Kitchen Dispatch</h4>
+              <span class="transit-pincode-badge" id="transitPincodeBadge">PIN: 500034</span>
+            </div>
+
+            <div class="shipping-options-list" id="shippingOptionsList">
+              <!-- Dynamically populated via app.js -->
+            </div>
+
+            <!-- Freshness Packaging Guarantee -->
+            <div class="freshness-guarantee-strip">
+              <span style="font-size:1.4rem;">🛡️</span>
+              <div>
+                <strong>Airtight Nitrogen-Flushed Transit Standard:</strong>
+                <p>All iconic biscuits, pastries, and sweets are hermetically sealed with moisture-resistant food-grade multi-layer polyfoil.</p>
+              </div>
+            </div>
+
+            <div class="checkout-nav-footer">
+              <button type="button" class="btn-chk-back" onclick="proceedToCheckoutStep(1)">← Back to Address</button>
+              <button type="button" class="btn-chk-next" onclick="proceedToCheckoutStep(3)">Proceed to Payment →</button>
+            </div>
+          </div>
+
+          <!-- Step 3: Multi-Payment Gateway Simulator -->
+          <div class="checkout-step-content" id="chkStepContent3" style="display:none;">
+            <div class="checkout-panel-header">
+              <h4>3. Select Payment Gateway</h4>
+              <span class="secure-badge">🔒 100% PCI-DSS Compliant</span>
+            </div>
+
+            <!-- Payment Method Tabs -->
+            <div class="payment-tabs-row">
+              <button type="button" class="pay-tab active" id="payTabUPI" onclick="selectPaymentMethod('upi')">
+                <span>⚡ UPI / QR</span>
+              </button>
+              <button type="button" class="pay-tab" id="payTabCard" onclick="selectPaymentMethod('card')">
+                <span>💳 Cards</span>
+              </button>
+              <button type="button" class="pay-tab" id="payTabNet" onclick="selectPaymentMethod('netbanking')">
+                <span>🏛️ Net Banking</span>
+              </button>
+              <button type="button" class="pay-tab" id="payTabCOD" onclick="selectPaymentMethod('cod')">
+                <span>💵 Pay on Delivery</span>
+              </button>
+            </div>
+
+            <!-- Gateway Details Panel -->
+            <div class="payment-gateway-container">
+              <!-- UPI Panel -->
+              <div class="pay-panel active" id="payPanelUPI">
+                <div class="upi-method-grid">
+                  <div class="upi-qr-box">
+                    <div class="qr-mockup">
+                      <div class="qr-code-pattern"></div>
+                      <span class="qr-scan-label">Scan with Any UPI App</span>
+                    </div>
+                    <div class="upi-logos-row">
+                      <span class="upi-logo-chip">GPay</span>
+                      <span class="upi-logo-chip">PhonePe</span>
+                      <span class="upi-logo-chip">Paytm</span>
+                      <span class="upi-logo-chip">BHIM</span>
+                    </div>
+                  </div>
+                  <div class="upi-id-box">
+                    <label for="chkUpiId">Or Enter Your Virtual Payment Address (VPA):</label>
+                    <div class="upi-input-wrap">
+                      <input type="text" id="chkUpiId" class="chk-input" value="hitesh@okaxis" placeholder="yourname@upi">
+                      <button type="button" class="btn-verify-upi" onclick="showToast('UPI VPA Verified ✓', '⚡')">Verify</button>
+                    </div>
+                    <small style="color:var(--kb-text-muted); display:block; margin-top:0.35rem;">A payment request will be sent to your UPI app upon confirmation.</small>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card Panel -->
+              <div class="pay-panel" id="payPanelCard" style="display:none;">
+                <div class="card-form-grid">
+                  <div class="form-group span-2">
+                    <label for="chkCardNumber">Card Number *</label>
+                    <input type="text" id="chkCardNumber" class="chk-input" value="4532 8920 1849 5320" maxlength="19" placeholder="4532 •••• •••• ••••">
+                  </div>
+                  <div class="form-group">
+                    <label for="chkCardExpiry">Expiry Date *</label>
+                    <input type="text" id="chkCardExpiry" class="chk-input" value="08/29" maxlength="5" placeholder="MM/YY">
+                  </div>
+                  <div class="form-group">
+                    <label for="chkCardCvv">CVV / CVC *</label>
+                    <input type="password" id="chkCardCvv" class="chk-input" value="789" maxlength="4" placeholder="•••">
+                  </div>
+                  <div class="form-group span-2">
+                    <label for="chkCardHolder">Cardholder Name *</label>
+                    <input type="text" id="chkCardHolder" class="chk-input" value="SAMUDRALA HITESH" placeholder="Name as printed on card">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Net Banking Panel -->
+              <div class="pay-panel" id="payPanelNet" style="display:none;">
+                <label style="font-size:0.85rem; font-weight:600; color:var(--kb-text-primary); display:block; margin-bottom:0.5rem;">Select Popular Bank:</label>
+                <div class="bank-chips-grid">
+                  <label class="bank-chip active"><input type="radio" name="bankSelect" checked> <span>HDFC Bank</span></label>
+                  <label class="bank-chip"><input type="radio" name="bankSelect"> <span>ICICI Bank</span></label>
+                  <label class="bank-chip"><input type="radio" name="bankSelect"> <span>State Bank of India</span></label>
+                  <label class="bank-chip"><input type="radio" name="bankSelect"> <span>Axis Bank</span></label>
+                  <label class="bank-chip"><input type="radio" name="bankSelect"> <span>Kotak Mahindra</span></label>
+                </div>
+              </div>
+
+              <!-- COD Panel -->
+              <div class="pay-panel" id="payPanelCOD" style="display:none;">
+                <div class="cod-callout">
+                  <span style="font-size:2rem;">💵</span>
+                  <div>
+                    <strong>Cash on Delivery Available:</strong>
+                    <p>Pay with cash or UPI QR scan at your doorstep upon arrival. Exact change is appreciated.</p>
+                    <span class="cod-fee-note">₹40 Convenience & Handling Fee applicable on COD orders.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="checkout-nav-footer">
+              <button type="button" class="btn-chk-back" onclick="proceedToCheckoutStep(2)">← Back to Transit</button>
+              <button type="button" class="btn-chk-pay-final" id="btnFinalPlaceOrder" onclick="completeOrderPayment()">
+                <span>🔒 Complete Payment & Place Order</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Sticky Order Summary & Discount Coupon -->
+        <div class="checkout-summary-panel">
+          <h4 class="summary-heading">Order Summary</h4>
+          
+          <!-- Mini Items Preview -->
+          <div class="chk-mini-items" id="chkMiniItemsList">
+            <!-- Dynamically populated via app.js -->
+          </div>
+
+          <!-- Promo Code Input -->
+          <div class="promo-code-wrap">
+            <input type="text" id="chkPromoInput" class="chk-promo-input" placeholder="Coupon Code (e.g. KB100)" value="KBHERITAGE">
+            <button type="button" class="btn-apply-promo" onclick="applyPromoCode()">Apply</button>
+          </div>
+          <small id="promoStatusMessage" style="color:var(--kb-success); font-weight:600; display:block; margin-top:0.25rem;">✓ Coupon "KBHERITAGE" Applied! (-₹100)</small>
+
+          <!-- Bill Calculation Breakdown -->
+          <div class="chk-bill-box">
+            <div class="chk-bill-row">
+              <span>Items Total:</span>
+              <span id="chkItemsTotal">₹650</span>
+            </div>
+            <div class="chk-bill-row" id="chkDiscountRow">
+              <span style="color:var(--kb-success);">Special Coupon Discount:</span>
+              <span style="color:var(--kb-success); font-weight:700;" id="chkDiscountVal">-₹100</span>
+            </div>
+            <div class="chk-bill-row">
+              <span>GST (5% Food HSN):</span>
+              <span id="chkTaxVal">₹28</span>
+            </div>
+            <div class="chk-bill-row">
+              <span>Estimated Shipping:</span>
+              <span id="chkShippingVal" style="color:var(--kb-success); font-weight:700;">FREE</span>
+            </div>
+            <div class="chk-bill-divider"></div>
+            <div class="chk-bill-row grand-total">
+              <span>Grand Total:</span>
+              <strong id="chkGrandTotal">₹578</strong>
+            </div>
+          </div>
+
+          <!-- Assurance Guarantee -->
+          <div class="chk-assurance">
+            <div>🛡️ <strong>Heritage Quality Guarantee:</strong> Baked fresh with authentic 1953 recipes.</div>
+            <div style="margin-top:0.35rem;">📦 <strong>Breakage-Free Transit:</strong> Reinforced collectible tins.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       Day 9 Deliverable: Animated Order Confirmation & Live Tracking Modal (Issue #12)
+       ========================================================================== -->
+  <div class="tracking-modal-backdrop" id="orderTrackingModal" style="display:none;" onclick="handleTrackingBackdropClick(event)">
+    <div class="tracking-dialog" role="dialog" aria-modal="true" aria-labelledby="trackingModalHeading">
+      <div class="tracking-celebration-header">
+        <div class="celebration-seal">✓</div>
+        <h2 id="trackingModalHeading">Celebration Order Confirmed!</h2>
+        <p>Thank you for choosing Karachi Bakery. Your bakes are being prepared fresh in our kitchen!</p>
+        <span class="tracking-order-id" id="trackingOrderIdDisplay">Order Ref: KB-ORD-2026-9281</span>
+      </div>
+
+      <div class="tracking-body">
+        <!-- Interactive 4-Stage Delivery Tracking Timeline -->
+        <div class="tracking-timeline-card">
+          <h4 style="font-size:0.95rem; color:var(--kb-burgundy); margin-bottom:1rem;">Live Order Status Timeline</h4>
+          <div class="tracking-timeline">
+            <div class="track-step done">
+              <div class="track-icon">✓</div>
+              <div class="track-info">
+                <strong>Order Placed & Payment Verified</strong>
+                <span>Instant Confirmation Received</span>
+              </div>
+            </div>
+            <div class="track-step active">
+              <div class="track-icon">🔥</div>
+              <div class="track-info">
+                <strong>Fresh Baking & Handcrafting</strong>
+                <span>In Progress at Mozamjahi Central Kitchen, Hyderabad</span>
+              </div>
+            </div>
+            <div class="track-step">
+              <div class="track-icon">🚚</div>
+              <div class="track-info">
+                <strong>Insured Express Transit</strong>
+                <span>Air Cargo Handover (BlueDart / Shadowfax Express)</span>
+              </div>
+            </div>
+            <div class="track-step">
+              <div class="track-icon">📦</div>
+              <div class="track-info">
+                <strong>Out for Delivery</strong>
+                <span>Direct to Your Doorstep</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Summary & Details Grid -->
+        <div class="tracking-details-grid">
+          <div class="tracking-detail-card">
+            <h5>Estimated Arrival</h5>
+            <strong id="trackEstDate" style="color:var(--kb-success); font-size:1.1rem;">Tomorrow, by 1:00 PM</strong>
+            <p id="trackTransitMode">Hyderabad Local Express Kitchen Dispatch</p>
+          </div>
+          <div class="tracking-detail-card">
+            <h5>Delivery Destination</h5>
+            <strong id="trackRecipientName">Samudrala Hitesh</strong>
+            <p id="trackRecipientAddress">Banjara Hills, Hyderabad - 500034</p>
+          </div>
+        </div>
+
+        <!-- WhatsApp Alert Opt-In -->
+        <div class="whatsapp-alert-strip">
+          <span style="font-size:1.6rem;">📱</span>
+          <div style="flex:1;">
+            <strong>Real-Time WhatsApp Delivery Tracking</strong>
+            <p style="font-size:0.8rem; margin:0; color:var(--kb-text-secondary);">Receive live dispatch updates, driver contact, and OTP directly on your phone.</p>
+          </div>
+          <button type="button" class="btn-whatsapp-optin" id="btnWhatsappOptin" onclick="toggleWhatsAppAlerts()">
+            <span>✓ Alerts Enabled</span>
+          </button>
+        </div>
+
+        <!-- Final Actions -->
+        <div class="tracking-actions-row">
+          <button type="button" class="btn-download-receipt" onclick="printOrderInvoice()">🖨️ Print Tax Invoice</button>
+          <button type="button" class="action-btn-primary" onclick="closeTrackingModal()" style="padding:0.75rem 1.5rem;">Continue Exploring Karachi Bakery</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 <div class="toast-notice" id="toastNotice" role="alert" aria-live="polite">
     <span id="toastIcon">✨</span>
     <span id="toastMessage">Action completed successfully</span>
   </div>
 
   <!-- Main JavaScript Logic -->
-  <script src="js/app.js?v=8.1.0"></script>
+  <script src="js/app.js?v=10.0.0"></script>
 </body>
 </html>

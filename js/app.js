@@ -3475,5 +3475,451 @@ function updateCartBadge() {
 
 function proceedToCheckout(amount) {
   closeCartDrawer();
-  showToast(`Proceeding to Secure Gateway for ₹${amount.toLocaleString('en-IN')}! Thank you for ordering from Karachi Bakery.`, '🎉');
+  openCheckoutModal();
+}
+
+
+/**
+ * ============================================================================
+ * Day 9 Deliverable: Pincode Delivery Estimator & Unified Checkout Modal (Issue #4 & #12)
+ * ============================================================================
+ */
+
+const CheckoutState = {
+  step: 1,
+  fullName: 'Samudrala Hitesh',
+  phone: '9876543210',
+  email: 'hitesh@example.com',
+  address: 'Flat 402, Nizam Heritage Towers, Road No. 12',
+  area: 'Opposite City Center Mall, Banjara Hills',
+  pincode: '500034',
+  city: 'Hyderabad',
+  state: 'Telangana',
+  isGift: false,
+  giftMessage: '',
+  shippingZone: 'hyderabad', // 'hyderabad' | 'south' | 'national' | 'standard'
+  shippingSpeed: 'express_same_day',
+  shippingFee: 0,
+  deliveryDateStr: 'Tomorrow, by 1:00 PM',
+  transitModeTitle: 'Hyderabad Local Express Kitchen Dispatch',
+  couponCode: 'KBHERITAGE',
+  discountAmount: 100,
+  paymentMethod: 'upi',
+  lastPlacedOrder: null
+};
+
+function openCheckoutModal() {
+  const backdrop = document.getElementById('checkoutModalBackdrop');
+  if (!backdrop) return;
+
+  renderCheckoutMiniItems();
+  calculatePincodeShipping(CheckoutState.pincode);
+  proceedToCheckoutStep(1);
+
+  backdrop.style.display = 'flex';
+}
+
+function closeCheckoutModal() {
+  const backdrop = document.getElementById('checkoutModalBackdrop');
+  if (backdrop) backdrop.style.display = 'none';
+}
+
+function handleCheckoutBackdropClick(event) {
+  if (event.target.id === 'checkoutModalBackdrop') {
+    closeCheckoutModal();
+  }
+}
+
+function proceedToCheckoutStep(stepNum) {
+  CheckoutState.step = stepNum;
+
+  // Update step indicators
+  for (let i = 1; i <= 3; i++) {
+    const ind = document.getElementById(`chkStepInd${i}`);
+    const content = document.getElementById(`chkStepContent${i}`);
+    if (ind) {
+      if (i === stepNum) ind.classList.add('active');
+      else ind.classList.remove('active');
+    }
+    if (content) {
+      if (i === stepNum) {
+        content.style.display = 'block';
+        content.classList.add('active');
+      } else {
+        content.style.display = 'none';
+        content.classList.remove('active');
+      }
+    }
+  }
+
+  if (stepNum === 2) {
+    renderShippingTransitOptions();
+  }
+}
+
+function autofillDemoAddress() {
+  const name = document.getElementById('chkFullName');
+  const phone = document.getElementById('chkPhone');
+  const email = document.getElementById('chkEmail');
+  const addr = document.getElementById('chkAddress');
+  const area = document.getElementById('chkArea');
+  const pin = document.getElementById('chkPincode');
+
+  if (name) name.value = 'Samudrala Hitesh';
+  if (phone) phone.value = '9876543210';
+  if (email) email.value = 'hiteshsamudrala22@gmail.com';
+  if (addr) addr.value = 'Plot 42, Jubilee Enclave, Hitec City';
+  if (area) area.value = 'Near Cyber Towers, Hyderabad';
+  if (pin) {
+    pin.value = '500081';
+    calculatePincodeShipping('500081');
+  }
+
+  showToast('Demo shipping details auto-filled!', '⚡');
+}
+
+function toggleGiftOptions(isChecked) {
+  CheckoutState.isGift = isChecked;
+  const wrap = document.getElementById('giftMsgWrap');
+  if (wrap) wrap.style.display = isChecked ? 'block' : 'none';
+}
+
+function calculatePincodeShipping(pincode) {
+  const cleanPin = (pincode || '').trim();
+  const statusTag = document.getElementById('chkPincodeStatus');
+  const callout = document.getElementById('serviceabilityCallout');
+  const cityInput = document.getElementById('chkCity');
+  const stateInput = document.getElementById('chkState');
+
+  CheckoutState.pincode = cleanPin;
+
+  if (!/^[1-9][0-9]{5}$/.test(cleanPin)) {
+    if (statusTag) {
+      statusTag.className = 'pincode-status-tag';
+      statusTag.textContent = `${cleanPin.length}/6 Digits`;
+    }
+    if (callout) {
+      callout.innerHTML = `⚠️ Enter a valid 6-digit postal code to verify live delivery serviceability.`;
+    }
+    return;
+  }
+
+  // Zone 1: Hyderabad Local
+  if (cleanPin.startsWith('500') || cleanPin.startsWith('501') || cleanPin.startsWith('502')) {
+    CheckoutState.shippingZone = 'hyderabad';
+    CheckoutState.shippingFee = 0;
+    CheckoutState.city = 'Hyderabad';
+    CheckoutState.state = 'Telangana';
+    CheckoutState.deliveryDateStr = 'Tomorrow, by 1:00 PM';
+    CheckoutState.transitModeTitle = 'Hyderabad Local Express Kitchen Dispatch';
+
+    if (statusTag) {
+      statusTag.className = 'pincode-status-tag success';
+      statusTag.textContent = '✓ Same-Day Local';
+    }
+    if (callout) {
+      callout.innerHTML = `🟢 <strong>Hyderabad Metro Serviceable:</strong> Dispatched fresh from Mozamjahi Central Kitchen. <strong>Free Express Same-Day Delivery!</strong>`;
+    }
+  } 
+  // Zone 2: South India Metros (Bengaluru, Chennai, Vijayawada)
+  else if (cleanPin.startsWith('560') || cleanPin.startsWith('600') || cleanPin.startsWith('520')) {
+    CheckoutState.shippingZone = 'south';
+    CheckoutState.shippingFee = 0;
+    CheckoutState.city = cleanPin.startsWith('560') ? 'Bengaluru' : (cleanPin.startsWith('600') ? 'Chennai' : 'Vijayawada');
+    CheckoutState.state = cleanPin.startsWith('560') ? 'Karnataka' : (cleanPin.startsWith('600') ? 'Tamil Nadu' : 'Andhra Pradesh');
+    CheckoutState.deliveryDateStr = 'Within 48 Hours via Air Cargo';
+    CheckoutState.transitModeTitle = 'South Metro Express Air Cargo';
+
+    if (statusTag) {
+      statusTag.className = 'pincode-status-tag success';
+      statusTag.textContent = '✓ 48h Express Air';
+    }
+    if (callout) {
+      callout.innerHTML = `✈️ <strong>South India Metro Serviceable:</strong> 48-Hour Priority Express Air Cargo. <strong>Free Shipping Applied!</strong>`;
+    }
+  }
+  // Zone 3: Pan-India (Delhi, Mumbai, Kolkata, Pune)
+  else {
+    CheckoutState.shippingZone = 'national';
+    CheckoutState.shippingFee = 0;
+    CheckoutState.city = cleanPin.startsWith('110') ? 'New Delhi' : (cleanPin.startsWith('400') ? 'Mumbai' : 'Rest of India');
+    CheckoutState.state = cleanPin.startsWith('110') ? 'Delhi NCR' : (cleanPin.startsWith('400') ? 'Maharashtra' : 'India');
+    CheckoutState.deliveryDateStr = '3 – 5 Business Days';
+    CheckoutState.transitModeTitle = 'Pan-India BlueDart Insured Express';
+
+    if (statusTag) {
+      statusTag.className = 'pincode-status-tag success';
+      statusTag.textContent = '✓ Pan-India Shipping';
+    }
+    if (callout) {
+      callout.innerHTML = `🚚 <strong>Pan-India Serviceable:</strong> Air-sealed hermetic tin packing. 3–5 Business Days via BlueDart. <strong>Free Shipping Promo!</strong>`;
+    }
+  }
+
+  if (cityInput) cityInput.value = CheckoutState.city;
+  if (stateInput) stateInput.value = CheckoutState.state;
+
+  const badge = document.getElementById('transitPincodeBadge');
+  if (badge) badge.textContent = `PIN: ${cleanPin} (${CheckoutState.city})`;
+
+  recalculateCheckoutBill();
+}
+
+function renderShippingTransitOptions() {
+  const container = document.getElementById('shippingOptionsList');
+  if (!container) return;
+
+  const isHyd = CheckoutState.shippingZone === 'hyderabad';
+
+  if (isHyd) {
+    container.innerHTML = `
+      <label class="shipping-card-option active" onclick="selectShippingSpeed('express_same_day', 0, 'Tomorrow, by 1:00 PM', 'Hyderabad Local Express Kitchen Dispatch')">
+        <input type="radio" name="shipSpeed" checked>
+        <div class="shipping-card-details">
+          <div class="shipping-card-title">🌅 Morning Fresh Kitchen Dispatch (Recommended)</div>
+          <div class="shipping-card-desc">Freshly baked at 5:00 AM in Mozamjahi Market central bakery. Delivered by 1:00 PM.</div>
+        </div>
+        <span class="shipping-card-rate free">FREE</span>
+      </label>
+
+      <label class="shipping-card-option" onclick="selectShippingSpeed('same_day_evening', 40, 'Today, between 6:00 PM – 9:00 PM', 'Hyderabad Evening Rush Hour Priority')">
+        <input type="radio" name="shipSpeed">
+        <div class="shipping-card-details">
+          <div class="shipping-card-title">🌆 Evening Celebration Rush (Same-Day)</div>
+          <div class="shipping-card-desc">Guaranteed evening delivery for birthday celebrations and family gatherings.</div>
+        </div>
+        <span class="shipping-card-rate">₹40</span>
+      </label>
+    `;
+  } else {
+    container.innerHTML = `
+      <label class="shipping-card-option active" onclick="selectShippingSpeed('air_express', 0, '3 – 4 Business Days', 'BlueDart Insured Air Express')">
+        <input type="radio" name="shipSpeed" checked>
+        <div class="shipping-card-details">
+          <div class="shipping-card-title">✈️ Standard Air Express (Recommended)</div>
+          <div class="shipping-card-desc">Hermetically sealed keepsake tin containers dispatched via BlueDart / Shadowfax Express.</div>
+        </div>
+        <span class="shipping-card-rate free">FREE</span>
+      </label>
+
+      <label class="shipping-card-option" onclick="selectShippingSpeed('priority_air', 90, 'Within 24 – 48 Hours', 'Priority Next-Flight-Out Cargo')">
+        <input type="radio" name="shipSpeed">
+        <div class="shipping-card-details">
+          <div class="shipping-card-title">⚡ Priority Next-Flight Cargo</div>
+          <div class="shipping-card-desc">First-priority airport dispatch from Shamshabad RGI Airport to recipient metro.</div>
+        </div>
+        <span class="shipping-card-rate">+₹90</span>
+      </label>
+    `;
+  }
+}
+
+function selectShippingSpeed(speedKey, fee, dateStr, modeTitle) {
+  CheckoutState.shippingSpeed = speedKey;
+  CheckoutState.shippingFee = fee;
+  CheckoutState.deliveryDateStr = dateStr;
+  CheckoutState.transitModeTitle = modeTitle;
+
+  document.querySelectorAll('.shipping-card-option').forEach(card => {
+    card.classList.remove('active');
+  });
+  if (event && event.currentTarget) {
+    event.currentTarget.classList.add('active');
+  }
+
+  recalculateCheckoutBill();
+}
+
+function selectPaymentMethod(methodKey) {
+  CheckoutState.paymentMethod = methodKey;
+
+  const tabs = {
+    upi: 'payTabUPI',
+    card: 'payTabCard',
+    netbanking: 'payTabNet',
+    cod: 'payTabCOD'
+  };
+
+  const panels = {
+    upi: 'payPanelUPI',
+    card: 'payPanelCard',
+    netbanking: 'payPanelNet',
+    cod: 'payPanelCOD'
+  };
+
+  Object.keys(tabs).forEach(k => {
+    const tabEl = document.getElementById(tabs[k]);
+    const panEl = document.getElementById(panels[k]);
+    if (tabEl) {
+      if (k === methodKey) tabEl.classList.add('active');
+      else tabEl.classList.remove('active');
+    }
+    if (panEl) {
+      if (k === methodKey) panEl.style.display = 'block';
+      else panEl.style.display = 'none';
+    }
+  });
+}
+
+function renderCheckoutMiniItems() {
+  const container = document.getElementById('chkMiniItemsList');
+  if (!container) return;
+
+  const items = AppState.cartItems || [];
+  if (items.length === 0) {
+    container.innerHTML = '<span style="font-size:0.8rem; color:var(--kb-text-muted);">Cart is empty.</span>';
+    return;
+  }
+
+  container.innerHTML = items.map(item => `
+    <div class="chk-mini-item">
+      <span>🍪 ${item.name}</span>
+      <strong>₹${item.price}</strong>
+    </div>
+  `).join('');
+
+  recalculateCheckoutBill();
+}
+
+function applyPromoCode() {
+  const input = document.getElementById('chkPromoInput');
+  const msg = document.getElementById('promoStatusMessage');
+  const code = (input ? input.value : '').trim().toUpperCase();
+
+  if (code === 'KBHERITAGE' || code === 'KB100' || code === 'DIWALI2026') {
+    CheckoutState.discountAmount = 100;
+    if (msg) {
+      msg.style.color = 'var(--kb-success)';
+      msg.textContent = `✓ Coupon "${code}" Applied! (-₹100)`;
+    }
+    showToast(`Coupon "${code}" applied! You saved ₹100!`, '🎉');
+  } else if (code === 'FESTIVE20') {
+    CheckoutState.discountAmount = 150;
+    if (msg) {
+      msg.style.color = 'var(--kb-success)';
+      msg.textContent = `✓ Coupon "${code}" Applied! (-₹150)`;
+    }
+    showToast(`Festival Coupon "${code}" applied! You saved ₹150!`, '🎉');
+  } else {
+    CheckoutState.discountAmount = 0;
+    if (msg) {
+      msg.style.color = '#C62828';
+      msg.textContent = `Invalid or expired coupon code.`;
+    }
+    showToast('Invalid coupon code.', '⚠️');
+  }
+
+  recalculateCheckoutBill();
+}
+
+function recalculateCheckoutBill() {
+  const items = AppState.cartItems || [];
+  let subtotal = 0;
+  items.forEach(i => subtotal += i.price);
+
+  const discount = Math.min(CheckoutState.discountAmount, subtotal);
+  const discountedSubtotal = Math.max(0, subtotal - discount);
+  const gst = Math.round(discountedSubtotal * 0.05); // 5% GST
+  const ship = CheckoutState.shippingFee;
+  const codSurcharge = CheckoutState.paymentMethod === 'cod' ? 40 : 0;
+  const grandTotal = discountedSubtotal + gst + ship + codSurcharge;
+
+  const itemsTotalEl = document.getElementById('chkItemsTotal');
+  const discountValEl = document.getElementById('chkDiscountVal');
+  const taxValEl = document.getElementById('chkTaxVal');
+  const shipValEl = document.getElementById('chkShippingVal');
+  const grandTotalEl = document.getElementById('chkGrandTotal');
+  const btnPay = document.getElementById('btnFinalPlaceOrder');
+
+  if (itemsTotalEl) itemsTotalEl.textContent = `₹${subtotal.toLocaleString('en-IN')}`;
+  if (discountValEl) discountValEl.textContent = `-₹${discount.toLocaleString('en-IN')}`;
+  if (taxValEl) taxValEl.textContent = `₹${gst.toLocaleString('en-IN')}`;
+  if (shipValEl) shipValEl.textContent = ship === 0 ? 'FREE' : `₹${ship}`;
+  if (grandTotalEl) grandTotalEl.textContent = `₹${grandTotal.toLocaleString('en-IN')}`;
+  if (btnPay) btnPay.innerHTML = `<span>🔒 Pay ₹${grandTotal.toLocaleString('en-IN')} & Confirm Order</span>`;
+
+  CheckoutState.finalCalculatedTotal = grandTotal;
+}
+
+function completeOrderPayment() {
+  const name = document.getElementById('chkFullName')?.value.trim() || 'Samudrala Hitesh';
+  const phone = document.getElementById('chkPhone')?.value.trim() || '9876543210';
+  const address = document.getElementById('chkAddress')?.value.trim() || 'Banjara Hills, Hyderabad';
+  const btnPay = document.getElementById('btnFinalPlaceOrder');
+
+  if (btnPay) {
+    btnPay.innerHTML = '<span>⏳ Processing Secure Payment...</span>';
+    btnPay.disabled = true;
+  }
+
+  setTimeout(() => {
+    closeCheckoutModal();
+    if (btnPay) {
+      btnPay.innerHTML = '<span>🔒 Complete Payment & Place Order</span>';
+      btnPay.disabled = false;
+    }
+
+    const orderId = `KB-ORD-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+    CheckoutState.lastPlacedOrder = {
+      orderId,
+      name,
+      phone,
+      address,
+      amount: CheckoutState.finalCalculatedTotal || 578,
+      transit: CheckoutState.transitModeTitle,
+      deliveryDate: CheckoutState.deliveryDateStr
+    };
+
+    // Open Animated Tracking Modal
+    openTrackingModal(CheckoutState.lastPlacedOrder);
+
+    // Empty shopping cart & update badges
+    AppState.cartItems = [];
+    updateCartBadge();
+
+    showToast(`Order ${orderId} confirmed & payment successful!`, '🎉');
+  }, 1200);
+}
+
+function openTrackingModal(order) {
+  const modal = document.getElementById('orderTrackingModal');
+  if (!modal) return;
+
+  const idEl = document.getElementById('trackingOrderIdDisplay');
+  const dateEl = document.getElementById('trackEstDate');
+  const modeEl = document.getElementById('trackTransitMode');
+  const nameEl = document.getElementById('trackRecipientName');
+  const addrEl = document.getElementById('trackRecipientAddress');
+
+  if (idEl) idEl.textContent = `Order Ref: ${order.orderId}`;
+  if (dateEl) dateEl.textContent = order.deliveryDate;
+  if (modeEl) modeEl.textContent = order.transit;
+  if (nameEl) nameEl.textContent = order.name;
+  if (addrEl) addrEl.textContent = `${order.address} (${CheckoutState.pincode})`;
+
+  modal.style.display = 'flex';
+}
+
+function closeTrackingModal() {
+  const modal = document.getElementById('orderTrackingModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function handleTrackingBackdropClick(event) {
+  if (event.target.id === 'orderTrackingModal') {
+    closeTrackingModal();
+  }
+}
+
+function toggleWhatsAppAlerts() {
+  const btn = document.getElementById('btnWhatsappOptin');
+  if (btn) {
+    btn.innerHTML = '<span>✓ Tracking Enabled on WhatsApp</span>';
+    btn.style.background = '#1E7E34';
+  }
+  showToast('Live dispatch tracking alerts enabled for WhatsApp!', '📱');
+}
+
+function printOrderInvoice() {
+  window.print();
 }
