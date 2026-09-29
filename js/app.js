@@ -5177,14 +5177,21 @@ let currentSelectedAdminMonth = 'sep_2026';
 function selectAdminMonth(monthKey, btnEl) {
   currentSelectedAdminMonth = monthKey;
 
-  // Update button active state
-  document.querySelectorAll('.btn-period-pill').forEach(b => b.classList.remove('active'));
-  if (btnEl) {
-    btnEl.classList.add('active');
-  } else {
-    const defaultBtn = document.querySelector(`.btn-period-pill[onclick*="${monthKey}"]`);
-    if (defaultBtn) defaultBtn.classList.add('active');
+  // Sync Dropdown
+  const monthDropdown = document.getElementById('adminMonthSelect');
+  if (monthDropdown && monthDropdown.value !== monthKey) {
+    monthDropdown.value = monthKey;
   }
+
+  // Sync Pill Buttons
+  document.querySelectorAll('.btn-period-pill').forEach(b => {
+    const bMonth = b.getAttribute('data-month');
+    if (bMonth === monthKey || (b.getAttribute('onclick') && b.getAttribute('onclick').includes(`'${monthKey}'`))) {
+      b.classList.add('active');
+    } else {
+      b.classList.remove('active');
+    }
+  });
 
   // Update Period Summary Tag
   const data = MONTHLY_ANALYTICS_DATA[monthKey] || MONTHLY_ANALYTICS_DATA.sep_2026;

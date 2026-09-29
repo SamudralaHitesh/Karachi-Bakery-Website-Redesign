@@ -8305,3 +8305,42 @@ tr.highlight-selected-month {
   background: rgba(201, 151, 38, 0.12) !important;
   border-left: 3px solid #C99726;
 }
+
+
+
+.period-filter-controls-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.admin-month-dropdown {
+  background: #14171A;
+  border: 1.5px solid #C99726;
+  color: #FFE082;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  min-width: 270px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  transition: all 0.2s ease;
+}
+
+.admin-month-dropdown:hover {
+  border-color: #FFE082;
+}
+
+.admin-month-dropdown:focus {
+  outline: none;
+  border-color: #FFE082;
+  box-shadow: 0 0 12px rgba(255, 224, 130, 0.4);
+}
+
+.admin-month-dropdown option {
+  background: #1C1F25;
+  color: #ECEFF1;
+  padding: 0.6rem;
+}

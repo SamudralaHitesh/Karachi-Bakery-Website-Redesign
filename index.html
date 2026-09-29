@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
   
   <!-- Main Design System CSS -->
-  <link rel="stylesheet" href="styles/main.css?v=13.0.0">
+  <link rel="stylesheet" href="styles/main.css?v=14.0.0">
 </head>
 <body>
 
@@ -3278,18 +3278,31 @@
           <!-- KPI Metric Cards Grid -->
           <!-- Month-Wise Reporting Period Selector (Directly Resolves User Request) -->
           <div class="admin-period-filter-bar">
-            <div class="period-filter-label">
-              <span>📅 Financial Reporting Period:</span>
+            <div class="period-filter-controls-group">
+              <label for="adminMonthSelect" class="period-filter-label">
+                <span>📅 Select Reporting Month / Period:</span>
+              </label>
+              <select id="adminMonthSelect" class="admin-month-dropdown" onchange="selectAdminMonth(this.value, null)" aria-label="Select Financial Month for Revenue and Orders">
+                <option value="sep_2026" selected>🗓️ September 2026 (Current Month • Festival Season Surge)</option>
+                <option value="aug_2026">🗓️ August 2026 (Raksha Bandhan & Independence Day Festivities)</option>
+                <option value="jul_2026">🗓️ July 2026 (Monsoon Irani Chai & Rusk Season)</option>
+                <option value="jun_2026">🗓️ June 2026 (Summer Patisserie & Celebration Cakes)</option>
+                <option value="may_2026">🗓️ May 2026 (Summer Weddings & 3-Tier Cakes)</option>
+                <option value="apr_2026">🗓️ April 2026 (Financial Year 2026-27 Kickoff)</option>
+                <option value="all_time">📊 All-Time / FY 2026-27 YTD (Full Financial Year-to-Date)</option>
+              </select>
             </div>
+            
             <div class="period-pills-wrap" id="periodPillsWrap">
-              <button type="button" class="btn-period-pill active" onclick="selectAdminMonth('sep_2026', this)">Sep 2026 (Current)</button>
-              <button type="button" class="btn-period-pill" onclick="selectAdminMonth('aug_2026', this)">Aug 2026</button>
-              <button type="button" class="btn-period-pill" onclick="selectAdminMonth('jul_2026', this)">Jul 2026</button>
-              <button type="button" class="btn-period-pill" onclick="selectAdminMonth('jun_2026', this)">Jun 2026</button>
-              <button type="button" class="btn-period-pill" onclick="selectAdminMonth('may_2026', this)">May 2026</button>
-              <button type="button" class="btn-period-pill" onclick="selectAdminMonth('apr_2026', this)">Apr 2026</button>
-              <button type="button" class="btn-period-pill" onclick="selectAdminMonth('all_time', this)">📊 FY 2026 YTD</button>
+              <button type="button" class="btn-period-pill active" data-month="sep_2026" onclick="selectAdminMonth('sep_2026', this)">Sep 2026</button>
+              <button type="button" class="btn-period-pill" data-month="aug_2026" onclick="selectAdminMonth('aug_2026', this)">Aug 2026</button>
+              <button type="button" class="btn-period-pill" data-month="jul_2026" onclick="selectAdminMonth('jul_2026', this)">Jul 2026</button>
+              <button type="button" class="btn-period-pill" data-month="jun_2026" onclick="selectAdminMonth('jun_2026', this)">Jun 2026</button>
+              <button type="button" class="btn-period-pill" data-month="may_2026" onclick="selectAdminMonth('may_2026', this)">May 2026</button>
+              <button type="button" class="btn-period-pill" data-month="apr_2026" onclick="selectAdminMonth('apr_2026', this)">Apr 2026</button>
+              <button type="button" class="btn-period-pill" data-month="all_time" onclick="selectAdminMonth('all_time', this)">📊 FY YTD</button>
             </div>
+
             <div class="period-summary-tag" id="periodSummaryTag">
               Viewing: <strong>September 2026</strong> (Festival Season Surge)
             </div>
@@ -3761,6 +3774,6 @@
   </div>
 
   <!-- Main JavaScript Logic -->
-  <script src="js/app.js?v=13.0.0"></script>
+  <script src="js/app.js?v=14.0.0"></script>
 </body>
 </html>
