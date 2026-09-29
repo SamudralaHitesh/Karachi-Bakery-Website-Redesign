@@ -40,7 +40,12 @@ A comprehensive, modern redesign of the iconic **Karachi Bakery** web platform (
 
 To provide a complete enterprise e-commerce architecture beyond the customer storefront, the redesign includes an interactive **Store Manager & Operations Admin Portal**:
 
-- **How to Access:** Click the **`🔐 Store Manager / Admin`** tab in the Journey Switcher bar or the **`Staff Admin`** button in the header.
+- **Customer Experience:** Completely hidden from normal shoppers to preserve a clean, authentic brand presentation.
+- **How to Access (Authorized Staff & Evaluators):**
+  1. **Direct URL Hash:** Add `/#admin` to the website URL (e.g. [`https://karachi-bakery-website-redesign.vercel.app/#admin`](https://karachi-bakery-website-redesign.vercel.app/#admin)).
+  2. **Secret Keyboard Shortcut:** Press `Ctrl + Shift + A` anywhere on the page.
+  3. **Secret Logo Double-Click:** Double-click the golden **`KB`** brand emblem in the header.
+  4. **Discreet Footer Link:** Click the subtle `Staff Access` link in the bottom copyright line.
 - **Demo Access Passcode:** `admin123` (or click *"⚡ 1-Click Instant Manager Login"*).
 - **Core Admin Modules:**
   1. **Dynamic Cost & Price Management**: Adjust item selling prices/costs on the fly with immediate DOM recalculation across product cards, PDP, compare, and shopping cart.

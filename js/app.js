@@ -4638,7 +4638,40 @@ function applyStoredCatalogOverrides() {
   });
 }
 
+// Secret Trigger Listeners (Hidden from regular customers)
+function initSecretAdminTriggers() {
+  // 1. URL Hash / Query checker (e.g. visiting site/#admin or site/?admin=1)
+  const checkUrlAdminTrigger = () => {
+    if (window.location.hash === '#admin' || window.location.search.includes('admin=1') || window.location.search.includes('admin=true')) {
+      openAdminPortalModal();
+    }
+  };
+  checkUrlAdminTrigger();
+  window.addEventListener('hashchange', checkUrlAdminTrigger);
+
+  // 2. Secret Keyboard Shortcut: Ctrl + Shift + A (or Cmd + Shift + A)
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+      e.preventDefault();
+      openAdminPortalModal();
+      showToast('Staff Admin Mode Activated', '🔐');
+    }
+  });
+
+  // 3. Secret Double-Click on the "KB" emblem in header
+  const brandEmblem = document.querySelector('.brand-identity .brand-emblem');
+  if (brandEmblem) {
+    brandEmblem.addEventListener('dblclick', (e) => {
+      e.preventDefault();
+      openAdminPortalModal();
+      showToast('Staff Admin Mode Activated', '🔐');
+    });
+  }
+}
+
 // Hook Admin into App Initialization
 document.addEventListener('DOMContentLoaded', () => {
   initAdminSystem();
+  initSecretAdminTriggers();
 });
+

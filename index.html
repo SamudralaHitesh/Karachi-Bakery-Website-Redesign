@@ -52,9 +52,6 @@
         <button class="journey-tab" id="tabCustomCakes" role="tab" aria-selected="false" data-journey="custom">
           🎂 Custom Cake Studio
         </button>
-        <button class="journey-tab admin-journey-tab" id="tabAdmin" role="tab" aria-selected="false" data-journey="admin" onclick="openAdminPortalModal()">
-          🔐 Store Manager / Admin <span class="tag" style="background:#FFE082; color:#5D4037;">Staff</span>
-        </button>
         <button class="journey-tab" id="tabStores" role="tab" aria-selected="false" data-journey="stores">
           📍 Store Locator <span class="tag">50+ Outlets</span>
         </button>
@@ -103,9 +100,6 @@
 
         <!-- Action Buttons -->
         <div class="header-actions">
-          <button class="action-btn action-btn-admin" id="btnAdminPortal" title="Store Operations & Inventory Manager" onclick="openAdminPortalModal()">
-            🔐 <span class="action-text">Staff Admin</span>
-          </button>
           <button class="action-btn action-btn-ghost" id="btnCompareBadge" title="Compare Delicacies Side-by-Side (Day 5)" onclick="openCompareModal()">
             ⚖️ <span class="action-text">Compare</span>
             <span class="badge-count" id="compareCount">0</span>
@@ -2677,7 +2671,7 @@
 
     <div class="container footer-bottom">
       <div>
-        © 2026 Karachi Bakery Pvt. Ltd. All Rights Reserved. • Redesign Sprint (Day 10 of 10 — 100% Completed 🏁)
+        © 2026 Karachi Bakery Pvt. Ltd. All Rights Reserved. • Redesign Sprint (Day 10 of 10 — 100% Completed 🏁) • <a href="#admin" onclick="openAdminPortalModal()" style="color:inherit; opacity:0.35; text-decoration:none; font-size:0.75rem;" title="Internal Authorized Personnel Access">Staff Access</a>
       </div>
       <div>
         Designed for Excellence • All 15 Website Architecture & UX Problems Fully Resolved (Unified Portal, Taxonomy, Search Hub, PDP Specs, Comparison Matrix, B2B Suite, Cake Studio, Store Locator, Pincode Estimator & Checkout Gateways)</div>
