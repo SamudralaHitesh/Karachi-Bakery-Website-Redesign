@@ -2013,6 +2013,10 @@ function initModalsAccessibility() {
     if (e.key === 'Escape') {
       closeProductDetail();
       closeCompareModal();
+      if (typeof closeCartDrawer === 'function') closeCartDrawer();
+      if (typeof closeCheckoutModal === 'function') closeCheckoutModal();
+      if (typeof closeTrackingModal === 'function') closeTrackingModal();
+      if (typeof closeAdminPortalModal === 'function') closeAdminPortalModal();
     }
   });
 }
@@ -3786,7 +3790,16 @@ function applyPromoCode() {
   const msg = document.getElementById('promoStatusMessage');
   const code = (input ? input.value : '').trim().toUpperCase();
 
-  if (code === 'KBHERITAGE' || code === 'KB100' || code === 'DIWALI2026') {
+  const foundAdminCoupon = (typeof AdminStore !== 'undefined' && AdminStore.coupons) ? AdminStore.coupons.find(c => c.code === code) : null;
+
+  if (foundAdminCoupon) {
+    CheckoutState.discountAmount = foundAdminCoupon.discount;
+    if (msg) {
+      msg.style.color = 'var(--kb-success)';
+      msg.textContent = `✓ Coupon "${code}" Applied! (-₹${foundAdminCoupon.discount})`;
+    }
+    showToast(`Coupon "${code}" applied! You saved ₹${foundAdminCoupon.discount}!`, '🎉');
+  } else if (code === 'KBHERITAGE' || code === 'KB100' || code === 'DIWALI2026') {
     CheckoutState.discountAmount = 100;
     if (msg) {
       msg.style.color = 'var(--kb-success)';
@@ -3860,6 +3873,23 @@ function completeOrderPayment() {
     }
 
     const orderId = `KB-ORD-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+    // Store in Admin System
+    const newAdminOrder = {
+      orderId,
+      date: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) + ' Today',
+      customerName: name,
+      phone,
+      destination: `${address} (${CheckoutState.pincode})`,
+      items: AppState.cartItems.map(i => i.name),
+      amount: CheckoutState.finalCalculatedTotal || 578,
+      paymentMethod: selectedMethod || 'Instant UPI',
+      status: 'placed',
+      statusLabel: 'Order Placed & Verified'
+    };
+    if (typeof AdminStore !== 'undefined') {
+      AdminStore.orders.unshift(newAdminOrder);
+      localStorage.setItem('KB_ADMIN_ORDERS', JSON.stringify(AdminStore.orders));
+    }
     CheckoutState.lastPlacedOrder = {
       orderId,
       name,
@@ -3923,3 +3953,692 @@ function toggleWhatsAppAlerts() {
 function printOrderInvoice() {
   window.print();
 }
+
+
+
+// =============================================================================
+// Karachi Bakery Store Operations & Admin Management System
+// Controls Product Catalog, Dynamic Pricing/Costs, Stock Status, Kitchen Dispatch & Order Auditing
+// =============================================================================
+
+const ADMIN_CONFIG = {
+  defaultPin: 'admin123',
+  managerName: 'Rajesh Gupta',
+  storeId: '#HYD-01',
+  location: 'Mozamjahi Central Kitchen, Hyderabad'
+};
+
+const AdminStore = {
+  isAuthenticated: false,
+  activeTab: 'products',
+  orders: [],
+  coupons: [],
+  priceOverrides: {},
+  stockOverrides: {},
+  customProducts: []
+};
+
+// Seed realistic recent orders
+const INITIAL_DEMO_ORDERS = [
+  {
+    orderId: 'KB-ORD-2026-4412',
+    date: 'Today, 09:15 AM',
+    customerName: 'Rahul Verma',
+    phone: '+91 98490 12345',
+    destination: 'Indiranagar, Bengaluru - 560038',
+    items: ['Original Hyderabad Fruit Biscuit (400g) x2'],
+    amount: 440,
+    paymentMethod: 'UPI Instant Pay (GPay)',
+    status: 'baking', // 'placed' | 'baking' | 'cargo' | 'out_for_delivery' | 'delivered'
+    statusLabel: 'Baking in Mozamjahi Central Kitchen'
+  },
+  {
+    orderId: 'KB-ORD-2026-7821',
+    date: 'Today, 08:30 AM',
+    customerName: 'Ananya Reddy',
+    phone: '+91 94401 67890',
+    destination: 'Jubilee Hills, Hyderabad - 500033',
+    items: ['Belgian Dark Chocolate Truffle Cake (1kg)'],
+    amount: 650,
+    paymentMethod: 'Credit Card (HDFC)',
+    status: 'out_for_delivery',
+    statusLabel: 'Out for Delivery (Express Van #04)'
+  },
+  {
+    orderId: 'KB-ORD-2026-3109',
+    date: 'Yesterday, 04:45 PM',
+    customerName: 'Vikram Malhotra',
+    phone: '+91 98200 45678',
+    destination: 'Bandra West, Mumbai - 400050',
+    items: ["Nizam's Royal Heritage 3-in-1 Tin x1"],
+    amount: 950,
+    paymentMethod: 'Cash on Delivery (COD)',
+    status: 'cargo',
+    statusLabel: 'Air Cargo Handover (BlueDart AWB #98124)'
+  }
+];
+
+// Seed active discount coupons
+const INITIAL_COUPONS = [
+  { code: 'KBHERITAGE', discount: 100, minOrder: 500, status: 'Active' },
+  { code: 'FESTIVE20', discount: 150, minOrder: 600, status: 'Active' },
+  { code: 'SWEET50', discount: 50, minOrder: 300, status: 'Active' }
+];
+
+function initAdminSystem() {
+  try {
+    // Load persisted session
+    const savedAuth = sessionStorage.getItem('KB_ADMIN_AUTH');
+    if (savedAuth === 'true') {
+      AdminStore.isAuthenticated = true;
+    }
+
+    // Load orders
+    const savedOrders = localStorage.getItem('KB_ADMIN_ORDERS');
+    AdminStore.orders = savedOrders ? JSON.parse(savedOrders) : [...INITIAL_DEMO_ORDERS];
+
+    // Load coupons
+    const savedCoupons = localStorage.getItem('KB_ADMIN_COUPONS');
+    AdminStore.coupons = savedCoupons ? JSON.parse(savedCoupons) : [...INITIAL_COUPONS];
+
+    // Load overrides
+    const savedPrices = localStorage.getItem('KB_PRICE_OVERRIDES');
+    if (savedPrices) AdminStore.priceOverrides = JSON.parse(savedPrices);
+
+    const savedStock = localStorage.getItem('KB_STOCK_OVERRIDES');
+    if (savedStock) AdminStore.stockOverrides = JSON.parse(savedStock);
+
+    const savedCustom = localStorage.getItem('KB_CUSTOM_PRODUCTS');
+    if (savedCustom) AdminStore.customProducts = JSON.parse(savedCustom);
+
+    // Apply stored modifications to live storefront
+    applyStoredCatalogOverrides();
+  } catch (err) {
+    console.error('Error initializing Admin system:', err);
+  }
+}
+
+function openAdminPortalModal() {
+  const modal = document.getElementById('adminPortalModal');
+  if (!modal) return;
+  modal.style.display = 'flex';
+  
+  if (AdminStore.isAuthenticated) {
+    showAdminDashboardView();
+  } else {
+    showAdminLoginView();
+  }
+}
+
+function closeAdminPortalModal() {
+  const modal = document.getElementById('adminPortalModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function handleAdminBackdropClick(event) {
+  if (event.target.id === 'adminPortalModal') {
+    closeAdminPortalModal();
+  }
+}
+
+function showAdminLoginView() {
+  const loginSec = document.getElementById('adminLoginSection');
+  const dashSec = document.getElementById('adminDashboardSection');
+  if (loginSec) loginSec.style.display = 'flex';
+  if (dashSec) dashSec.style.display = 'none';
+}
+
+function showAdminDashboardView() {
+  const loginSec = document.getElementById('adminLoginSection');
+  const dashSec = document.getElementById('adminDashboardSection');
+  if (loginSec) loginSec.style.display = 'none';
+  if (dashSec) dashSec.style.display = 'block';
+
+  renderAdminKpis();
+  renderAdminProductsTable();
+  renderAdminOrdersTable();
+  renderAdminCouponsTable();
+}
+
+function handleAdminLoginSubmit(e) {
+  e.preventDefault();
+  const input = document.getElementById('adminPasscode');
+  if (!input) return;
+
+  if (input.value.trim() === ADMIN_CONFIG.defaultPin) {
+    AdminStore.isAuthenticated = true;
+    sessionStorage.setItem('KB_ADMIN_AUTH', 'true');
+    showToast('Store Manager authentication successful!', '👨‍💼');
+    showAdminDashboardView();
+  } else {
+    showToast('Incorrect Passcode. Use demo PIN: admin123', '⚠️');
+  }
+}
+
+function quickAdminLogin() {
+  const input = document.getElementById('adminPasscode');
+  if (input) input.value = ADMIN_CONFIG.defaultPin;
+  AdminStore.isAuthenticated = true;
+  sessionStorage.setItem('KB_ADMIN_AUTH', 'true');
+  showToast('Authenticated as Operations Manager Rajesh Gupta', '🔑');
+  showAdminDashboardView();
+}
+
+function adminLogout() {
+  AdminStore.isAuthenticated = false;
+  sessionStorage.removeItem('KB_ADMIN_AUTH');
+  showToast('Logged out of Store Manager Portal', '👋');
+  showAdminLoginView();
+}
+
+function switchAdminTab(tabName) {
+  AdminStore.activeTab = tabName;
+  
+  // Tab buttons
+  document.querySelectorAll('.admin-nav-tab').forEach(btn => btn.classList.remove('active'));
+  const activeBtn = document.getElementById(`adminTabBtn${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`);
+  if (activeBtn) activeBtn.classList.add('active');
+
+  // Tab panels
+  const panels = ['Products', 'Orders', 'Coupons', 'Analytics'];
+  panels.forEach(p => {
+    const el = document.getElementById(`adminPanel${p}`);
+    if (el) el.style.display = (p.toLowerCase() === tabName) ? 'block' : 'none';
+  });
+
+  if (tabName === 'products') renderAdminProductsTable();
+  if (tabName === 'orders') renderAdminOrdersTable();
+  if (tabName === 'coupons') renderAdminCouponsTable();
+}
+
+function renderAdminKpis() {
+  // Revenue
+  let totalRev = 284500;
+  AdminStore.orders.forEach(o => {
+    totalRev += Number(o.amount || 0);
+  });
+  const revEl = document.getElementById('adminKpiRevenue');
+  if (revEl) revEl.textContent = `₹${totalRev.toLocaleString('en-IN')}`;
+
+  // Orders count
+  const ordersEl = document.getElementById('adminKpiOrders');
+  const badgeEl = document.getElementById('adminOrdersTabBadge');
+  const count = AdminStore.orders.length;
+  if (ordersEl) ordersEl.textContent = `${count} Orders`;
+  if (badgeEl) badgeEl.textContent = count;
+
+  // Catalog count
+  const catalogCount = Object.keys(PRODUCT_CATALOG_DATA).length + AdminStore.customProducts.length;
+  const prodEl = document.getElementById('adminKpiProducts');
+  if (prodEl) prodEl.textContent = `${catalogCount} Delicacies`;
+}
+
+function renderAdminProductsTable(filterTerm = '') {
+  const tbody = document.getElementById('adminCatalogTableBody');
+  if (!tbody) return;
+
+  const term = filterTerm.toLowerCase().trim();
+  let rowsHtml = '';
+
+  // Merge built-in products with custom added products
+  const allProducts = [];
+  Object.values(PRODUCT_CATALOG_DATA).forEach(p => {
+    allProducts.push({
+      id: p.id,
+      name: p.name,
+      category: p.categoryLabel || p.category,
+      price: AdminStore.priceOverrides[p.id] !== undefined ? AdminStore.priceOverrides[p.id] : p.price,
+      unit: p.unit || '400g Tin',
+      emoji: p.icon || '🍪',
+      isCustom: false
+    });
+  });
+
+  AdminStore.customProducts.forEach(cp => {
+    allProducts.push({
+      id: cp.id,
+      name: cp.name,
+      category: cp.categoryLabel || cp.category,
+      price: AdminStore.priceOverrides[cp.id] !== undefined ? AdminStore.priceOverrides[cp.id] : cp.price,
+      unit: cp.unit || '400g Box',
+      emoji: cp.icon || '🍪',
+      isCustom: true
+    });
+  });
+
+  allProducts.forEach(p => {
+    if (term && !p.name.toLowerCase().includes(term) && !p.category.toLowerCase().includes(term)) {
+      return;
+    }
+
+    const isOutOfStock = AdminStore.stockOverrides[p.id] === true;
+
+    rowsHtml += `
+      <tr>
+        <td>
+          <div class="admin-prod-thumb-row">
+            <span class="admin-prod-emoji">${p.emoji}</span>
+            <div>
+              <strong>${p.name}</strong>
+              <div style="font-size:0.75rem; color:#90A4AE;">${p.unit}</div>
+            </div>
+          </div>
+        </td>
+        <td><span class="tag" style="background:#2C323B; color:#ECEFF1;">${p.category}</span></td>
+        <td>
+          <div class="admin-price-cell">
+            <span>₹</span>
+            <input type="number" class="admin-price-input" id="price_input_${p.id}" value="${p.price}" min="50" max="10000">
+            <button type="button" class="btn-save-price" onclick="adminSavePrice('${p.id}')">Update</button>
+          </div>
+        </td>
+        <td>
+          <button type="button" class="admin-stock-badge ${isOutOfStock ? 'outofstock' : 'instock'}" onclick="adminToggleStock('${p.id}')">
+            ${isOutOfStock ? '🔴 Out of Stock' : '🟢 In Stock'}
+          </button>
+        </td>
+        <td>
+          ${p.isCustom ? `
+            <button type="button" class="btn-admin-del" onclick="adminDeleteProduct('${p.id}')" title="Delete custom item">🗑️ Delete</button>
+          ` : `
+            <span style="font-size:0.75rem; color:#78909C;">Core Delicacy</span>
+          `}
+        </td>
+      </tr>
+    `;
+  });
+
+  tbody.innerHTML = rowsHtml;
+}
+
+function filterAdminCatalog(term) {
+  renderAdminProductsTable(term);
+}
+
+function adminSavePrice(productId) {
+  const input = document.getElementById(`price_input_${productId}`);
+  if (!input) return;
+  const newPrice = parseInt(input.value, 10);
+  if (isNaN(newPrice) || newPrice < 10) {
+    showToast('Please enter a valid price amount.', '⚠️');
+    return;
+  }
+
+  AdminStore.priceOverrides[productId] = newPrice;
+  localStorage.setItem('KB_PRICE_OVERRIDES', JSON.stringify(AdminStore.priceOverrides));
+
+  // Update in PRODUCT_CATALOG_DATA if present
+  if (PRODUCT_CATALOG_DATA[productId]) {
+    PRODUCT_CATALOG_DATA[productId].price = newPrice;
+  }
+
+  // Update DOM card on main storefront
+  const card = document.querySelector(`article[data-id="${productId}"]`);
+  if (card) {
+    card.setAttribute('data-price', newPrice);
+    const priceCurrent = card.querySelector('.price-current');
+    if (priceCurrent) priceCurrent.textContent = `₹${newPrice}`;
+
+    const addBtn = card.querySelector('.btn-add-cart');
+    const pName = card.getAttribute('data-name') || 'Bakery Delicacy';
+    if (addBtn) addBtn.setAttribute('onclick', `addToCart('${pName}', ${newPrice})`);
+  }
+
+  showToast(`Updated cost/price for item to ₹${newPrice}`, '💰');
+}
+
+function adminToggleStock(productId) {
+  const current = AdminStore.stockOverrides[productId] === true;
+  const next = !current;
+  AdminStore.stockOverrides[productId] = next;
+  localStorage.setItem('KB_STOCK_OVERRIDES', JSON.stringify(AdminStore.stockOverrides));
+
+  // Update live storefront card
+  const card = document.querySelector(`article[data-id="${productId}"]`);
+  if (card) {
+    if (next) {
+      card.classList.add('is-out-of-stock');
+      if (!card.querySelector('.out-of-stock-banner')) {
+        const banner = document.createElement('div');
+        banner.className = 'out-of-stock-banner';
+        banner.textContent = 'SOLD OUT';
+        card.appendChild(banner);
+      }
+      const addBtn = card.querySelector('.btn-add-cart');
+      if (addBtn) {
+        addBtn.disabled = true;
+        addBtn.textContent = 'Out of Stock';
+      }
+    } else {
+      card.classList.remove('is-out-of-stock');
+      const banner = card.querySelector('.out-of-stock-banner');
+      if (banner) banner.remove();
+      const addBtn = card.querySelector('.btn-add-cart');
+      if (addBtn) {
+        addBtn.disabled = false;
+        addBtn.textContent = 'Add to Cart';
+      }
+    }
+  }
+
+  renderAdminProductsTable();
+  showToast(next ? 'Item marked as OUT OF STOCK on storefront' : 'Item marked as IN STOCK on storefront', next ? '🔴' : '🟢');
+}
+
+function handleAddNewProductSubmit(e) {
+  e.preventDefault();
+  const name = document.getElementById('newProdName').value.trim();
+  const category = document.getElementById('newProdCategory').value;
+  const price = parseInt(document.getElementById('newProdPrice').value, 10);
+  const unit = document.getElementById('newProdUnit').value.trim();
+  const dietary = document.getElementById('newProdDietary').value;
+  const emoji = document.getElementById('newProdEmoji').value;
+  const desc = document.getElementById('newProdDesc').value.trim();
+
+  if (!name || isNaN(price)) {
+    showToast('Please fill in required product details.', '⚠️');
+    return;
+  }
+
+  const newId = `p_custom_${Date.now()}`;
+  const newProduct = {
+    id: newId,
+    name,
+    category,
+    categoryLabel: category.charAt(0).toUpperCase() + category.slice(1),
+    price,
+    originalPrice: Math.round(price * 1.15),
+    unit,
+    emoji,
+    dietary: [dietary],
+    description: desc,
+    rating: 5.0,
+    reviews: 1
+  };
+
+  AdminStore.customProducts.push(newProduct);
+  localStorage.setItem('KB_CUSTOM_PRODUCTS', JSON.stringify(AdminStore.customProducts));
+
+  // Add into PRODUCT_CATALOG_DATA for search & pdp
+  PRODUCT_CATALOG_DATA[newId] = newProduct;
+
+  // Insert into live DOM grid
+  insertCustomProductToStorefront(newProduct);
+
+  // Clear form & re-render
+  document.getElementById('adminAddProductForm').reset();
+  renderAdminProductsTable();
+  renderAdminKpis();
+
+  showToast(`🎉 "${name}" published live to Karachi Bakery store!`, '🚀');
+}
+
+function insertCustomProductToStorefront(p) {
+  const container = document.getElementById('productGridContainer');
+  if (!container) return;
+
+  const article = document.createElement('article');
+  article.className = 'product-card custom-admin-product';
+  article.setAttribute('data-id', p.id);
+  article.setAttribute('data-category', p.category);
+  article.setAttribute('data-price', p.price);
+  article.setAttribute('data-name', p.name);
+  article.setAttribute('data-dietary', p.dietary.join(' '));
+
+  article.innerHTML = `
+    <div class="product-card-top-bar">
+      <div class="product-tags-group">
+        <span class="product-tag" style="background:#FFE082; color:#3E2723;">Fresh Batch ✨</span>
+        <span class="product-tag dietary">${p.dietary.includes('veg') ? 'Veg 🟢' : 'Eggless'}</span>
+      </div>
+    </div>
+    <div class="product-thumb">
+      <span class="product-thumb-placeholder">${p.emoji || '🍪'}</span>
+      <span class="thumb-badge">New Arrival</span>
+    </div>
+    <div class="product-details">
+      <div class="product-rating">
+        <span class="star-icon">⭐</span>
+        <strong>5.0</strong>
+        <span class="rating-count">(New)</span>
+      </div>
+      <span class="product-category-label">${p.categoryLabel}</span>
+      <h3 class="product-title">${p.name}</h3>
+      <div class="product-specs">
+        <span>📦 ${p.unit}</span>
+        <span>•</span>
+        <span>⏳ 6 Months</span>
+      </div>
+      <p class="product-card-desc">${p.description}</p>
+      <div class="product-pricing">
+        <div class="price-box">
+          <span class="price-current">₹${p.price}</span>
+          <span class="price-original">₹${p.originalPrice}</span>
+        </div>
+        <div class="product-card-buttons">
+          <button type="button" class="btn-card-details" onclick="showToast('${p.name}: Fresh batch handcrafted with authentic Karachi Bakery recipe.', 'ℹ️')">👁️ Info</button>
+          <button type="button" class="btn-add-cart" onclick="addToCart('${p.name} (${p.unit})', ${p.price})">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  container.prepend(article);
+}
+
+function adminDeleteProduct(productId) {
+  AdminStore.customProducts = AdminStore.customProducts.filter(p => p.id !== productId);
+  localStorage.setItem('KB_CUSTOM_PRODUCTS', JSON.stringify(AdminStore.customProducts));
+
+  delete PRODUCT_CATALOG_DATA[productId];
+
+  const card = document.querySelector(`article[data-id="${productId}"]`);
+  if (card) card.remove();
+
+  renderAdminProductsTable();
+  renderAdminKpis();
+  showToast('Custom delicacy removed from catalog.', '🗑️');
+}
+
+function renderAdminOrdersTable(statusFilter = 'all') {
+  const tbody = document.getElementById('adminOrdersTableBody');
+  if (!tbody) return;
+
+  let rowsHtml = '';
+  const orders = AdminStore.orders || [];
+
+  orders.forEach(o => {
+    if (statusFilter !== 'all' && o.status !== statusFilter) return;
+
+    rowsHtml += `
+      <tr>
+        <td>
+          <strong>${o.orderId}</strong>
+          <div style="font-size:0.75rem; color:#90A4AE;">${o.date || 'Just Now'}</div>
+        </td>
+        <td>
+          <strong>${o.customerName}</strong>
+          <div style="font-size:0.75rem; color:#90A4AE;">${o.phone}</div>
+          <div style="font-size:0.75rem; color:#CFD8DC;">${o.destination}</div>
+        </td>
+        <td>
+          <ul style="padding-left:1rem; margin:0; font-size:0.8rem;">
+            ${(o.items || []).map(i => `<li>${typeof i === 'string' ? i : i.name}</li>`).join('')}
+          </ul>
+        </td>
+        <td>
+          <strong style="color:#FFE082;">₹${o.amount}</strong>
+          <div style="font-size:0.75rem; color:#90A4AE;">${o.paymentMethod || 'Paid Online'}</div>
+        </td>
+        <td>
+          <select class="admin-status-select" onchange="adminUpdateOrderStatus('${o.orderId}', this.value)">
+            <option value="placed" ${o.status === 'placed' ? 'selected' : ''}>📋 Order Placed & Verified</option>
+            <option value="baking" ${o.status === 'baking' ? 'selected' : ''}>🔥 Baking in Central Kitchen</option>
+            <option value="cargo" ${o.status === 'cargo' ? 'selected' : ''}>🚚 Air Cargo In-Transit</option>
+            <option value="out_for_delivery" ${o.status === 'out_for_delivery' ? 'selected' : ''}>📦 Out for Delivery</option>
+            <option value="delivered" ${o.status === 'delivered' ? 'selected' : ''}>✅ Delivered Successfully</option>
+          </select>
+        </td>
+        <td>
+          <button type="button" class="btn-save-price" onclick="printSingleOrderReceipt('${o.orderId}')">🖨️ Invoice</button>
+        </td>
+      </tr>
+    `;
+  });
+
+  if (orders.length === 0) {
+    rowsHtml = '<tr><td colspan="6" style="text-align:center; padding:2rem; color:#90A4AE;">No orders currently recorded.</td></tr>';
+  }
+
+  tbody.innerHTML = rowsHtml;
+}
+
+function filterAdminOrders(statusFilter, btn) {
+  document.querySelectorAll('.btn-order-filter').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderAdminOrdersTable(statusFilter);
+}
+
+function adminUpdateOrderStatus(orderId, newStatus) {
+  const order = AdminStore.orders.find(o => o.orderId === orderId);
+  if (order) {
+    order.status = newStatus;
+    const labels = {
+      placed: 'Order Placed & Verified',
+      baking: 'Baking in Mozamjahi Central Kitchen',
+      cargo: 'Air Cargo Handover (BlueDart)',
+      out_for_delivery: 'Out for Delivery (Express Van)',
+      delivered: 'Delivered Successfully'
+    };
+    order.statusLabel = labels[newStatus] || newStatus;
+    localStorage.setItem('KB_ADMIN_ORDERS', JSON.stringify(AdminStore.orders));
+    showToast(`Order ${orderId} dispatch status updated to: ${order.statusLabel}`, '🚚');
+  }
+}
+
+function printSingleOrderReceipt(orderId) {
+  const order = AdminStore.orders.find(o => o.orderId === orderId);
+  if (!order) return;
+  showToast(`Printing official tax invoice for order ${orderId}...`, '🖨️');
+  setTimeout(() => window.print(), 300);
+}
+
+function renderAdminCouponsTable() {
+  const tbody = document.getElementById('adminCouponsTableBody');
+  if (!tbody) return;
+
+  let rowsHtml = '';
+  AdminStore.coupons.forEach(c => {
+    rowsHtml += `
+      <tr>
+        <td><strong style="color:#FFE082;">${c.code}</strong></td>
+        <td>₹${c.discount} Flat OFF</td>
+        <td>Min Cart: ₹${c.minOrder}</td>
+        <td><span class="tag" style="background:#2E7D32; color:#FFF;">${c.status}</span></td>
+        <td>
+          <button type="button" class="btn-admin-del" onclick="adminDeleteCoupon('${c.code}')">Delete</button>
+        </td>
+      </tr>
+    `;
+  });
+
+  tbody.innerHTML = rowsHtml;
+}
+
+function handleAddNewCouponSubmit(e) {
+  e.preventDefault();
+  const code = document.getElementById('newCouponCode').value.trim().toUpperCase();
+  const discount = parseInt(document.getElementById('newCouponDiscount').value, 10);
+  const minOrder = parseInt(document.getElementById('newCouponMinOrder').value, 10);
+
+  if (!code || isNaN(discount)) return;
+
+  AdminStore.coupons.push({ code, discount, minOrder, status: 'Active' });
+  localStorage.setItem('KB_ADMIN_COUPONS', JSON.stringify(AdminStore.coupons));
+
+  document.getElementById('adminAddCouponForm').reset();
+  renderAdminCouponsTable();
+  showToast(`Discount Coupon "${code}" is now live on checkout!`, '🎟️');
+}
+
+function adminDeleteCoupon(code) {
+  AdminStore.coupons = AdminStore.coupons.filter(c => c.code !== code);
+  localStorage.setItem('KB_ADMIN_COUPONS', JSON.stringify(AdminStore.coupons));
+  renderAdminCouponsTable();
+  showToast(`Coupon ${code} removed.`, '🗑️');
+}
+
+function exportOrdersToCsv() {
+  const orders = AdminStore.orders || [];
+  if (orders.length === 0) {
+    showToast('No orders available to export.', '⚠️');
+    return;
+  }
+
+  let csv = 'Order ID,Date,Customer Name,Phone,Destination,Amount,Payment Method,Status\n';
+  orders.forEach(o => {
+    csv += `"${o.orderId}","${o.date || ''}","${o.customerName}","${o.phone}","${o.destination.replace(/"/g, '""')}","${o.amount}","${o.paymentMethod || ''}","${o.status}"\n`;
+  });
+
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.setAttribute('href', url);
+  a.setAttribute('download', `Karachi_Bakery_Orders_${Date.now()}.csv`);
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+
+  showToast('Orders exported to CSV spreadsheet successfully!', '📥');
+}
+
+function applyStoredCatalogOverrides() {
+  // Apply Price Overrides
+  Object.keys(AdminStore.priceOverrides).forEach(id => {
+    const price = AdminStore.priceOverrides[id];
+    if (PRODUCT_CATALOG_DATA[id]) {
+      PRODUCT_CATALOG_DATA[id].price = price;
+    }
+    const card = document.querySelector(`article[data-id="${id}"]`);
+    if (card) {
+      card.setAttribute('data-price', price);
+      const curr = card.querySelector('.price-current');
+      if (curr) curr.textContent = `₹${price}`;
+      const btn = card.querySelector('.btn-add-cart');
+      const name = card.getAttribute('data-name') || 'Item';
+      if (btn) btn.setAttribute('onclick', `addToCart('${name}', ${price})`);
+    }
+  });
+
+  // Apply Stock Overrides
+  Object.keys(AdminStore.stockOverrides).forEach(id => {
+    if (AdminStore.stockOverrides[id] === true) {
+      const card = document.querySelector(`article[data-id="${id}"]`);
+      if (card) {
+        card.classList.add('is-out-of-stock');
+        if (!card.querySelector('.out-of-stock-banner')) {
+          const banner = document.createElement('div');
+          banner.className = 'out-of-stock-banner';
+          banner.textContent = 'SOLD OUT';
+          card.appendChild(banner);
+        }
+        const btn = card.querySelector('.btn-add-cart');
+        if (btn) {
+          btn.disabled = true;
+          btn.textContent = 'Out of Stock';
+        }
+      }
+    }
+  });
+
+  // Render Custom Products
+  AdminStore.customProducts.forEach(cp => {
+    PRODUCT_CATALOG_DATA[cp.id] = cp;
+    insertCustomProductToStorefront(cp);
+  });
+}
+
+// Hook Admin into App Initialization
+document.addEventListener('DOMContentLoaded', () => {
+  initAdminSystem();
+});

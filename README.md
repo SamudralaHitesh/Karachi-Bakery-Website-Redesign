@@ -36,6 +36,22 @@ A comprehensive, modern redesign of the iconic **Karachi Bakery** web platform (
 
 ---
 
+## 🔐 Store Operations & Admin Management Portal (Back-Office Hub)
+
+To provide a complete enterprise e-commerce architecture beyond the customer storefront, the redesign includes an interactive **Store Manager & Operations Admin Portal**:
+
+- **How to Access:** Click the **`🔐 Store Manager / Admin`** tab in the Journey Switcher bar or the **`Staff Admin`** button in the header.
+- **Demo Access Passcode:** `admin123` (or click *"⚡ 1-Click Instant Manager Login"*).
+- **Core Admin Modules:**
+  1. **Dynamic Cost & Price Management**: Adjust item selling prices/costs on the fly with immediate DOM recalculation across product cards, PDP, compare, and shopping cart.
+  2. **Inventory Stock Status Controls**: Toggle any product between `🟢 In Stock` and `🔴 Out of Stock`. When out of stock, the public storefront marks the card with a `SOLD OUT` ribbon and disables "Add to Cart".
+  3. **Delicacy Publisher**: Add brand new bakery items directly into the live storefront catalog with category, price, pack size, dietary flags, and emoji icons.
+  4. **Live Orders & Kitchen Dispatch Dispatcher**: Real-time incoming order ledger synced directly with customer checkout. Admin can advance order status (`Baking in Kitchen` → `Air Cargo Handover` → `Out for Delivery` → `Delivered`), dynamically updating the customer's live tracking screen!
+  5. **Promo Coupon Engine**: Create and manage custom discount codes (`KBHERITAGE`, `FESTIVE20`, etc.) that are instantly accepted at customer checkout.
+  6. **Business Analytics & CSV Export**: Category sales share breakdown, payment gateway distribution, and 1-click order spreadsheet export.
+
+---
+
 ## 🚀 Day 9 Achievements
 
 - **Pincode Delivery Estimator & Multi-Zone Shipping (Problem #12 Solved)**:

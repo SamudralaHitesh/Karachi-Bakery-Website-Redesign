@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
   
   <!-- Main Design System CSS -->
-  <link rel="stylesheet" href="styles/main.css?v=10.0.0">
+  <link rel="stylesheet" href="styles/main.css?v=11.0.0">
 </head>
 <body>
 
@@ -51,6 +51,9 @@
         </button>
         <button class="journey-tab" id="tabCustomCakes" role="tab" aria-selected="false" data-journey="custom">
           🎂 Custom Cake Studio
+        </button>
+        <button class="journey-tab admin-journey-tab" id="tabAdmin" role="tab" aria-selected="false" data-journey="admin" onclick="openAdminPortalModal()">
+          🔐 Store Manager / Admin <span class="tag" style="background:#FFE082; color:#5D4037;">Staff</span>
         </button>
         <button class="journey-tab" id="tabStores" role="tab" aria-selected="false" data-journey="stores">
           📍 Store Locator <span class="tag">50+ Outlets</span>
@@ -100,6 +103,9 @@
 
         <!-- Action Buttons -->
         <div class="header-actions">
+          <button class="action-btn action-btn-admin" id="btnAdminPortal" title="Store Operations & Inventory Manager" onclick="openAdminPortalModal()">
+            🔐 <span class="action-text">Staff Admin</span>
+          </button>
           <button class="action-btn action-btn-ghost" id="btnCompareBadge" title="Compare Delicacies Side-by-Side (Day 5)" onclick="openCompareModal()">
             ⚖️ <span class="action-text">Compare</span>
             <span class="badge-count" id="compareCount">0</span>
@@ -3205,12 +3211,373 @@
     </div>
   </div>
 
-<div class="toast-notice" id="toastNotice" role="alert" aria-live="polite">
+
+  <!-- ==========================================================================
+       Admin & Store Manager Portal Modal
+       Provides Real-Time Product Catalog Management, Pricing/Cost Updates,
+       Inventory/Stock Status Toggling, Kitchen Dispatch Tracking & Order Audits
+       ========================================================================== -->
+  <div class="admin-modal-backdrop" id="adminPortalModal" style="display:none;" onclick="handleAdminBackdropClick(event)">
+    <div class="admin-modal-window" role="dialog" aria-modal="true" aria-labelledby="adminModalTitle">
+      
+      <!-- Modal Header Bar -->
+      <div class="admin-header-bar">
+        <div class="admin-header-brand">
+          <div class="admin-emblem">KB</div>
+          <div>
+            <h3 id="adminModalTitle" class="admin-title">Karachi Bakery Store Operations & Inventory Hub</h3>
+            <span class="admin-subtitle">Mozamjahi Central Kitchen, Hyderabad • Live Operations System</span>
+          </div>
+        </div>
+        <div class="admin-header-controls">
+          <div class="admin-badge-live">● Live Storefront Synced</div>
+          <button type="button" class="btn-admin-close" onclick="closeAdminPortalModal()" title="Close and return to Public Storefront">✕ Close</button>
+        </div>
+      </div>
+
+      <!-- Content Container -->
+      <div class="admin-modal-body">
+        
+        <!-- SECTION A: Admin Login Screen (Shown when not authenticated) -->
+        <div id="adminLoginSection" class="admin-login-wrapper">
+          <div class="admin-login-card">
+            <div class="admin-lock-icon">🔐</div>
+            <h4>Karachi Bakery Staff Authentication</h4>
+            <p>Access the central store manager console to update pricing, manage stock, add new bakery delicacies, and dispatch live customer orders.</p>
+            
+            <form id="adminLoginForm" onsubmit="handleAdminLoginSubmit(event)">
+              <div class="admin-form-group">
+                <label for="adminPasscode">Enter Store Manager Passcode / PIN:</label>
+                <div class="admin-passcode-row">
+                  <input type="password" id="adminPasscode" placeholder="Enter PIN (e.g. admin123)" required autocomplete="current-password">
+                  <button type="submit" class="btn-admin-login-submit">Authenticate ➔</button>
+                </div>
+              </div>
+            </form>
+
+            <div class="admin-login-hint-box">
+              <span class="hint-tag">💡 Demo Mode Credentials</span>
+              <p>For instant testing and university evaluation, use Passcode: <strong>admin123</strong></p>
+              <button type="button" class="btn-quick-admin-login" onclick="quickAdminLogin()">⚡ 1-Click Instant Manager Login</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION B: Main Authenticated Dashboard (Shown when logged in) -->
+        <div id="adminDashboardSection" style="display:none;" class="admin-dashboard-wrapper">
+          
+          <!-- Top Manager Info Bar -->
+          <div class="admin-manager-bar">
+            <div class="manager-profile">
+              <span class="manager-avatar">👨‍💼</span>
+              <div>
+                <strong>Rajesh Gupta</strong>
+                <span class="manager-role">Head of Operations & Dispatch (Store ID: #HYD-01)</span>
+              </div>
+            </div>
+            <div class="admin-action-links">
+              <button type="button" class="btn-manager-action" onclick="exportOrdersToCsv()">📥 Export Orders CSV</button>
+              <button type="button" class="btn-manager-action danger" onclick="adminLogout()">🚪 Log Out</button>
+            </div>
+          </div>
+
+          <!-- KPI Metric Cards Grid -->
+          <div class="admin-kpi-grid">
+            <div class="admin-kpi-card gold">
+              <div class="kpi-icon">💰</div>
+              <div class="kpi-info">
+                <span class="kpi-label">Total E-Commerce Revenue</span>
+                <strong class="kpi-value" id="adminKpiRevenue">₹2,84,500</strong>
+                <span class="kpi-sub">Includes live checkout orders</span>
+              </div>
+            </div>
+            <div class="admin-kpi-card crimson">
+              <div class="kpi-icon">📦</div>
+              <div class="kpi-info">
+                <span class="kpi-label">Active Orders Received</span>
+                <strong class="kpi-value" id="adminKpiOrders">14 Orders</strong>
+                <span class="kpi-sub" id="adminKpiPending">3 Pending Dispatch</span>
+              </div>
+            </div>
+            <div class="admin-kpi-card blue">
+              <div class="kpi-icon">🍪</div>
+              <div class="kpi-info">
+                <span class="kpi-label">Live Storefront Catalog</span>
+                <strong class="kpi-value" id="adminKpiProducts">16 Items</strong>
+                <span class="kpi-sub" id="adminKpiActiveCategories">5 Signature Pillars</span>
+              </div>
+            </div>
+            <div class="admin-kpi-card green">
+              <div class="kpi-icon">⚡</div>
+              <div class="kpi-info">
+                <span class="kpi-label">Kitchen Status</span>
+                <strong class="kpi-value">Active & Baking</strong>
+                <span class="kpi-sub">Mozamjahi Central Hub</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Admin Sub-Navigation Tabs -->
+          <div class="admin-nav-tabs" role="tablist">
+            <button type="button" class="admin-nav-tab active" id="adminTabBtnProducts" onclick="switchAdminTab('products')">
+              🏷️ Products & Price Management
+            </button>
+            <button type="button" class="admin-nav-tab" id="adminTabBtnOrders" onclick="switchAdminTab('orders')">
+              🚚 Orders & Kitchen Dispatch (<span id="adminOrdersTabBadge">0</span>)
+            </button>
+            <button type="button" class="admin-nav-tab" id="adminTabBtnCoupons" onclick="switchAdminTab('coupons')">
+              🎟️ Discount Coupons & Promo
+            </button>
+            <button type="button" class="admin-nav-tab" id="adminTabBtnAnalytics" onclick="switchAdminTab('analytics')">
+              📊 Sales Insights & Audit Log
+            </button>
+          </div>
+
+          <!-- PANEL 1: Products & Price Management -->
+          <div class="admin-tab-panel active" id="adminPanelProducts">
+            
+            <!-- Quick Add Delicacy Card -->
+            <div class="admin-card add-product-card">
+              <div class="admin-card-header">
+                <h4>➕ Add New Bakery Delicacy to Storefront</h4>
+                <p>New items immediately appear on the public website with search, filter, and cart capabilities.</p>
+              </div>
+              <form id="adminAddProductForm" onsubmit="handleAddNewProductSubmit(event)">
+                <div class="admin-form-row-3">
+                  <div class="form-group">
+                    <label for="newProdName">Product Title *</label>
+                    <input type="text" id="newProdName" placeholder="e.g. Royal Cashew Pista Delight" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="newProdCategory">Category Pillar *</label>
+                    <select id="newProdCategory" required>
+                      <option value="biscuits">Signature Biscuits & Cookies</option>
+                      <option value="cakes">Artisan Celebration Cakes</option>
+                      <option value="sweets">Pure Desi Ghee Mithai</option>
+                      <option value="hampers">Royal Keepsake Hampers</option>
+                      <option value="healthy">Wellness & Sugar-Free</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="newProdPrice">Selling Price / Cost (₹) *</label>
+                    <input type="number" id="newProdPrice" placeholder="e.g. 260" min="50" max="10000" required>
+                  </div>
+                </div>
+
+                <div class="admin-form-row-3">
+                  <div class="form-group">
+                    <label for="newProdUnit">Unit / Pack Size</label>
+                    <input type="text" id="newProdUnit" placeholder="e.g. 400g Heritage Box" value="400g Heritage Box">
+                  </div>
+                  <div class="form-group">
+                    <label for="newProdDietary">Dietary Tag</label>
+                    <select id="newProdDietary">
+                      <option value="veg">100% Pure Veg 🟢</option>
+                      <option value="eggless">Eggless Bake</option>
+                      <option value="sugar-free">No Added Sugar</option>
+                      <option value="non-veg">Contains Egg</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="newProdEmoji">Icon Emoji / Symbol</label>
+                    <select id="newProdEmoji">
+                      <option value="🍪">🍪 Biscuit / Cookie</option>
+                      <option value="🎂">🎂 Artisan Cake</option>
+                      <option value="🍯">🍯 Pure Desi Sweet / Mithai</option>
+                      <option value="🎁">🎁 Royal Keepsake Hamper</option>
+                      <option value="🌾">🌾 Superfood Crisp</option>
+                      <option value="☕">☕ Rusk / Toast</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom:1rem;">
+                  <label for="newProdDesc">Short Description</label>
+                  <input type="text" id="newProdDesc" placeholder="e.g. Handcrafted delicacy baked with pure dairy butter and rich dry fruits." value="Authentic Hyderabadi handcrafted recipe prepared fresh at Mozamjahi Central Kitchen.">
+                </div>
+
+                <div class="admin-form-actions">
+                  <button type="submit" class="btn-publish-product">🚀 Publish Delicacy to Live Storefront</button>
+                  <button type="reset" class="btn-reset-product">Clear Fields</button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Existing Products Catalog & Price Editor Table -->
+            <div class="admin-card">
+              <div class="admin-card-header flex-between">
+                <div>
+                  <h4>Live Storefront Catalog & Dynamic Price / Stock Controls</h4>
+                  <p>Change costs, adjust prices, or toggle items In/Out of stock in real-time.</p>
+                </div>
+                <div class="catalog-search-wrap">
+                  <input type="text" id="adminCatalogSearchInput" placeholder="Filter items..." oninput="filterAdminCatalog(this.value)">
+                </div>
+              </div>
+
+              <div class="admin-table-container">
+                <table class="admin-table" id="adminCatalogTable">
+                  <thead>
+                    <tr>
+                      <th>Product</th>
+                      <th>Category</th>
+                      <th>Selling Cost / Price</th>
+                      <th>Stock Availability</th>
+                      <th>Live Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adminCatalogTableBody">
+                    <!-- Populated dynamically by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- PANEL 2: Live Orders & Kitchen Dispatch Manager -->
+          <div class="admin-tab-panel" id="adminPanelOrders" style="display:none;">
+            <div class="admin-card">
+              <div class="admin-card-header flex-between">
+                <div>
+                  <h4>Customer Orders & Real-Time Kitchen Dispatch Manager</h4>
+                  <p>When you update an order status here, the customer's live tracking timeline updates automatically.</p>
+                </div>
+                <div class="order-filter-pills">
+                  <button type="button" class="btn-order-filter active" onclick="filterAdminOrders('all', this)">All</button>
+                  <button type="button" class="btn-order-filter" onclick="filterAdminOrders('baking', this)">Baking</button>
+                  <button type="button" class="btn-order-filter" onclick="filterAdminOrders('cargo', this)">Air Cargo</button>
+                  <button type="button" class="btn-order-filter" onclick="filterAdminOrders('out_for_delivery', this)">Out for Delivery</button>
+                </div>
+              </div>
+
+              <div class="admin-table-container">
+                <table class="admin-table" id="adminOrdersTable">
+                  <thead>
+                    <tr>
+                      <th>Order ID & Date</th>
+                      <th>Customer & Delivery Destination</th>
+                      <th>Items Ordered</th>
+                      <th>Amount & Payment</th>
+                      <th>Dispatch Tracking Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adminOrdersTableBody">
+                    <!-- Populated dynamically by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- PANEL 3: Discount Coupons & Promo -->
+          <div class="admin-tab-panel" id="adminPanelCoupons" style="display:none;">
+            <div class="admin-card">
+              <div class="admin-card-header">
+                <h4>🎟️ Create & Manage Discount Promo Codes</h4>
+                <p>Created coupons can be typed directly by customers into the checkout modal for instant savings.</p>
+              </div>
+              
+              <form id="adminAddCouponForm" onsubmit="handleAddNewCouponSubmit(event)" style="margin-bottom:1.5rem;">
+                <div class="admin-form-row-3">
+                  <div class="form-group">
+                    <label for="newCouponCode">Promo Code (Uppercase)</label>
+                    <input type="text" id="newCouponCode" placeholder="e.g. DIWALI30" required style="text-transform:uppercase;">
+                  </div>
+                  <div class="form-group">
+                    <label for="newCouponDiscount">Discount Amount (₹)</label>
+                    <input type="number" id="newCouponDiscount" placeholder="e.g. 150" min="10" max="5000" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="newCouponMinOrder">Min Order Amount (₹)</label>
+                    <input type="number" id="newCouponMinOrder" placeholder="e.g. 500" value="400" required>
+                  </div>
+                </div>
+                <button type="submit" class="btn-publish-product" style="width:auto; padding:0.6rem 1.25rem;">+ Add Active Coupon</button>
+              </form>
+
+              <div class="admin-table-container">
+                <table class="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Coupon Code</th>
+                      <th>Discount Value</th>
+                      <th>Minimum Cart Value</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adminCouponsTableBody">
+                    <!-- Populated dynamically by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- PANEL 4: Sales Insights & Analytics -->
+          <div class="admin-tab-panel" id="adminPanelAnalytics" style="display:none;">
+            <div class="admin-analytics-grid">
+              <div class="admin-card">
+                <h4>📊 Category Sales Share</h4>
+                <div class="analytics-bar-item">
+                  <div class="flex-between"><span>Signature Biscuits & Cookies</span><strong>54% (₹1,53,630)</strong></div>
+                  <div class="bar-progress"><div class="bar-fill" style="width:54%; background:#C99726;"></div></div>
+                </div>
+                <div class="analytics-bar-item">
+                  <div class="flex-between"><span>Artisan Celebration Cakes</span><strong>22% (₹62,590)</strong></div>
+                  <div class="bar-progress"><div class="bar-fill" style="width:22%; background:#720E1E;"></div></div>
+                </div>
+                <div class="analytics-bar-item">
+                  <div class="flex-between"><span>Pure Desi Ghee Mithai</span><strong>14% (₹39,830)</strong></div>
+                  <div class="bar-progress"><div class="bar-fill" style="width:14%; background:#2E7D32;"></div></div>
+                </div>
+                <div class="analytics-bar-item">
+                  <div class="flex-between"><span>Festive Gift Hampers</span><strong>10% (₹28,450)</strong></div>
+                  <div class="bar-progress"><div class="bar-fill" style="width:10%; background:#1565C0;"></div></div>
+                </div>
+              </div>
+
+              <div class="admin-card">
+                <h4>🏆 Top 3 Bestselling Delicacies</h4>
+                <ol class="bestseller-rank-list">
+                  <li>
+                    <strong>Original Hyderabad Fruit Biscuit (400g)</strong>
+                    <span class="sales-pill">3,420 Tins Sold</span>
+                  </li>
+                  <li>
+                    <strong>Hyderabadi Osmania Biscuits (400g)</strong>
+                    <span class="sales-pill">2,810 Boxes Sold</span>
+                  </li>
+                  <li>
+                    <strong>Royal Kaju Katli Diamond Cut (500g)</strong>
+                    <span class="sales-pill">1,140 Gift Packs Sold</span>
+                  </li>
+                </ol>
+
+                <h4 style="margin-top:1.5rem;">💳 Preferred Payment Gateways</h4>
+                <div class="payment-stats-row">
+                  <span class="tag">⚡ UPI QR: 64%</span>
+                  <span class="tag">💳 Credit/Debit: 21%</span>
+                  <span class="tag">🏛️ Net Banking: 9%</span>
+                  <span class="tag">💵 COD: 6%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div> <!-- End of Dashboard Section -->
+
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-notice" id="toastNotice" role="alert" aria-live="polite">
     <span id="toastIcon">✨</span>
     <span id="toastMessage">Action completed successfully</span>
   </div>
 
   <!-- Main JavaScript Logic -->
-  <script src="js/app.js?v=10.0.0"></script>
+  <script src="js/app.js?v=11.0.0"></script>
 </body>
 </html>
