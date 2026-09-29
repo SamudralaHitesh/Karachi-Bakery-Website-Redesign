@@ -4182,23 +4182,40 @@ function switchAdminTab(tabName) {
   if (tabName === 'coupons') renderAdminCouponsTable();
   if (tabName === 'b2bcakes') renderAdminB2bTable();
   if (tabName === 'announcement') previewThemePreset(document.getElementById('adminFestiveThemeSelect')?.value || 'heritage');
+  if (tabName === 'analytics') {
+    renderMonthlyAnalyticsChart();
+    renderMonthlyBreakdownTable();
+  }
 }
 
 function renderAdminKpis() {
-  // Revenue
-  let totalRev = 284500;
-  AdminStore.orders.forEach(o => {
-    totalRev += Number(o.amount || 0);
-  });
+  const monthData = (typeof MONTHLY_ANALYTICS_DATA !== 'undefined' && MONTHLY_ANALYTICS_DATA[currentSelectedAdminMonth]) 
+                    ? MONTHLY_ANALYTICS_DATA[currentSelectedAdminMonth] 
+                    : { baseRevenue: 284500, baseOrders: 14, growth: '+14.2% MoM' };
+
+  let totalRev = monthData.baseRevenue;
+  let count = monthData.baseOrders;
+
+  // Add live placed orders if viewing current month or all time
+  if ((currentSelectedAdminMonth === 'sep_2026' || currentSelectedAdminMonth === 'all_time') && AdminStore && AdminStore.orders) {
+    AdminStore.orders.forEach(o => {
+      totalRev += Number(o.amount || 0);
+    });
+    if (currentSelectedAdminMonth === 'sep_2026') {
+      count = AdminStore.orders.length;
+    }
+  }
+
   const revEl = document.getElementById('adminKpiRevenue');
   if (revEl) revEl.textContent = `₹${totalRev.toLocaleString('en-IN')}`;
 
-  // Orders count
   const ordersEl = document.getElementById('adminKpiOrders');
   const badgeEl = document.getElementById('adminOrdersTabBadge');
-  const count = AdminStore.orders.length;
   if (ordersEl) ordersEl.textContent = `${count} Orders`;
-  if (badgeEl) badgeEl.textContent = count;
+  if (badgeEl) badgeEl.textContent = (AdminStore.orders || []).length;
+
+  const pendingEl = document.getElementById('adminKpiPending');
+  if (pendingEl) pendingEl.textContent = `${monthData.growth} MoM Growth`;
 
   // Catalog count
   const catalogCount = Object.keys(PRODUCT_CATALOG_DATA).length + AdminStore.customProducts.length;
@@ -5038,4 +5055,242 @@ function resetDefaultAnnouncement() {
 
   previewThemePreset('heritage');
   showToast('Reset to classic Karachi Bakery heritage theme.', '🏛️');
+}
+
+
+
+// =============================================================================
+// Month-Wise Revenue & Orders Analytics Engine (FY 2026-27)
+// Provides Month Filtering, MoM Comparison, Split Ledger & Bar Chart
+// =============================================================================
+
+const MONTHLY_ANALYTICS_DATA = {
+  sep_2026: {
+    key: 'sep_2026',
+    label: 'September 2026',
+    shortLabel: 'Sep 2026',
+    tag: 'Festival Season Surge & Dussehra Prep',
+    baseRevenue: 284500, // dynamically incorporates live checkout orders
+    baseOrders: 14,      // dynamically incorporates live checkout orders
+    b2bRevenue: 155000,
+    retailRevenue: 129500,
+    aov: '₹20,324',
+    topItem: 'Original Hyderabad Fruit Biscuit (400g Tin)',
+    growth: '+14.2%',
+    growthType: 'pos',
+    kitchenStatus: 'Active & Baking (High Volume)'
+  },
+  aug_2026: {
+    key: 'aug_2026',
+    label: 'August 2026',
+    shortLabel: 'Aug 2026',
+    tag: 'Raksha Bandhan & Independence Day Festivities',
+    baseRevenue: 342800,
+    baseOrders: 18,
+    b2bRevenue: 190000,
+    retailRevenue: 152800,
+    aov: '₹19,044',
+    topItem: 'Royal Kaju Katli (Pure Desi Ghee Diamond Cut)',
+    growth: '+56.8%',
+    growthType: 'pos',
+    kitchenStatus: 'Peak Festival Fulfilled'
+  },
+  jul_2026: {
+    key: 'jul_2026',
+    label: 'July 2026',
+    shortLabel: 'Jul 2026',
+    tag: 'Monsoon Irani Chai & Rusk Season',
+    baseRevenue: 218600,
+    baseOrders: 11,
+    b2bRevenue: 110000,
+    retailRevenue: 108600,
+    aov: '₹19,872',
+    topItem: 'Irani Chai Double-Baked Butter Rusk (300g)',
+    growth: '+11.8%',
+    growthType: 'pos',
+    kitchenStatus: 'Regular Dispatch'
+  },
+  jun_2026: {
+    key: 'jun_2026',
+    label: 'June 2026',
+    shortLabel: 'Jun 2026',
+    tag: 'Summer Patisserie & Celebration Cakes',
+    baseRevenue: 195400,
+    baseOrders: 9,
+    b2bRevenue: 95000,
+    retailRevenue: 100400,
+    aov: '₹21,711',
+    topItem: 'Belgian Dark Chocolate Truffle Cake (1kg)',
+    growth: '-25.9%',
+    growthType: 'neg',
+    kitchenStatus: 'Regular Dispatch'
+  },
+  may_2026: {
+    key: 'may_2026',
+    label: 'May 2026',
+    shortLabel: 'May 2026',
+    tag: 'Summer Weddings & 3-Tier Cakes',
+    baseRevenue: 264000,
+    baseOrders: 13,
+    b2bRevenue: 140000,
+    retailRevenue: 124000,
+    aov: '₹20,307',
+    topItem: 'Bespoke 3-Tier Celebration Wedding Cakes',
+    growth: '+44.8%',
+    growthType: 'pos',
+    kitchenStatus: 'Wedding Season Surge'
+  },
+  apr_2026: {
+    key: 'apr_2026',
+    label: 'April 2026',
+    shortLabel: 'Apr 2026',
+    tag: 'Financial Year 2026-27 Kickoff',
+    baseRevenue: 182300,
+    baseOrders: 8,
+    b2bRevenue: 90000,
+    retailRevenue: 92300,
+    aov: '₹22,787',
+    topItem: 'Hyderabadi Osmania Biscuits (400g Box)',
+    growth: 'Baseline',
+    growthType: 'pos',
+    kitchenStatus: 'Regular Dispatch'
+  },
+  all_time: {
+    key: 'all_time',
+    label: 'FY 2026-27 YTD (Apr - Sep)',
+    shortLabel: 'FY YTD',
+    tag: 'Complete Financial Year-to-Date Performance',
+    baseRevenue: 1487600,
+    baseOrders: 73,
+    b2bRevenue: 780000,
+    retailRevenue: 707600,
+    aov: '₹20,378',
+    topItem: 'Original Hyderabad Fruit Biscuit (400g Tin)',
+    growth: '+28.4% YoY',
+    growthType: 'pos',
+    kitchenStatus: 'Optimal Efficiency'
+  }
+};
+
+let currentSelectedAdminMonth = 'sep_2026';
+
+function selectAdminMonth(monthKey, btnEl) {
+  currentSelectedAdminMonth = monthKey;
+
+  // Update button active state
+  document.querySelectorAll('.btn-period-pill').forEach(b => b.classList.remove('active'));
+  if (btnEl) {
+    btnEl.classList.add('active');
+  } else {
+    const defaultBtn = document.querySelector(`.btn-period-pill[onclick*="${monthKey}"]`);
+    if (defaultBtn) defaultBtn.classList.add('active');
+  }
+
+  // Update Period Summary Tag
+  const data = MONTHLY_ANALYTICS_DATA[monthKey] || MONTHLY_ANALYTICS_DATA.sep_2026;
+  const tagEl = document.getElementById('periodSummaryTag');
+  if (tagEl) {
+    tagEl.innerHTML = `Viewing: <strong>${data.label}</strong> (${data.tag})`;
+  }
+
+  // Recalculate and update top KPI Cards
+  renderAdminKpis();
+
+  // Re-render Analytics chart & ledger table
+  renderMonthlyAnalyticsChart();
+  renderMonthlyBreakdownTable();
+
+  showToast(`Loaded financial metrics for ${data.label}!`, '📅');
+}
+
+function renderMonthlyAnalyticsChart() {
+  const container = document.getElementById('monthlyChartBars');
+  if (!container) return;
+
+  const months = ['apr_2026', 'may_2026', 'jun_2026', 'jul_2026', 'aug_2026', 'sep_2026'];
+  const maxRev = 360000;
+
+  let html = '';
+  months.forEach(mKey => {
+    const item = MONTHLY_ANALYTICS_DATA[mKey];
+    let rev = item.baseRevenue;
+    let orders = item.baseOrders;
+
+    // If current month (Sep), add live checkout orders
+    if (mKey === 'sep_2026' && typeof AdminStore !== 'undefined' && AdminStore.orders) {
+      AdminStore.orders.forEach(o => {
+        rev += Number(o.amount || 0);
+      });
+      orders = AdminStore.orders.length;
+    }
+
+    const heightPct = Math.min(100, Math.max(15, Math.round((rev / maxRev) * 100)));
+    const isActive = (currentSelectedAdminMonth === mKey);
+
+    html += `
+      <div class="monthly-bar-col ${isActive ? 'active' : ''}" onclick="selectAdminMonth('${mKey}', null)" title="Click to view ${item.label} details">
+        <span class="monthly-bar-val">₹${(rev / 1000).toFixed(0)}k</span>
+        <span class="monthly-bar-orders">${orders} Orders</span>
+        <div class="monthly-bar" style="height:${heightPct}%;"></div>
+        <span class="monthly-bar-lbl">${item.shortLabel.split(' ')[0]}</span>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+function renderMonthlyBreakdownTable() {
+  const tbody = document.getElementById('monthlyLedgerTableBody');
+  if (!tbody) return;
+
+  const orderKeys = ['sep_2026', 'aug_2026', 'jul_2026', 'jun_2026', 'may_2026', 'apr_2026', 'all_time'];
+  let html = '';
+
+  orderKeys.forEach(mKey => {
+    const item = MONTHLY_ANALYTICS_DATA[mKey];
+    let rev = item.baseRevenue;
+    let orders = item.baseOrders;
+
+    if (mKey === 'sep_2026' && typeof AdminStore !== 'undefined' && AdminStore.orders) {
+      AdminStore.orders.forEach(o => {
+        rev += Number(o.amount || 0);
+      });
+      orders = AdminStore.orders.length;
+    }
+
+    const isSelected = (currentSelectedAdminMonth === mKey);
+
+    html += `
+      <tr class="${isSelected ? 'highlight-selected-month' : ''}" style="cursor:pointer;" onclick="selectAdminMonth('${mKey}', null)">
+        <td>
+          <strong style="color:#FFE082;">${item.label}</strong>
+          <div style="font-size:0.75rem; color:#90A4AE;">${item.tag}</div>
+        </td>
+        <td>
+          <strong>${orders} Orders</strong>
+        </td>
+        <td>
+          <strong style="color:#FFE082; font-size:0.95rem;">₹${rev.toLocaleString('en-IN')}</strong>
+        </td>
+        <td>
+          <div style="font-size:0.8rem;">
+            <span>🏢 B2B: ₹${item.b2bRevenue.toLocaleString('en-IN')}</span> • 
+            <span>🛍️ Retail: ₹${item.retailRevenue.toLocaleString('en-IN')}</span>
+          </div>
+        </td>
+        <td>
+          <span>${item.aov}</span>
+        </td>
+        <td>
+          <span style="font-size:0.8rem; color:#CFD8DC;">${item.topItem}</span>
+        </td>
+        <td>
+          <span class="${item.growthType === 'pos' ? 'growth-badge-positive' : 'growth-badge-negative'}">${item.growth}</span>
+        </td>
+      </tr>
+    `;
+  });
+
+  tbody.innerHTML = html;
 }

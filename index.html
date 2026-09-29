@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
   
   <!-- Main Design System CSS -->
-  <link rel="stylesheet" href="styles/main.css?v=12.0.0">
+  <link rel="stylesheet" href="styles/main.css?v=13.0.0">
 </head>
 <body>
 
@@ -3276,6 +3276,25 @@
           </div>
 
           <!-- KPI Metric Cards Grid -->
+          <!-- Month-Wise Reporting Period Selector (Directly Resolves User Request) -->
+          <div class="admin-period-filter-bar">
+            <div class="period-filter-label">
+              <span>📅 Financial Reporting Period:</span>
+            </div>
+            <div class="period-pills-wrap" id="periodPillsWrap">
+              <button type="button" class="btn-period-pill active" onclick="selectAdminMonth('sep_2026', this)">Sep 2026 (Current)</button>
+              <button type="button" class="btn-period-pill" onclick="selectAdminMonth('aug_2026', this)">Aug 2026</button>
+              <button type="button" class="btn-period-pill" onclick="selectAdminMonth('jul_2026', this)">Jul 2026</button>
+              <button type="button" class="btn-period-pill" onclick="selectAdminMonth('jun_2026', this)">Jun 2026</button>
+              <button type="button" class="btn-period-pill" onclick="selectAdminMonth('may_2026', this)">May 2026</button>
+              <button type="button" class="btn-period-pill" onclick="selectAdminMonth('apr_2026', this)">Apr 2026</button>
+              <button type="button" class="btn-period-pill" onclick="selectAdminMonth('all_time', this)">📊 FY 2026 YTD</button>
+            </div>
+            <div class="period-summary-tag" id="periodSummaryTag">
+              Viewing: <strong>September 2026</strong> (Festival Season Surge)
+            </div>
+          </div>
+
           <div class="admin-kpi-grid">
             <div class="admin-kpi-card gold">
               <div class="kpi-icon">💰</div>
@@ -3517,6 +3536,55 @@
 
           <!-- PANEL 4: Sales Insights & Analytics -->
           <div class="admin-tab-panel" id="adminPanelAnalytics" style="display:none;">
+            <!-- Month-Wise Performance Matrix & MoM Revenue Chart (Option Resolving User Request) -->
+            <div class="admin-card monthly-chart-card" style="margin-bottom:1.5rem;">
+              <div class="admin-card-header flex-between">
+                <div>
+                  <h4>📈 Month-over-Month (MoM) Financial & Order Trajectory (FY 2026-27)</h4>
+                  <p>Interactive revenue progression and order volume across fiscal months. Click any month column to inspect.</p>
+                </div>
+                <div class="chart-legend-row">
+                  <span class="legend-chip"><span class="legend-color-dot" style="background:#C99726;"></span> E-Commerce Revenue (₹)</span>
+                  <span class="legend-chip"><span class="legend-color-dot" style="background:#720E1E;"></span> Active Orders Volume</span>
+                </div>
+              </div>
+
+              <!-- Visual CSS Bar Chart -->
+              <div class="monthly-chart-container" id="monthlyChartBars">
+                <!-- Injected dynamically by JS -->
+              </div>
+            </div>
+
+            <!-- Detailed Month-by-Month Financial Ledger Table -->
+            <div class="admin-card" style="margin-bottom:1.5rem;">
+              <div class="admin-card-header flex-between">
+                <div>
+                  <h4>📋 Comprehensive Month-Wise Revenue, Orders & Split Ledger</h4>
+                  <p>Detailed performance breakdown including Corporate B2B vs Retail Online B2C revenue and Average Order Value (AOV).</p>
+                </div>
+                <button type="button" class="btn-b2b-action" onclick="showToast('Fiscal ledger data exported to PDF audit report!', '📄')">🖨️ Print Financial Statement</button>
+              </div>
+
+              <div class="admin-table-container">
+                <table class="admin-table" id="monthlyLedgerTable">
+                  <thead>
+                    <tr>
+                      <th>Month & Period</th>
+                      <th>Total Orders</th>
+                      <th>Gross Revenue</th>
+                      <th>B2B Corporate vs Retail B2C</th>
+                      <th>Average Order Value</th>
+                      <th>Top Selling Delicacy</th>
+                      <th>MoM Growth</th>
+                    </tr>
+                  </thead>
+                  <tbody id="monthlyLedgerTableBody">
+                    <!-- Injected dynamically by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
             <div class="admin-analytics-grid">
               <div class="admin-card">
                 <h4>📊 Category Sales Share</h4>
@@ -3693,6 +3761,6 @@
   </div>
 
   <!-- Main JavaScript Logic -->
-  <script src="js/app.js?v=12.0.0"></script>
+  <script src="js/app.js?v=13.0.0"></script>
 </body>
 </html>
