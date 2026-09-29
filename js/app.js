@@ -2448,6 +2448,22 @@ function confirmB2BQuoteBooking(quoteNum) {
     setTimeout(() => cartBadge.classList.remove('bump'), 300);
   }
   showToast(`Quotation ${quoteNum} accepted and added to your Cart!`, '🛒');
+  if (typeof AdminStore !== 'undefined' && AdminStore.b2bOrders) {
+    const liveB2bEntry = {
+      id: quoteNum,
+      date: 'Just Now (Today)',
+      company: B2B_STATE.companyName || 'Corporate Client Requisition',
+      contact: (B2B_STATE.contactPerson || 'Purchasing Manager') + ` (${B2B_STATE.phone || '+91-Enterprise'})`,
+      gstin: B2B_STATE.gstin || '36AAACI9999K1Z2',
+      item: `${B2B_STATE.quantity}x ${B2B_STATE.selectedProductName} (Custom Co-Branding)`,
+      amount: B2B_STATE.activeQuote ? B2B_STATE.activeQuote.finalTotal : 54600,
+      status: 'advance_paid',
+      statusLabel: '💰 Advance 50% Received (Direct Web Booking)',
+      deliveryDate: 'As Scheduled'
+    };
+    AdminStore.b2bOrders.unshift(liveB2bEntry);
+    localStorage.setItem('KB_ADMIN_B2B', JSON.stringify(AdminStore.b2bOrders));
+  }
 }
 
 function closeB2BQuoteModal() {
@@ -2762,6 +2778,21 @@ function bookCustomCake() {
 
   // Add to main shopping cart
   addToCart(cakeTitle, total);
+  if (typeof AdminStore !== 'undefined' && AdminStore.customCakes) {
+    const liveCakeBooking = {
+      id: `KB-CAKE-${Math.floor(1000 + Math.random() * 9000)}`,
+      date: CAKE_STUDIO_STATE.deliveryDate || 'Tomorrow (5:00 PM)',
+      customer: 'Online Patron (Web Booking)',
+      occasion: 'Celebration Cake Studio',
+      specs: `${CAKE_STUDIO_STATE.flavorName} • ${CAKE_STUDIO_STATE.weightKg}kg • ${CAKE_STUDIO_STATE.tiers}-Tier`,
+      inscription: CAKE_STUDIO_STATE.inscription || 'Celebration Joy ❤️',
+      chef: 'Chef Farhan (Head Patissier)',
+      status: 'confirmed',
+      statusLabel: '⏳ Booking Confirmed (Added to Cart)'
+    };
+    AdminStore.customCakes.unshift(liveCakeBooking);
+    localStorage.setItem('KB_ADMIN_CAKES', JSON.stringify(AdminStore.customCakes));
+  }
 
   // Render Confirmation Modal
   const modal = document.getElementById('cakeModalBackdrop');
@@ -4140,7 +4171,7 @@ function switchAdminTab(tabName) {
   if (activeBtn) activeBtn.classList.add('active');
 
   // Tab panels
-  const panels = ['Products', 'Orders', 'Coupons', 'Analytics'];
+  const panels = ['Products', 'Orders', 'Coupons', 'Analytics', 'B2bcakes', 'Announcement'];
   panels.forEach(p => {
     const el = document.getElementById(`adminPanel${p}`);
     if (el) el.style.display = (p.toLowerCase() === tabName) ? 'block' : 'none';
@@ -4149,6 +4180,8 @@ function switchAdminTab(tabName) {
   if (tabName === 'products') renderAdminProductsTable();
   if (tabName === 'orders') renderAdminOrdersTable();
   if (tabName === 'coupons') renderAdminCouponsTable();
+  if (tabName === 'b2bcakes') renderAdminB2bTable();
+  if (tabName === 'announcement') previewThemePreset(document.getElementById('adminFestiveThemeSelect')?.value || 'heritage');
 }
 
 function renderAdminKpis() {
@@ -4672,6 +4705,337 @@ function initSecretAdminTriggers() {
 // Hook Admin into App Initialization
 document.addEventListener('DOMContentLoaded', () => {
   initAdminSystem();
+  initAdminOptions1And2();
   initSecretAdminTriggers();
 });
 
+
+
+
+// =============================================================================
+// Admin Option 1: B2B Corporate Orders & Custom Cake Studio Hub
+// Admin Option 2: Live Announcement & Festive Theme Controller
+// =============================================================================
+
+const INITIAL_B2B_ORDERS = [
+  {
+    id: 'KB-B2B-2026-9042',
+    date: '28-Sep-2026',
+    company: 'Infosys Technologies Ltd. (Hyderabad DC)',
+    contact: 'Priya Sharma (HR & Gifting Lead)',
+    gstin: '36AAACI1234F1Z5',
+    item: '500x Collectible Keepsake Tins (Co-Branded Metallic Logo Embossing)',
+    amount: 100000,
+    status: 'invoice_sent',
+    statusLabel: '📄 GST Pro-Forma Invoice Sent',
+    deliveryDate: '15-Oct-2026'
+  },
+  {
+    id: 'KB-B2B-2026-8819',
+    date: '27-Sep-2026',
+    company: 'Google India (Gachibowli Campus)',
+    contact: 'Vikram Mehta (Procurement Lead)',
+    gstin: '36AACCG5678B1ZK',
+    item: '250x Vintage Hyderabad Festive Hampers',
+    amount: 312500,
+    status: 'advance_paid',
+    statusLabel: '💰 Advance 50% Received',
+    deliveryDate: '20-Oct-2026'
+  },
+  {
+    id: 'KB-B2B-2026-7201',
+    date: '26-Sep-2026',
+    company: 'Deloitte USI (Hi-Tech City)',
+    contact: 'Sandeep Roy (Operations Director)',
+    gstin: '36AADCD9876C1ZQ',
+    item: '150x Corporate Executive Wooden Gift Crates',
+    amount: 217500,
+    status: 'in_production',
+    statusLabel: '🏭 In Production & Packing',
+    deliveryDate: '10-Oct-2026'
+  }
+];
+
+const INITIAL_CUSTOM_CAKES = [
+  {
+    id: 'KB-CAKE-2026-118',
+    date: '02-Oct-2026 (5:00 PM)',
+    customer: 'Arjun Kapoor (Tel: +91 98490 22334)',
+    occasion: 'Wedding Grand Reception (3-Tier)',
+    specs: 'Belgian Dark Chocolate Truffle + Royal Red Velvet • 5.0 kg',
+    inscription: 'Arjun & Meera • Forever Together ❤️',
+    chef: 'Chef Farhan (Head Patissier)',
+    status: 'fondant_art',
+    statusLabel: '🎂 Baking & Fondant Artistry'
+  },
+  {
+    id: 'KB-CAKE-2026-204',
+    date: 'Tomorrow (4:00 PM)',
+    customer: 'Ananya Sharma (Tel: +91 94401 55667)',
+    occasion: '1st Birthday Celebration (2-Tier)',
+    specs: 'Fresh Mango & Alphonso Cream • 3.0 kg',
+    inscription: 'Happy 1st Birthday Little Reyansh 🌟',
+    chef: 'Chef Anjali',
+    status: 'baking',
+    statusLabel: '🔥 Sponge Baked & Chilling'
+  }
+];
+
+function initAdminOptions1And2() {
+  try {
+    // Load B2B Orders
+    const savedB2b = localStorage.getItem('KB_ADMIN_B2B');
+    AdminStore.b2bOrders = savedB2b ? JSON.parse(savedB2b) : [...INITIAL_B2B_ORDERS];
+
+    // Load Custom Cakes
+    const savedCakes = localStorage.getItem('KB_ADMIN_CAKES');
+    AdminStore.customCakes = savedCakes ? JSON.parse(savedCakes) : [...INITIAL_CUSTOM_CAKES];
+
+    // Load Announcement & Theme Config
+    const savedAnn = localStorage.getItem('KB_ANNOUNCEMENT_CONFIG');
+    if (savedAnn) {
+      const cfg = JSON.parse(savedAnn);
+      applyAnnouncementConfig(cfg);
+    }
+
+    const savedTheme = localStorage.getItem('KB_THEME_CONFIG');
+    if (savedTheme) {
+      applyThemePreset(savedTheme);
+    }
+  } catch (err) {
+    console.error('Error initializing Options 1 & 2:', err);
+  }
+}
+
+function renderAdminB2bTable() {
+  const tbody = document.getElementById('adminB2bTableBody');
+  if (!tbody) return;
+
+  const orders = AdminStore.b2bOrders || [];
+  let html = '';
+
+  orders.forEach(o => {
+    html += `
+      <tr>
+        <td>
+          <strong style="color:#FFE082;">${o.id}</strong>
+          <div style="font-size:0.75rem; color:#90A4AE;">Requested: ${o.date}</div>
+          <div style="font-size:0.75rem; color:#81C784;">Delivery Due: ${o.deliveryDate}</div>
+        </td>
+        <td>
+          <strong>${o.company}</strong>
+          <div style="font-size:0.75rem; color:#90A4AE;">${o.contact}</div>
+          <div style="font-size:0.72rem; color:#CFD8DC;">GSTIN: ${o.gstin}</div>
+        </td>
+        <td>
+          <div style="font-size:0.85rem; font-weight:600;">${o.item}</div>
+        </td>
+        <td>
+          <strong style="color:#FFE082; font-size:1rem;">₹${Number(o.amount).toLocaleString('en-IN')}</strong>
+          <div style="font-size:0.75rem; color:#90A4AE;">GST Pro-Forma</div>
+        </td>
+        <td>
+          <select class="admin-status-select" onchange="adminUpdateB2bStatus('${o.id}', this.value)">
+            <option value="quote_req" ${o.status === 'quote_req' ? 'selected' : ''}>📋 Quote Requested</option>
+            <option value="invoice_sent" ${o.status === 'invoice_sent' ? 'selected' : ''}>📄 GST Pro-Forma Invoice Sent</option>
+            <option value="advance_paid" ${o.status === 'advance_paid' ? 'selected' : ''}>💰 Advance 50% Received</option>
+            <option value="in_production" ${o.status === 'in_production' ? 'selected' : ''}>🏭 In Production & Packing</option>
+            <option value="dispatched" ${o.status === 'dispatched' ? 'selected' : ''}>🚚 Dispatched via Cargo</option>
+            <option value="fulfilled" ${o.status === 'fulfilled' ? 'selected' : ''}>✅ Fulfilled & Closed</option>
+          </select>
+        </td>
+        <td>
+          <div style="display:flex; flex-direction:column; gap:0.35rem;">
+            <button type="button" class="btn-b2b-action" onclick="printSingleOrderReceipt('${o.id}')">🖨️ GST Invoice</button>
+            <button type="button" class="btn-b2b-action" onclick="showToast('WhatsApp confirmation sent to ${o.contact.split(' ')[0]}!', '📱')">💬 WhatsApp</button>
+          </div>
+        </td>
+      </tr>
+    `;
+  });
+
+  tbody.innerHTML = html;
+}
+
+function renderAdminCakesTable() {
+  const tbody = document.getElementById('adminCakesTableBody');
+  if (!tbody) return;
+
+  const cakes = AdminStore.customCakes || [];
+  let html = '';
+
+  cakes.forEach(c => {
+    html += `
+      <tr>
+        <td>
+          <strong style="color:#FFE082;">${c.id}</strong>
+          <div style="font-size:0.75rem; color:#90A4AE;">${c.occasion}</div>
+          <div style="font-size:0.72rem; color:#81C784;">Slot: ${c.date}</div>
+        </td>
+        <td>
+          <strong>${c.customer}</strong>
+        </td>
+        <td>
+          <strong>${c.specs}</strong>
+        </td>
+        <td>
+          <span style="font-style:italic; color:#FFE082; font-size:0.8rem;">"${c.inscription}"</span>
+        </td>
+        <td>
+          <select class="admin-status-select" onchange="adminUpdateCakeChef('${c.id}', this.value)">
+            <option value="Chef Farhan (Head Patissier)" ${c.chef.includes('Farhan') ? 'selected' : ''}>Chef Farhan (Head Patissier)</option>
+            <option value="Chef Anjali" ${c.chef.includes('Anjali') ? 'selected' : ''}>Chef Anjali (Fondant Artist)</option>
+            <option value="Chef Vikram" ${c.chef.includes('Vikram') ? 'selected' : ''}>Chef Vikram (Bakery Lead)</option>
+          </select>
+        </td>
+        <td>
+          <select class="admin-status-select" onchange="adminUpdateCakeStatus('${c.id}', this.value)">
+            <option value="confirmed" ${c.status === 'confirmed' ? 'selected' : ''}>⏳ Booking Confirmed</option>
+            <option value="baking" ${c.status === 'baking' ? 'selected' : ''}>🔥 Baking Sponge & Base</option>
+            <option value="fondant_art" ${c.status === 'fondant_art' ? 'selected' : ''}>🎂 Fondant Artistry & Plaque</option>
+            <option value="cold_chain" ${c.status === 'cold_chain' ? 'selected' : ''}>❄️ Cold-Chain Dispatch</option>
+            <option value="delivered" ${c.status === 'delivered' ? 'selected' : ''}>🎉 Delivered to Venue</option>
+          </select>
+        </td>
+        <td>
+          <button type="button" class="btn-b2b-action" onclick="showToast('Chef preparation slip printed for ${c.id}', '🖨️')">🖨️ Chef Slip</button>
+        </td>
+      </tr>
+    `;
+  });
+
+  tbody.innerHTML = html;
+}
+
+function switchB2bCakesSubView(view, btn) {
+  document.querySelectorAll('#adminPanelB2bcakes .btn-order-filter').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  const b2bView = document.getElementById('adminB2bSubView');
+  const cakesView = document.getElementById('adminCakesSubView');
+
+  if (view === 'b2b') {
+    if (b2bView) b2bView.style.display = 'block';
+    if (cakesView) cakesView.style.display = 'none';
+    renderAdminB2bTable();
+  } else {
+    if (b2bView) b2bView.style.display = 'none';
+    if (cakesView) cakesView.style.display = 'block';
+    renderAdminCakesTable();
+  }
+}
+
+function adminUpdateB2bStatus(orderId, status) {
+  const o = AdminStore.b2bOrders.find(item => item.id === orderId);
+  if (o) {
+    o.status = status;
+    localStorage.setItem('KB_ADMIN_B2B', JSON.stringify(AdminStore.b2bOrders));
+    showToast(`B2B order ${orderId} pipeline status updated!`, '🏢');
+  }
+}
+
+function adminUpdateCakeChef(cakeId, chef) {
+  const c = AdminStore.customCakes.find(item => item.id === cakeId);
+  if (c) {
+    c.chef = chef;
+    localStorage.setItem('KB_ADMIN_CAKES', JSON.stringify(AdminStore.customCakes));
+    showToast(`Custom cake ${cakeId} assigned to ${chef}!`, '👨‍🍳');
+  }
+}
+
+function adminUpdateCakeStatus(cakeId, status) {
+  const c = AdminStore.customCakes.find(item => item.id === cakeId);
+  if (c) {
+    c.status = status;
+    localStorage.setItem('KB_ADMIN_CAKES', JSON.stringify(AdminStore.customCakes));
+    showToast(`Cake ${cakeId} preparation status updated!`, '🎂');
+  }
+}
+
+// Option 2: Live Announcement & Festive Ambience Controller
+function previewThemePreset(theme) {
+  const box = document.getElementById('themePreviewBox');
+  const badge = document.getElementById('previewBadge');
+  const badgeVal = document.getElementById('adminAnnounceBadgeInput')?.value || 'Pan-India';
+  const msgVal = document.getElementById('adminAnnounceMessageInput')?.value || 'Shipping across 19,000+ pincodes';
+
+  if (!box) return;
+
+  if (theme === 'diwali') {
+    box.style.background = '#C45100';
+    box.style.borderColor = '#FFB300';
+  } else if (theme === 'eid') {
+    box.style.background = '#1B5E20';
+    box.style.borderColor = '#C99726';
+  } else if (theme === 'christmas') {
+    box.style.background = '#8E001A';
+    box.style.borderColor = '#ECEFF1';
+  } else {
+    box.style.background = '#720E1E';
+    box.style.borderColor = '#C99726';
+  }
+
+  if (badge) badge.textContent = badgeVal;
+  const txt = document.getElementById('previewText');
+  if (txt) txt.textContent = `${badgeVal}: ${msgVal}`;
+}
+
+function handleSaveAnnouncementConfig(e) {
+  e.preventDefault();
+  const badge = document.getElementById('adminAnnounceBadgeInput').value.trim();
+  const message = document.getElementById('adminAnnounceMessageInput').value.trim();
+  const visibility = document.getElementById('adminAnnounceVisibility').value;
+  const theme = document.getElementById('adminFestiveThemeSelect').value;
+
+  const config = { badge, message, visibility };
+  localStorage.setItem('KB_ANNOUNCEMENT_CONFIG', JSON.stringify(config));
+  localStorage.setItem('KB_THEME_CONFIG', theme);
+
+  applyAnnouncementConfig(config);
+  applyThemePreset(theme);
+
+  showToast('Homepage announcement bar & festive theme updated live on storefront!', '📢');
+}
+
+function applyAnnouncementConfig(cfg) {
+  const badgeEl = document.getElementById('topAnnouncementBadge');
+  const msgEl = document.getElementById('topAnnouncementMessage');
+  const asideEl = document.getElementById('topAnnouncementAside');
+
+  if (badgeEl && cfg.badge) badgeEl.textContent = cfg.badge;
+  if (msgEl && cfg.message) msgEl.textContent = cfg.message;
+  if (asideEl) {
+    asideEl.style.display = cfg.visibility === 'hidden' ? 'none' : 'block';
+  }
+}
+
+function applyThemePreset(theme) {
+  document.body.classList.remove('theme-diwali', 'theme-eid', 'theme-christmas');
+  if (theme !== 'heritage') {
+    document.body.classList.add(`theme-${theme}`);
+  }
+}
+
+function resetDefaultAnnouncement() {
+  const defaultCfg = {
+    badge: 'Pan-India',
+    message: '🚚 Shipping across 19,000+ pincodes • Same-day local delivery in Hyderabad',
+    visibility: 'visible'
+  };
+  localStorage.removeItem('KB_ANNOUNCEMENT_CONFIG');
+  localStorage.removeItem('KB_THEME_CONFIG');
+
+  applyAnnouncementConfig(defaultCfg);
+  applyThemePreset('heritage');
+
+  const bInput = document.getElementById('adminAnnounceBadgeInput');
+  const mInput = document.getElementById('adminAnnounceMessageInput');
+  const tSel = document.getElementById('adminFestiveThemeSelect');
+
+  if (bInput) bInput.value = defaultCfg.badge;
+  if (mInput) mInput.value = defaultCfg.message;
+  if (tSel) tSel.value = 'heritage';
+
+  previewThemePreset('heritage');
+  showToast('Reset to classic Karachi Bakery heritage theme.', '🏛️');
+}

@@ -8057,3 +8057,69 @@ button {
   gap: 0.5rem;
   flex-wrap: wrap;
 }
+
+
+
+/* ==========================================================================
+   Admin Options 1 & 2: B2B/Cakes Hub and Announcement & Festive Themes
+   ========================================================================== */
+
+.theme-preview-box {
+  background: var(--kb-burgundy, #720E1E);
+  color: #FFF;
+  padding: 0.85rem 1.25rem;
+  border-radius: 8px;
+  border: 1.5px solid #C99726;
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  font-size: 0.88rem;
+  transition: all 0.3s ease;
+}
+
+.theme-preview-box .preview-badge {
+  background: #C99726;
+  color: #3E2723;
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* Festive Themes applied to <body> or root */
+body.theme-diwali {
+  --kb-burgundy: #C45100;
+  --kb-gold: #FFB300;
+}
+
+body.theme-eid {
+  --kb-burgundy: #1B5E20;
+  --kb-gold: #C99726;
+}
+
+body.theme-christmas {
+  --kb-burgundy: #8E001A;
+  --kb-gold: #D4AF37;
+}
+
+.btn-b2b-action {
+  background: #2C323B;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #FFE082;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.35rem 0.65rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.btn-b2b-action:hover {
+  background: #C99726;
+  color: #3E2723;
+}

@@ -53,7 +53,10 @@ To provide a complete enterprise e-commerce architecture beyond the customer sto
   3. **Delicacy Publisher**: Add brand new bakery items directly into the live storefront catalog with category, price, pack size, dietary flags, and emoji icons.
   4. **Live Orders & Kitchen Dispatch Dispatcher**: Real-time incoming order ledger synced directly with customer checkout. Admin can advance order status (`Baking in Kitchen` → `Air Cargo Handover` → `Out for Delivery` → `Delivered`), dynamically updating the customer's live tracking screen!
   5. **Promo Coupon Engine**: Create and manage custom discount codes (`KBHERITAGE`, `FESTIVE20`, etc.) that are instantly accepted at customer checkout.
-  6. **Business Analytics & CSV Export**: Category sales share breakdown, payment gateway distribution, and 1-click order spreadsheet export.
+  6. **Corporate B2B Orders & Quotes Pipeline**: Track enterprise requisitions (Infosys, Google, Deloitte), update sales stages, verify GSTINs, and print formal GST pro-forma invoices.
+  7. **Artisanal Custom Cake Studio Registry**: Manage bespoke tiered cake bookings, track chef assignments (Chef Farhan, Chef Anjali), inspect plaque messages, and monitor refrigerated cold-chain dispatch.
+  8. **Live Announcement & 1-Click Festive Ambience Controller**: Live-edit the top announcement strip text/badge without code and transform the storefront with 1-click festive theme presets (Diwali Saffron 🪔, Eid Emerald 🌙, Christmas Plum 🎄).
+  9. **Business Analytics & CSV Export**: Category sales share breakdown, payment gateway distribution, and 1-click order spreadsheet export.
 
 ---
 

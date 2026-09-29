@@ -12,18 +12,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
   
   <!-- Main Design System CSS -->
-  <link rel="stylesheet" href="styles/main.css?v=11.0.0">
+  <link rel="stylesheet" href="styles/main.css?v=12.0.0">
 </head>
 <body>
 
   <!-- ==========================================================================
        Top Announcement & Express Pincode Checker (Addresses Delivery Info #12)
        ========================================================================== -->
-  <aside class="top-announcement" aria-label="Announcement bar">
+  <aside class="top-announcement" id="topAnnouncementAside" aria-label="Announcement bar">
     <div class="container">
       <div class="announcement-text">
-        <span class="announcement-badge">Pan-India</span>
-        <span>🚚 Shipping across 19,000+ pincodes • Same-day local delivery in Hyderabad</span>
+        <span class="announcement-badge" id="topAnnouncementBadge">Pan-India</span>
+        <span id="topAnnouncementMessage">🚚 Shipping across 19,000+ pincodes • Same-day local delivery in Hyderabad</span>
       </div>
       <div class="pincode-quick-check">
         <span>Delivery to:</span>
@@ -3322,6 +3322,12 @@
             <button type="button" class="admin-nav-tab" id="adminTabBtnCoupons" onclick="switchAdminTab('coupons')">
               🎟️ Discount Coupons & Promo
             </button>
+            <button type="button" class="admin-nav-tab" id="adminTabBtnB2bCakes" onclick="switchAdminTab('b2bcakes')">
+              🏢 B2B & Custom Cakes Hub (<span id="adminB2bCakesBadge">5</span>)
+            </button>
+            <button type="button" class="admin-nav-tab" id="adminTabBtnAnnouncement" onclick="switchAdminTab('announcement')">
+              📢 Announcement & Festive Theme
+            </button>
             <button type="button" class="admin-nav-tab" id="adminTabBtnAnalytics" onclick="switchAdminTab('analytics')">
               📊 Sales Insights & Audit Log
             </button>
@@ -3560,6 +3566,121 @@
             </div>
           </div>
 
+        
+          <!-- PANEL 5: B2B Corporate Quotes & Artisanal Custom Cake Orders (Option 1) -->
+          <div class="admin-tab-panel" id="adminPanelB2bcakes" style="display:none;">
+            
+            <!-- Sub Switcher for B2B vs Cakes -->
+            <div class="admin-card">
+              <div class="admin-card-header flex-between">
+                <div>
+                  <h4>🏢 Corporate B2B Bulk Orders & 🎂 Custom Cake Studio Registry</h4>
+                  <p>Review incoming corporate bulk requisitions, approve GST tax invoices, and assign master pastry chefs to celebration cakes.</p>
+                </div>
+                <div class="order-filter-pills">
+                  <button type="button" class="btn-order-filter active" id="btnFilterB2bSub" onclick="switchB2bCakesSubView('b2b', this)">Corporate B2B Orders</button>
+                  <button type="button" class="btn-order-filter" id="btnFilterCakesSub" onclick="switchB2bCakesSubView('cakes', this)">Custom Cake Studio</button>
+                </div>
+              </div>
+
+              <!-- Sub-View 1: Corporate B2B Requisitions -->
+              <div id="adminB2bSubView">
+                <div class="admin-table-container">
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Quote Ref & Date</th>
+                        <th>Organization & GSTIN</th>
+                        <th>Delicacy Requisition & Volume</th>
+                        <th>Quotation Value</th>
+                        <th>Corporate Pipeline Status</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="adminB2bTableBody">
+                      <!-- Populated dynamically by JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Sub-View 2: Custom Cake Studio Bookings -->
+              <div id="adminCakesSubView" style="display:none;">
+                <div class="admin-table-container">
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Booking ID & Occasion</th>
+                        <th>Celebrant / Customer</th>
+                        <th>Cake Flavor, Weight & Tiers</th>
+                        <th>Plaque Inscription</th>
+                        <th>Assigned Pastry Chef</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody id="adminCakesTableBody">
+                      <!-- Populated dynamically by JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- PANEL 6: Homepage Announcement & Festive Theme Controller (Option 2) -->
+          <div class="admin-tab-panel" id="adminPanelAnnouncement" style="display:none;">
+            <div class="admin-card">
+              <div class="admin-card-header">
+                <h4>📢 Live Homepage Announcement & Festive Theme Ambience</h4>
+                <p>Customize the top announcement strip and transform the entire website with 1-click festive theme colors.</p>
+              </div>
+
+              <form id="adminAnnouncementForm" onsubmit="handleSaveAnnouncementConfig(event)">
+                <div class="admin-form-row-3">
+                  <div class="form-group">
+                    <label for="adminAnnounceBadgeInput">Announcement Badge Text *</label>
+                    <input type="text" id="adminAnnounceBadgeInput" value="Pan-India" placeholder="e.g. Diwali Offer, Free Shipping, Fresh Batch" required>
+                  </div>
+                  <div class="form-group" style="grid-column: span 2;">
+                    <label for="adminAnnounceMessageInput">Main Announcement Message *</label>
+                    <input type="text" id="adminAnnounceMessageInput" value="🚚 Shipping across 19,000+ pincodes • Same-day local delivery in Hyderabad" placeholder="e.g. Free Express Shipping on orders above ₹499 • Use code KBHERITAGE" required>
+                  </div>
+                </div>
+
+                <div class="admin-form-row-3">
+                  <div class="form-group">
+                    <label for="adminAnnounceVisibility">Announcement Bar Visibility</label>
+                    <select id="adminAnnounceVisibility">
+                      <option value="visible">👁️ Visible on Storefront (Active)</option>
+                      <option value="hidden">🙈 Hidden / Disabled</option>
+                    </select>
+                  </div>
+                  <div class="form-group" style="grid-column: span 2;">
+                    <label for="adminFestiveThemeSelect">Festive Ambience Theme Preset</label>
+                    <select id="adminFestiveThemeSelect" onchange="previewThemePreset(this.value)">
+                      <option value="heritage">Classic Royal Heritage (Hyderabad Burgundy #720E1E + Heritage Gold #C99726)</option>
+                      <option value="diwali">🪔 Diwali Festival of Lights (Warm Saffron #C45100 + Golden Amber #FFB300)</option>
+                      <option value="eid">🌙 Royal Eid Mubarak (Imperial Emerald #1B5E20 + Antique Gold #C99726)</option>
+                      <option value="christmas">🎄 Christmas & Winter Heritage (Rich Plum Crimson #8E001A + Platinum Silver #ECEFF1)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="theme-preview-box" id="themePreviewBox">
+                  <span class="preview-badge" id="previewBadge">Live Preview</span>
+                  <span id="previewText">Pan-India: 🚚 Shipping across 19,000+ pincodes • Same-day local delivery in Hyderabad</span>
+                </div>
+
+                <div class="admin-form-actions" style="margin-top:1.25rem;">
+                  <button type="submit" class="btn-publish-product">💾 Apply Changes to Live Storefront</button>
+                  <button type="button" class="btn-reset-product" onclick="resetDefaultAnnouncement()">Reset to Default Heritage</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
         </div> <!-- End of Dashboard Section -->
 
       </div>
@@ -3572,6 +3693,6 @@
   </div>
 
   <!-- Main JavaScript Logic -->
-  <script src="js/app.js?v=11.0.0"></script>
+  <script src="js/app.js?v=12.0.0"></script>
 </body>
 </html>
