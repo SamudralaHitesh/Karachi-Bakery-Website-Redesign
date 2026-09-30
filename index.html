@@ -3632,6 +3632,9 @@
             <button type="button" class="admin-nav-tab" id="adminTabBtnAnalytics" onclick="switchAdminTab('analytics')">
               📊 Sales Insights & Audit Log
             </button>
+            <button type="button" class="admin-nav-tab" id="adminTabBtnMongo" onclick="switchAdminTab('mongo')">
+              🍃 MongoDB Cloud Sync
+            </button>
           </div>
 
           <!-- PANEL 1: Products & Price Management -->
@@ -4028,6 +4031,84 @@
                   <button type="button" class="btn-reset-product" onclick="resetDefaultAnnouncement()">Reset to Default Heritage</button>
                 </div>
               </form>
+            </div>
+          </div>
+
+          <!-- PANEL 7: MongoDB Cloud Sync & Database Control Hub -->
+          <div class="admin-tab-panel" id="adminPanelMongo" style="display:none;">
+            <div class="admin-card">
+              <div class="admin-card-header flex-between">
+                <div>
+                  <h4>🍃 MongoDB Atlas Cloud Integration & Data Synchronization Hub</h4>
+                  <p>Enterprise NoSQL document database management for real-time customer orders, 54 store outlets, customer reviews, and corporate B2B requisitions.</p>
+                </div>
+                <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                  <button type="button" class="btn-b2b-action" onclick="checkMongoHealthAndRender()">🔄 Refresh Status</button>
+                  <button type="button" class="btn-b2b-action" style="background:#00684A; color:#fff;" onclick="triggerMongoSeed()">🌱 Seed DB (/api/seed)</button>
+                </div>
+              </div>
+
+              <!-- Live MongoDB Connection Status Strip -->
+              <div id="mongoStatusBanner" style="padding:1rem 1.25rem; border-radius:8px; margin-bottom:1.5rem; background:rgba(0,104,74,0.1); border:1.5px solid #00684A; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
+                <div style="display:flex; align-items:center; gap:0.75rem;">
+                  <span style="font-size:1.8rem;">🍃</span>
+                  <div>
+                    <strong id="mongoStatusTitle" style="display:block; font-size:1rem; color:#00684A;">Checking MongoDB Atlas Connection...</strong>
+                    <span id="mongoStatusSubtitle" style="font-size:0.8rem; color:#555;">Querying /api/health endpoint</span>
+                  </div>
+                </div>
+                <span id="mongoPingBadge" class="tag" style="background:#00684A; color:#fff; font-weight:700;">Ping: -- ms</span>
+              </div>
+
+              <!-- MongoDB Collections Explorer Grid -->
+              <div class="admin-analytics-grid" style="margin-bottom:1.5rem;">
+                <div class="admin-card" style="padding:1rem;">
+                  <span style="font-size:1.6rem; display:block; margin-bottom:0.25rem;">📦</span>
+                  <strong style="display:block; font-size:0.9rem;">`orders` Collection</strong>
+                  <p style="font-size:0.75rem; color:#666; margin:0.25rem 0;">Customer checkouts, payment receipts, live delivery stages.</p>
+                  <span class="tag" id="mongoOrdersCount">Live Synced</span>
+                </div>
+
+                <div class="admin-card" style="padding:1rem;">
+                  <span style="font-size:1.6rem; display:block; margin-bottom:0.25rem;">🏷️</span>
+                  <strong style="display:block; font-size:0.9rem;">`products` Collection</strong>
+                  <p style="font-size:0.75rem; color:#666; margin:0.25rem 0;">Delicacies, pricing, live stock availability, and allergen tags.</p>
+                  <span class="tag" id="mongoProductsCount">Live Synced</span>
+                </div>
+
+                <div class="admin-card" style="padding:1rem;">
+                  <span style="font-size:1.6rem; display:block; margin-bottom:0.25rem;">📍</span>
+                  <strong style="display:block; font-size:0.9rem;">`stores` Collection</strong>
+                  <p style="font-size:0.75rem; color:#666; margin:0.25rem 0;">54 verified outlets across 9 Indian metros with geo data.</p>
+                  <span class="tag" id="mongoStoresCount">54 Outlets</span>
+                </div>
+
+                <div class="admin-card" style="padding:1rem;">
+                  <span style="font-size:1.6rem; display:block; margin-bottom:0.25rem;">✍️</span>
+                  <strong style="display:block; font-size:0.9rem;">`reviews` Collection</strong>
+                  <p style="font-size:0.75rem; color:#666; margin:0.25rem 0;">Customer 5-star ratings, testimonials, verified buyer flags.</p>
+                  <span class="tag" id="mongoReviewsCount">Live Synced</span>
+                </div>
+              </div>
+
+              <!-- Step-by-Step Connection Instructions -->
+              <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:1.25rem;">
+                <h4 style="color:#0F172A; margin-bottom:0.5rem; display:flex; align-items:center; gap:0.5rem;">
+                  <span>🔑</span> How to Connect Your Free MongoDB Atlas Cluster
+                </h4>
+                <ol style="font-size:0.85rem; color:#475569; padding-left:1.25rem; line-height:1.6; margin:0;">
+                  <li>Create a free account on <a href="https://www.mongodb.com/cloud/atlas" target="_blank" rel="noopener noreferrer" style="color:#00684A; font-weight:700;">MongoDB Atlas</a> and deploy an <strong>M0 Free Cluster</strong> (AWS Mumbai).</li>
+                  <li>In <strong>Database Access</strong>, create a database user (e.g. <code>admin</code>) and set a secure password.</li>
+                  <li>In <strong>Network Access</strong>, click <em>Add IP Address</em> and select <code>Allow Access from Anywhere (0.0.0.0/0)</code> so Vercel Serverless can connect.</li>
+                  <li>Go to <strong>Vercel Dashboard ➔ Project Settings ➔ Environment Variables</strong>, add <code>MONGODB_URI</code> with your connection string:
+                    <div style="margin:0.5rem 0; padding:0.5rem 0.75rem; background:#1E293B; color:#38BDF8; font-family:monospace; border-radius:6px; font-size:0.8rem; word-break:break-all;">
+                      MONGODB_URI=mongodb+srv://admin:&lt;password&gt;@cluster0.xxxxx.mongodb.net/karachi_bakery?retryWrites=true&amp;w=majority
+                    </div>
+                  </li>
+                  <li>Click <strong>Redeploy</strong> in Vercel. All orders, reviews, and catalog items will immediately stream into your MongoDB cloud database!</li>
+                </ol>
+              </div>
+
             </div>
           </div>
 

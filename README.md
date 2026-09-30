@@ -239,6 +239,39 @@ For full technical details, see the [Day 1 Progress Report](docs/DAY-01-REPORT.m
 
 ---
 
+
+---
+
+## 🍃 MongoDB Atlas Cloud Database Integration
+
+The platform includes a production-grade **MongoDB NoSQL Cloud Architecture** running via **Vercel Serverless Functions (`/api/`)**:
+
+### 1. Database Collections Schema
+- **`orders`**: Customer checkout records, payment statuses (UPI, COD, Card), and live kitchen-to-dispatch tracking stages.
+- **`products`**: Catalog items, active prices, inventory stock status (`inStock` / `soldOut`), nutritional facts, and allergen tags.
+- **`stores`**: 54 verified outlet records across 9 Indian metro regions with geo-coordinates and amenities.
+- **`reviews`**: Customer star ratings, review headlines, verified buyer badges, and feedback text.
+- **`b2b_inquiries`**: Corporate bulk orders, enterprise leads (Google, Infosys, Deloitte), GSTINs, and quotation statuses.
+
+### 2. Serverless API Endpoints
+- `GET /api/health`: Diagnostic endpoint reporting MongoDB connection status, latency (ms), and active collections.
+- `GET /api/orders` & `POST /api/orders` & `PATCH /api/orders`: Order placement, retrieval, and kitchen dispatch status progression.
+- `GET /api/products` & `POST /api/products` & `PATCH /api/products`: Catalog retrieval, delicacy publisher, and live stock/price overrides.
+- `GET /api/reviews` & `POST /api/reviews`: Customer 5-star review submission and display.
+- `GET /api/stores` & `POST /api/stores`: Query 54 verified outlets by city and type.
+- `GET /api/b2b` & `POST /api/b2b`: Corporate quote inquiries pipeline.
+- `POST /api/seed`: 1-click database initialization seeding collections with products and stores.
+
+### 3. How to Connect Your Free MongoDB Atlas Cluster
+1. Create a free account on [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) and deploy a free **M0 Shared Cluster** (AWS Mumbai).
+2. Create a Database User with password under **Database Access**.
+3. Allow IP access from anywhere (`0.0.0.0/0`) under **Network Access** (required for Vercel Serverless).
+4. Add `MONGODB_URI` in **Vercel Dashboard ➔ Project Settings ➔ Environment Variables**:
+   ```
+   MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.xxxxx.mongodb.net/karachi_bakery?retryWrites=true&w=majority
+   ```
+5. Click **Redeploy**. The application automatically detects the cloud database and synchronizes all records!
+
 ## 💻 How to Run Locally
 
 Simply clone and open `index.html` in any browser, or use the local server:

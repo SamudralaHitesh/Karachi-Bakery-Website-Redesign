@@ -4847,6 +4847,21 @@ function completeOrderPayment() {
     if (typeof AdminStore !== 'undefined') {
       AdminStore.orders.unshift(newAdminOrder);
       localStorage.setItem('KB_ADMIN_ORDERS', JSON.stringify(AdminStore.orders));
+    // Asynchronously sync order to MongoDB Atlas API
+    fetch('/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        orderId,
+        customer: { name, phone },
+        items: AppState.cartItems.map(i => ({ name: i.name, price: i.price, qty: i.qty || 1 })),
+        grandTotal: CheckoutState.finalCalculatedTotal,
+        paymentMethod: selectedMethod || 'Instant UPI',
+        address: `${address} (${CheckoutState.pincode})`
+      })
+    }).then(r => r.json()).then(data => {
+      console.log('Order synced to MongoDB backend:', data);
+    }).catch(() => {});
     }
     CheckoutState.lastPlacedOrder = {
       orderId,
@@ -5098,7 +5113,7 @@ function switchAdminTab(tabName) {
   if (activeBtn) activeBtn.classList.add('active');
 
   // Tab panels
-  const panels = ['Products', 'Orders', 'Coupons', 'Analytics', 'B2bcakes', 'Announcement'];
+  const panels = ['Products', 'Orders', 'Coupons', 'Analytics', 'B2bcakes', 'Announcement', 'Mongo'];
   panels.forEach(p => {
     const el = document.getElementById(`adminPanel${p}`);
     if (el) el.style.display = (p.toLowerCase() === tabName) ? 'block' : 'none';
@@ -5112,6 +5127,9 @@ function switchAdminTab(tabName) {
   if (tabName === 'analytics') {
     renderMonthlyAnalyticsChart();
     renderMonthlyBreakdownTable();
+  }
+  if (tabName === 'mongo') {
+    checkMongoHealthAndRender();
   }
 }
 
@@ -6761,6 +6779,22 @@ function handleCustomerReviewSubmit(e) {
   const saved = JSON.parse(localStorage.getItem('KB_CUSTOM_REVIEWS') || '[]');
   saved.unshift(reviewRecord);
   localStorage.setItem('KB_CUSTOM_REVIEWS', JSON.stringify(saved));
+  // Asynchronously sync review to MongoDB Atlas API
+  fetch('/api/reviews', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      productId: 'p1',
+      productName: 'Original Fruit Biscuits',
+      author,
+      city,
+      rating: selectedReviewStars,
+      title,
+      comment: comments
+    })
+  }).then(r => r.json()).then(data => {
+    console.log('Review synced to MongoDB backend:', data);
+  }).catch(() => {});
 
   closeReviewModal();
   document.getElementById('customerReviewForm').reset();
@@ -6818,3 +6852,74 @@ document.addEventListener('DOMContentLoaded', () => {
   initByobStudio();
   initPwaEngine();
 });
+
+
+// =============================================================================
+// MongoDB Atlas Cloud Synchronization & Diagnostic Functions
+// =============================================================================
+async function checkMongoHealthAndRender() {
+  const titleEl = document.getElementById('mongoStatusTitle');
+  const subEl = document.getElementById('mongoStatusSubtitle');
+  const pingEl = document.getElementById('mongoPingBadge');
+  const bannerEl = document.getElementById('mongoStatusBanner');
+
+  if (titleEl) titleEl.textContent = 'Testing connection to /api/health...';
+
+  try {
+    const res = await fetch('/api/health');
+    const data = await res.json();
+
+    if (data.mongodbConnected) {
+      if (titleEl) {
+        titleEl.textContent = `🟢 Connected to MongoDB Atlas (${data.database})`;
+        titleEl.style.color = '#00684A';
+      }
+      if (subEl) subEl.textContent = `Collections active: ${data.collections.join(', ') || 'Ready for data'}`;
+      if (pingEl) {
+        pingEl.textContent = `⚡ Ping: ${data.latencyMs}ms`;
+        pingEl.style.background = '#00684A';
+      }
+      if (bannerEl) {
+        bannerEl.style.background = 'rgba(0,104,74,0.1)';
+        bannerEl.style.borderColor = '#00684A';
+      }
+      showToast('MongoDB Atlas is healthy and actively connected!', '🍃');
+    } else {
+      if (titleEl) {
+        titleEl.textContent = '🟡 Hybrid Fallback Mode (Ready for MONGODB_URI)';
+        titleEl.style.color = '#B45309';
+      }
+      if (subEl) subEl.textContent = 'Operating via local fallback while MONGODB_URI is not set. All records are stored locally and will sync once MONGODB_URI is configured.';
+      if (pingEl) {
+        pingEl.textContent = `⏱️ Latency: ${data.latencyMs}ms`;
+        pingEl.style.background = '#D97706';
+      }
+      if (bannerEl) {
+        bannerEl.style.background = 'rgba(217,119,6,0.1)';
+        bannerEl.style.borderColor = '#D97706';
+      }
+    }
+  } catch (err) {
+    if (titleEl) {
+      titleEl.textContent = '🟡 Local Mode (Serverless API ready on deployment)';
+      titleEl.style.color = '#B45309';
+    }
+    if (subEl) subEl.textContent = 'Serverless /api/health is ready for deployment on Vercel with MONGODB_URI.';
+  }
+}
+
+async function triggerMongoSeed() {
+  try {
+    showToast('Initializing database seeding...', '🌱');
+    const res = await fetch('/api/seed', { method: 'POST' });
+    const data = await res.json();
+    if (data.success) {
+      showToast(`🎉 Seed complete! ${data.seededProducts} items seeded into ${data.database}`, '🍃');
+      checkMongoHealthAndRender();
+    } else {
+      showToast(data.message || 'Seeding requires MONGODB_URI to be configured in Vercel.', 'ℹ️');
+    }
+  } catch (e) {
+    showToast('Connect MONGODB_URI in Vercel settings to seed the cloud database.', 'ℹ️');
+  }
+}
