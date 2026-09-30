@@ -65,10 +65,14 @@ To provide a complete enterprise e-commerce architecture beyond the customer sto
 
 To elevate the platform beyond conventional storefronts, 5 advanced experiential systems were engineered:
 
-1. **🎁 Interactive "Build-Your-Own Gift Box" (BYOB) Studio**:
-   - Allows shoppers to pick their signature keepsake box (*Nizam's Brass-Tone Tin, Imperial Velvet Chest, or Artisanal Wicker Basket*).
-   - Interactive 4-slot assortment tray: hand-pick 4 iconic delicacies with live visual tray filling.
-   - Dynamic 10% assortment combo savings recalculation and gold-foiled greeting card personalization.
+1. **🎁 Interactive "Build-Your-Own Gift Box" (BYOB) Studio with Multi-Size Capacities**:
+   - **Multi-Capacity Box Sizing**: Support for 4 distinct weight capacities:
+     - **250 gm Petite Keepsake Box** (2 Delicacy Slots • Included ₹0 • 5% OFF)
+     - **500 gm (Half kg) Royal Heritage Tin** (4 Delicacy Slots • +₹50 Box • 10% OFF • Most Popular)
+     - **1 kg Imperial Grand Chest** (6 Delicacy Slots • +₹120 Box • 15% OFF)
+     - **1.5 kg Nizam's Velvet Trunk** (8 Delicacy Slots • +₹190 Box • 20% OFF)
+   - **Dynamic Adaptive Tray**: Visual tray automatically re-renders between 2, 4, 6, and 8 delicacy slots on box selection with smart capacity trimming and live counter.
+   - **Real-time Tiered Combo Savings**: Automatic discount calculation (5% to 20% OFF) with gold-foiled personalized greeting card message.
 2. **☕ Hyderabadi Irani Chai & Delicacy "Pairing Concierge"**:
    - Authentic tea-room recommendation engine: pairing hot brews (*Irani Chai, South Indian Filter Coffee, Kashmiri Kahwa, Badam Malai Milk, Earl Grey*) with iconic biscuits.
    - Master Baker Dip Guidelines (*"The 3-Second Dip: Submerge halfway into steaming Irani chai for exactly 3 seconds for creamy dairy butter melt"*).

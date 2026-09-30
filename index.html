@@ -1913,57 +1913,82 @@
       <div class="byob-header-center">
         <span class="section-eyebrow">🎁 Personalized Celebrations</span>
         <h2 class="section-title">Build-Your-Own Keepsake Gift Hamper</h2>
-        <p class="section-subtitle">Curate your own bespoke Karachi Bakery assorted hamper. Choose your signature box, hand-pick 4 iconic delicacies, and add a personalized gold-foiled greeting message with an instant 10% assortment savings!</p>
+        <p class="section-subtitle">Curate your bespoke Karachi Bakery hamper with multi-capacity sizes: <strong>250g, 500g (Half kg), 1 kg, and 1.5 kg</strong>. Pick your signature box, select your iconic delicacies to fill the dynamic tray, and personalize with a greeting card for up to 20% combo savings!</p>
       </div>
 
       <div class="byob-studio-grid">
         <!-- Left: Keepsake Box Customizer & Slots Visual Stage -->
         <div class="byob-builder-card">
-          <!-- Step 1: Box Style -->
+          <!-- Step 1: Box Style & Weight Selection -->
           <div class="byob-step-title">
             <span class="step-num">1</span>
-            <h4>Select Signature Keepsake Box Style</h4>
+            <h4>Select Box Size & Weight Capacity</h4>
           </div>
           <div class="byob-box-options">
-            <label class="byob-box-card active" onclick="selectByobBox('royal_tin', this)">
+            <label class="byob-box-card" onclick="selectByobBox('box_250g', this)">
+              <input type="radio" name="byobBoxSelect">
+              <div class="box-card-content">
+                <span class="box-weight-badge">250 gm</span>
+                <span class="box-icon">🎁</span>
+                <strong>Petite Keepsake Box</strong>
+                <span class="box-capacity-sub">2 Delicacy Slots</span>
+                <div class="box-card-footer">
+                  <span class="box-price-pill">Included (₹0)</span>
+                  <span class="box-discount-pill">5% OFF</span>
+                </div>
+              </div>
+            </label>
+
+            <label class="byob-box-card active" onclick="selectByobBox('box_500g', this)">
               <input type="radio" name="byobBoxSelect" checked>
               <div class="box-card-content">
+                <span class="box-weight-badge popular">500 gm (Half kg) ★</span>
                 <span class="box-icon">🥫</span>
-                <strong>Nizam's Brass-Tone Tin</strong>
-                <span>4 Signature Slots • Collectible</span>
-                <span class="box-price-pill">Included (₹0)</span>
+                <strong>Royal Heritage Tin</strong>
+                <span class="box-capacity-sub">4 Delicacy Slots</span>
+                <div class="box-card-footer">
+                  <span class="box-price-pill">+₹50 Box</span>
+                  <span class="box-discount-pill">10% OFF</span>
+                </div>
               </div>
             </label>
-            <label class="byob-box-card" onclick="selectByobBox('velvet_chest', this)">
+
+            <label class="byob-box-card" onclick="selectByobBox('box_1kg', this)">
               <input type="radio" name="byobBoxSelect">
               <div class="box-card-content">
+                <span class="box-weight-badge">1 kg Grand</span>
                 <span class="box-icon">📦</span>
-                <strong>Imperial Velvet Chest</strong>
-                <span>4 Signature Slots • Gold Embellished</span>
-                <span class="box-price-pill">+₹150</span>
+                <strong>Imperial Grand Chest</strong>
+                <span class="box-capacity-sub">6 Delicacy Slots</span>
+                <div class="box-card-footer">
+                  <span class="box-price-pill">+₹120 Box</span>
+                  <span class="box-discount-pill">15% OFF</span>
+                </div>
               </div>
             </label>
-            <label class="byob-box-card" onclick="selectByobBox('wicker_basket', this)">
+
+            <label class="byob-box-card" onclick="selectByobBox('box_1_5kg', this)">
               <input type="radio" name="byobBoxSelect">
               <div class="box-card-content">
+                <span class="box-weight-badge">1.5 kg Royal</span>
                 <span class="box-icon">🧺</span>
-                <strong>Artisanal Wicker Basket</strong>
-                <span>4 Signature Slots • Traditional Handle</span>
-                <span class="box-price-pill">+₹190</span>
+                <strong>Nizam's Velvet Trunk</strong>
+                <span class="box-capacity-sub">8 Delicacy Slots</span>
+                <div class="box-card-footer">
+                  <span class="box-price-pill">+₹190 Box</span>
+                  <span class="box-discount-pill">20% OFF</span>
+                </div>
               </div>
             </label>
           </div>
 
-          <!-- Step 2: 4-Slot Visual Stage -->
+          <!-- Step 2: Dynamic Capacity Visual Stage -->
           <div class="byob-step-title" style="margin-top:1.5rem;">
             <span class="step-num">2</span>
-            <h4>Your 4-Slot Assortment Tray (<span id="byobSlotCount">0/4 Selected</span>)</h4>
+            <h4>Your <span id="byobSlotCapacityText">4-Slot (500g Half kg)</span> Assortment Tray (<span id="byobSlotCount">0/4 Selected</span>)</h4>
           </div>
           <div class="byob-tray-slots-grid" id="byobSlotsGrid">
-            <div class="byob-slot-box empty" id="byobSlot0"><span>+ Empty Slot 1</span></div>
-            <div class="byob-slot-box empty" id="byobSlot1"><span>+ Empty Slot 2</span></div>
-            <div class="byob-slot-box empty" id="byobSlot2"><span>+ Empty Slot 3</span></div>
-            <div class="byob-slot-box empty" id="byobSlot3"><span>+ Empty Slot 4</span></div>
+            <!-- Dynamically populated by renderByobSlots() based on active box capacity (2, 4, 6, or 8 slots) -->
           </div>
 
           <!-- Step 3: Complimentary Gift Card Message -->
@@ -1980,7 +2005,7 @@
         <!-- Right: Delicacy Picker Tray & Live Total Summary -->
         <div class="byob-picker-card">
           <div class="byob-picker-header">
-            <h4>Select 4 Delicacies to Add into Your Box</h4>
+            <h4 id="byobPickerHeaderTitle">Select 4 Delicacies to Add into Your Box (500g Half kg)</h4>
             <span class="picker-hint">Click any delicacy below to place it into an empty tray slot</span>
           </div>
 
@@ -1995,11 +2020,11 @@
               <strong id="byobBoxPriceDisp">Included (₹0)</strong>
             </div>
             <div class="bill-row">
-              <span>Selected 4 Delicacies:</span>
+              <span>Selected <span id="byobDelicaciesCountLabel">4 Delicacies</span>:</span>
               <strong id="byobItemsSubtotalDisp">₹0</strong>
             </div>
             <div class="bill-row discount">
-              <span>Combo Assortment Savings (10% OFF):</span>
+              <span>Combo Assortment Savings (<span id="byobDiscountPctLabel">10%</span> OFF):</span>
               <strong id="byobDiscountDisp">-₹0</strong>
             </div>
             <div class="bill-total-row">

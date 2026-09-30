@@ -5520,11 +5520,53 @@ function addPairingBundleToCart() {
 
 // -----------------------------------------------------------------------------
 // 3. Build-Your-Own Gift Box (BYOB) Studio Engine (Option 2)
+// Multi-Capacity Sizing: 250g, 500g (Half kg), 1kg, 1.5kg
 // -----------------------------------------------------------------------------
-const BYOB_BOX_PRICES = {
-  royal_tin: 0,
-  velvet_chest: 150,
-  wicker_basket: 190
+const BYOB_BOX_TIERS = {
+  box_250g: {
+    id: 'box_250g',
+    name: 'Petite Keepsake Box',
+    weight: '250 gm',
+    slots: 2,
+    boxPrice: 0,
+    discountPct: 5,
+    icon: '🎁',
+    badge: '250 gm',
+    desc: '2 Signature Slots • Personal Treat / Token'
+  },
+  box_500g: {
+    id: 'box_500g',
+    name: 'Royal Heritage Tin',
+    weight: '500 gm (Half kg)',
+    slots: 4,
+    boxPrice: 50,
+    discountPct: 10,
+    icon: '🥫',
+    badge: '500 gm (Half kg) ★',
+    desc: '4 Signature Slots • Classic Heritage'
+  },
+  box_1kg: {
+    id: 'box_1kg',
+    name: 'Imperial Grand Chest',
+    weight: '1 kg',
+    slots: 6,
+    boxPrice: 120,
+    discountPct: 15,
+    icon: '📦',
+    badge: '1 kg Grand',
+    desc: '6 Signature Slots • Festive Family Gifting'
+  },
+  box_1_5kg: {
+    id: 'box_1_5kg',
+    name: "Nizam's Velvet Trunk",
+    weight: '1.5 kg',
+    slots: 8,
+    boxPrice: 190,
+    discountPct: 20,
+    icon: '🧺',
+    badge: '1.5 kg Royal',
+    desc: '8 Signature Slots • Royal Banquet Edition'
+  }
 };
 
 const BYOB_DELICACIES_CATALOG = [
@@ -5535,32 +5577,69 @@ const BYOB_DELICACIES_CATALOG = [
   { id: 'byob_kaju', name: 'Royal Kaju Katli Diamond Cut', unit: '250g Pack', price: 230, icon: '🍬' },
   { id: 'byob_motichoor', name: 'Pure Desi Ghee Motichoor Ladoo', unit: '250g Pack', price: 195, icon: '🍯' },
   { id: 'byob_truffle', name: 'Belgian Dark Truffle Brownie Bites', unit: '200g Box', price: 180, icon: '🍫' },
-  { id: 'byob_almond', name: 'Sugar-Free Roasted Almond Cookies', unit: '200g Box', price: 135, icon: '🌾' }
+  { id: 'byob_almond', name: 'Sugar-Free Roasted Almond Cookies', unit: '200g Box', price: 135, icon: '🌾' },
+  { id: 'byob_badam', name: 'Badam Pista Shahi Halwa', unit: '250g Box', price: 210, icon: '✨' },
+  { id: 'byob_dilkush', name: 'Traditional Coconut Dilkush Bun', unit: 'Pack of 2', price: 95, icon: '🥧' }
 ];
 
 const BYOB_STATE = {
-  selectedBox: 'royal_tin',
-  boxName: "Nizam's Brass-Tone Tin",
-  selectedItems: [] // array of delicacy objects, max 4
+  selectedBox: 'box_500g',
+  boxName: 'Royal Heritage Tin',
+  boxWeight: '500 gm (Half kg)',
+  maxSlots: 4,
+  selectedItems: [] // array of delicacy objects
 };
 
 function initByobStudio() {
+  const defaultTier = BYOB_BOX_TIERS.box_500g;
+  BYOB_STATE.selectedBox = 'box_500g';
+  BYOB_STATE.boxName = defaultTier.name;
+  BYOB_STATE.boxWeight = defaultTier.weight;
+  BYOB_STATE.maxSlots = defaultTier.slots;
+  BYOB_STATE.selectedItems = [];
+
+  renderByobSlots();
   renderByobDelicaciesList();
   updateByobBill();
 }
 
 function selectByobBox(boxKey, labelEl) {
+  const tier = BYOB_BOX_TIERS[boxKey];
+  if (!tier) return;
+
   BYOB_STATE.selectedBox = boxKey;
-  const names = {
-    royal_tin: "Nizam's Brass-Tone Tin",
-    velvet_chest: 'Imperial Velvet Chest',
-    wicker_basket: 'Artisanal Wicker Basket'
-  };
-  BYOB_STATE.boxName = names[boxKey] || 'Gift Box';
+  BYOB_STATE.boxName = tier.name;
+  BYOB_STATE.boxWeight = tier.weight;
+  BYOB_STATE.maxSlots = tier.slots;
+
+  // If user currently has more items than the new box capacity, trim extras
+  if (BYOB_STATE.selectedItems.length > tier.slots) {
+    BYOB_STATE.selectedItems.splice(tier.slots);
+    showToast(`Box size changed to ${tier.weight} (${tier.slots} slots). Extra items removed to fit.`, 'ℹ️');
+  }
 
   document.querySelectorAll('.byob-box-card').forEach(c => c.classList.remove('active'));
-  if (labelEl) labelEl.classList.add('active');
+  if (labelEl) {
+    labelEl.classList.add('active');
+    const radio = labelEl.querySelector('input[type="radio"]');
+    if (radio) radio.checked = true;
+  }
 
+  // Update dynamic labels
+  const capText = document.getElementById('byobSlotCapacityText');
+  if (capText) capText.textContent = `${tier.slots}-Slot (${tier.weight})`;
+
+  const pickHeader = document.getElementById('byobPickerHeaderTitle');
+  if (pickHeader) pickHeader.textContent = `Select ${tier.slots} Delicacies to Add into Your Box (${tier.weight})`;
+
+  const countLabel = document.getElementById('byobDelicaciesCountLabel');
+  if (countLabel) countLabel.textContent = `${tier.slots} Delicacies`;
+
+  const discLabel = document.getElementById('byobDiscountPctLabel');
+  if (discLabel) discLabel.textContent = `${tier.discountPct}%`;
+
+  renderByobSlots();
+  renderByobDelicaciesList();
   updateByobBill();
 }
 
@@ -5595,6 +5674,9 @@ function toggleByobItem(itemId) {
   const item = BYOB_DELICACIES_CATALOG.find(i => i.id === itemId);
   if (!item) return;
 
+  const tier = BYOB_BOX_TIERS[BYOB_STATE.selectedBox] || BYOB_BOX_TIERS.box_500g;
+  const maxSlots = tier.slots;
+
   const existingIndex = BYOB_STATE.selectedItems.findIndex(i => i.id === itemId);
 
   if (existingIndex !== -1) {
@@ -5602,8 +5684,8 @@ function toggleByobItem(itemId) {
     BYOB_STATE.selectedItems.splice(existingIndex, 1);
   } else {
     // Add
-    if (BYOB_STATE.selectedItems.length >= 4) {
-      showToast('Tray is full! (4/4 Delicacies Selected). Remove one to replace.', '⚠️');
+    if (BYOB_STATE.selectedItems.length >= maxSlots) {
+      showToast(`Tray is full! (${maxSlots}/${maxSlots} Delicacies Selected for ${tier.weight} box). Remove one or switch to a larger box.`, '⚠️');
       return;
     }
     BYOB_STATE.selectedItems.push(item);
@@ -5624,35 +5706,49 @@ function removeByobSlot(index) {
 }
 
 function renderByobSlots() {
+  const container = document.getElementById('byobSlotsGrid');
+  if (!container) return;
+
+  const tier = BYOB_BOX_TIERS[BYOB_STATE.selectedBox] || BYOB_BOX_TIERS.box_500g;
+  const maxSlots = tier.slots;
+
   const countEl = document.getElementById('byobSlotCount');
-  if (countEl) countEl.textContent = `${BYOB_STATE.selectedItems.length}/4 Selected`;
+  if (countEl) countEl.textContent = `${BYOB_STATE.selectedItems.length}/${maxSlots} Selected`;
 
-  for (let i = 0; i < 4; i++) {
-    const slotEl = document.getElementById(`byobSlot${i}`);
-    if (!slotEl) continue;
-
+  let html = '';
+  for (let i = 0; i < maxSlots; i++) {
     const item = BYOB_STATE.selectedItems[i];
     if (item) {
-      slotEl.className = 'byob-slot-box filled';
-      slotEl.innerHTML = `
-        <button type="button" class="btn-remove-slot" onclick="removeByobSlot(${i})" title="Remove item">✕</button>
-        <span class="slot-item-icon">${item.icon}</span>
-        <span class="slot-item-name">${item.name}</span>
-        <span style="font-size:0.7rem; color:#8C6514; font-weight:700;">₹${item.price}</span>
+      html += `
+        <div class="byob-slot-box filled" id="byobSlot${i}">
+          <button type="button" class="btn-remove-slot" onclick="removeByobSlot(${i})" title="Remove item" aria-label="Remove ${item.name}">✕</button>
+          <span class="slot-item-icon">${item.icon}</span>
+          <span class="slot-item-name">${item.name}</span>
+          <span style="font-size:0.75rem; color:#8C6514; font-weight:700;">₹${item.price}</span>
+        </div>
       `;
     } else {
-      slotEl.className = 'byob-slot-box empty';
-      slotEl.innerHTML = `<span>+ Empty Slot ${i + 1}</span>`;
+      html += `
+        <div class="byob-slot-box empty" id="byobSlot${i}">
+          <span>+ Empty Slot ${i + 1}</span>
+        </div>
+      `;
     }
   }
+
+  container.innerHTML = html;
 }
 
 function updateByobBill() {
-  const boxCost = BYOB_BOX_PRICES[BYOB_STATE.selectedBox] || 0;
+  const tier = BYOB_BOX_TIERS[BYOB_STATE.selectedBox] || BYOB_BOX_TIERS.box_500g;
+  const boxCost = tier.boxPrice;
+  const maxSlots = tier.slots;
+  const discountPct = tier.discountPct;
+
   let itemsSubtotal = 0;
   BYOB_STATE.selectedItems.forEach(i => itemsSubtotal += i.price);
 
-  const discount = Math.round(itemsSubtotal * 0.10); // 10% combo discount
+  const discount = Math.round(itemsSubtotal * (discountPct / 100));
   const grandTotal = Math.max(0, boxCost + itemsSubtotal - discount);
 
   const boxEl = document.getElementById('byobBoxPriceDisp');
@@ -5660,41 +5756,46 @@ function updateByobBill() {
   const discEl = document.getElementById('byobDiscountDisp');
   const totalEl = document.getElementById('byobGrandTotalDisp');
   const btnAdd = document.getElementById('btnByobAddToCart');
+  const discLabel = document.getElementById('byobDiscountPctLabel');
 
   if (boxEl) boxEl.textContent = boxCost === 0 ? 'Included (₹0)' : `+₹${boxCost}`;
   if (subEl) subEl.textContent = `₹${itemsSubtotal}`;
   if (discEl) discEl.textContent = `-₹${discount}`;
   if (totalEl) totalEl.textContent = `₹${grandTotal}`;
+  if (discLabel) discLabel.textContent = `${discountPct}%`;
 
   if (btnAdd) {
-    const isFull = BYOB_STATE.selectedItems.length === 4;
+    const isFull = BYOB_STATE.selectedItems.length === maxSlots;
     btnAdd.disabled = !isFull;
     if (isFull) {
-      btnAdd.innerHTML = `🎁 Add Custom ${BYOB_STATE.boxName} to Cart (₹${grandTotal})`;
+      btnAdd.innerHTML = `🎁 Add Custom ${tier.name} (${tier.weight}) to Cart (₹${grandTotal})`;
     } else {
-      btnAdd.innerHTML = `🔒 Select 4 Delicacies (${BYOB_STATE.selectedItems.length}/4 chosen)`;
+      btnAdd.innerHTML = `🔒 Select ${maxSlots} Delicacies (${BYOB_STATE.selectedItems.length}/${maxSlots} chosen)`;
     }
   }
 }
 
 function addByobHamperToCart() {
-  if (BYOB_STATE.selectedItems.length < 4) {
-    showToast('Please select all 4 delicacies for your keepsake box.', '⚠️');
+  const tier = BYOB_BOX_TIERS[BYOB_STATE.selectedBox] || BYOB_BOX_TIERS.box_500g;
+  const maxSlots = tier.slots;
+
+  if (BYOB_STATE.selectedItems.length < maxSlots) {
+    showToast(`Please select all ${maxSlots} delicacies for your ${tier.weight} keepsake box.`, '⚠️');
     return;
   }
 
-  const boxCost = BYOB_BOX_PRICES[BYOB_STATE.selectedBox] || 0;
+  const boxCost = tier.boxPrice;
   let itemsSubtotal = 0;
   BYOB_STATE.selectedItems.forEach(i => itemsSubtotal += i.price);
-  const discount = Math.round(itemsSubtotal * 0.10);
+  const discount = Math.round(itemsSubtotal * (tier.discountPct / 100));
   const grandTotal = boxCost + itemsSubtotal - discount;
 
   const names = BYOB_STATE.selectedItems.map(i => i.name).join(', ');
   const recipient = document.getElementById('byobRecipientInput')?.value || 'Recipient';
-  const customTitle = `Custom Hamper (${BYOB_STATE.boxName}): ${names} [For: ${recipient}]`;
+  const customTitle = `Custom ${tier.weight} Hamper (${tier.name}): ${names} [For: ${recipient}]`;
 
   addToCart(customTitle, grandTotal);
-  showToast(`🎉 Custom ${BYOB_STATE.boxName} added to cart for ₹${grandTotal}!`, '🎁');
+  showToast(`🎉 Custom ${tier.name} (${tier.weight}) added to cart for ₹${grandTotal}!`, '🎁');
 }
 
 // -----------------------------------------------------------------------------

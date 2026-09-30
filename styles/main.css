@@ -8604,8 +8604,55 @@ tr.highlight-selected-month {
 
 .byob-box-options {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 0.75rem;
+}
+
+.box-weight-badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(114, 14, 30, 0.08);
+  color: var(--kb-burgundy);
+  padding: 0.15rem 0.5rem;
+  border-radius: 20px;
+  margin-bottom: 0.35rem;
+}
+
+.box-weight-badge.popular {
+  background: var(--kb-gold, #C99726);
+  color: #2D1500;
+  font-weight: 800;
+  box-shadow: 0 1px 3px rgba(201, 151, 38, 0.3);
+}
+
+.box-capacity-sub {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--kb-text-muted);
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+}
+
+.box-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  margin-top: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.box-discount-pill {
+  font-size: 0.65rem;
+  font-weight: 800;
+  background: #E8F5E9;
+  color: #2E7D32;
+  padding: 0.12rem 0.38rem;
+  border-radius: 4px;
+  border: 1px solid #C8E6C9;
 }
 
 .byob-box-card {
@@ -8665,7 +8712,7 @@ tr.highlight-selected-month {
 
 .byob-tray-slots-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
   gap: 0.75rem;
 }
 
@@ -8991,6 +9038,12 @@ tr.highlight-selected-month {
   font-size: 1rem;
   cursor: pointer;
   padding: 0.2rem;
+}
+
+@media (max-width: 1024px) {
+  .byob-box-options {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 768px) {
