@@ -8344,3 +8344,660 @@ tr.highlight-selected-month {
   color: #ECEFF1;
   padding: 0.6rem;
 }
+
+
+
+/* ==========================================================================
+   Options 2, 3, 4, 5, 6: BYOB Studio, Multilingual, Reviews, Chai Pairing & PWA
+   ========================================================================== */
+
+/* Multilingual Language Switcher */
+.lang-switcher-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255, 255, 255, 0.12);
+  padding: 0.2rem 0.5rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 224, 130, 0.3);
+}
+
+.lang-globe {
+  font-size: 0.85rem;
+}
+
+.lang-btn-group {
+  display: flex;
+  gap: 0.2rem;
+}
+
+.btn-lang {
+  background: transparent;
+  border: none;
+  color: #FFF;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.45rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-lang:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.btn-lang.active {
+  background: #C99726;
+  color: #3E2723;
+}
+
+/* Chai Pairing Concierge */
+.chai-pairing-section {
+  padding: 4rem 0;
+  background: linear-gradient(180deg, #FBF8F3 0%, #F5EFEB 100%);
+  border-top: 1px solid var(--kb-border);
+  border-bottom: 1px solid var(--kb-border);
+}
+
+.chai-header-center, .byob-header-center {
+  text-align: center;
+  max-width: 750px;
+  margin: 0 auto 2.5rem;
+}
+
+.brew-selector-pills {
+  display: flex;
+  justify-content: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.btn-brew-pill {
+  background: #FFF;
+  border: 1.5px solid var(--kb-border);
+  color: var(--kb-text-primary);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.6rem 1.25rem;
+  border-radius: 25px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  transition: all 0.2s ease;
+}
+
+.btn-brew-pill:hover {
+  border-color: var(--kb-gold);
+  transform: translateY(-2px);
+}
+
+.btn-brew-pill.active {
+  background: var(--kb-burgundy);
+  color: #FFF;
+  border-color: var(--kb-burgundy);
+  box-shadow: 0 4px 14px rgba(114, 14, 30, 0.25);
+}
+
+.chai-pairing-display-card {
+  background: #FFF;
+  border-radius: 16px;
+  border: 1px solid var(--kb-border);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  overflow: hidden;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.pairing-visual-stage {
+  background: linear-gradient(135deg, #4A0813 0%, #720E1E 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2.5rem 1.5rem;
+  color: #FFF;
+}
+
+.pairing-brew-emblem, .pairing-delicacy-emblem {
+  font-size: 3.5rem;
+  background: rgba(255,255,255,0.1);
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #C99726;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.pairing-plus-sign {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #FFE082;
+}
+
+.pairing-details-col {
+  padding: 2rem 2.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.pairing-badge-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.badge-heritage {
+  background: rgba(201, 151, 38, 0.15);
+  color: #8C6514;
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 0.25rem 0.65rem;
+  border-radius: 4px;
+}
+
+.badge-timing {
+  background: rgba(46, 125, 50, 0.12);
+  color: #2E7D32;
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 0.25rem 0.65rem;
+  border-radius: 4px;
+}
+
+.pairing-item-title {
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
+  color: var(--kb-burgundy);
+  margin: 0 0 0.75rem 0;
+}
+
+.pairing-desc {
+  font-size: 0.9rem;
+  color: var(--kb-text-secondary);
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
+}
+
+.dip-instructions-strip {
+  background: #FFFDF9;
+  border: 1px dashed var(--kb-gold);
+  border-radius: 8px;
+  padding: 0.85rem 1.15rem;
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--kb-text-primary);
+  margin-bottom: 1.5rem;
+}
+
+.dip-icon {
+  font-size: 1.3rem;
+}
+
+.pairing-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.pairing-price-tag {
+  font-size: 0.8rem;
+  color: var(--kb-text-muted);
+}
+
+/* BYOB Studio */
+.byob-studio-section {
+  padding: 4.5rem 0;
+  background: #FFF;
+}
+
+.byob-studio-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  max-width: 1140px;
+  margin: 0 auto;
+}
+
+.byob-builder-card, .byob-picker-card {
+  background: var(--kb-cream, #FFFDF9);
+  border: 1px solid var(--kb-border);
+  border-radius: 14px;
+  padding: 1.75rem;
+}
+
+.byob-step-title {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 1rem;
+}
+
+.byob-step-title .step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--kb-burgundy);
+  color: #FFF;
+  font-size: 0.85rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.byob-step-title h4 {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  color: var(--kb-burgundy);
+  margin: 0;
+}
+
+.byob-box-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.byob-box-card {
+  background: #FFF;
+  border: 1.5px solid var(--kb-border);
+  border-radius: 8px;
+  padding: 0.85rem 0.6rem;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.byob-box-card input {
+  position: absolute;
+  opacity: 0;
+}
+
+.byob-box-card:hover {
+  border-color: var(--kb-gold);
+}
+
+.byob-box-card.active {
+  border-color: var(--kb-burgundy);
+  background: rgba(114, 14, 30, 0.04);
+  box-shadow: 0 0 0 1px var(--kb-burgundy);
+}
+
+.box-card-content .box-icon {
+  font-size: 1.8rem;
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+.box-card-content strong {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--kb-text-primary);
+  margin-bottom: 0.2rem;
+}
+
+.box-card-content span {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--kb-text-muted);
+}
+
+.box-price-pill {
+  display: inline-block;
+  margin-top: 0.35rem;
+  background: rgba(201, 151, 38, 0.15);
+  color: #8C6514;
+  font-weight: 800;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+}
+
+.byob-tray-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.byob-slot-box {
+  background: #FFF;
+  border: 2px dashed #CFD8DC;
+  border-radius: 8px;
+  min-height: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem;
+  text-align: center;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.byob-slot-box.empty {
+  color: #90A4AE;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.byob-slot-box.filled {
+  border: 1.5px solid var(--kb-gold);
+  background: #FFFDF9;
+}
+
+.byob-slot-box .slot-item-icon {
+  font-size: 1.8rem;
+}
+
+.byob-slot-box .slot-item-name {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--kb-text-primary);
+  margin: 0.2rem 0;
+}
+
+.byob-slot-box .btn-remove-slot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgba(198, 40, 40, 0.1);
+  color: #C62828;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 0.7rem;
+  cursor: pointer;
+}
+
+.byob-greeting-form input, .byob-greeting-form textarea {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  background: #FFF;
+  border: 1px solid var(--kb-border);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.byob-delicacies-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 0.35rem;
+  margin-bottom: 1.5rem;
+}
+
+.byob-pick-item {
+  background: #FFF;
+  border: 1px solid var(--kb-border);
+  border-radius: 8px;
+  padding: 0.65rem 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s;
+}
+
+.byob-pick-item:hover {
+  border-color: var(--kb-gold);
+  transform: translateX(2px);
+}
+
+.byob-pick-item.selected {
+  border-color: var(--kb-burgundy);
+  background: rgba(114, 14, 30, 0.03);
+}
+
+.pick-item-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.btn-add-to-byob {
+  background: #FFFDF9;
+  border: 1px solid var(--kb-burgundy);
+  color: var(--kb-burgundy);
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.35rem 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-add-to-byob:hover {
+  background: var(--kb-burgundy);
+  color: #FFF;
+}
+
+.btn-add-to-byob.added {
+  background: #2E7D32;
+  border-color: #2E7D32;
+  color: #FFF;
+}
+
+.byob-bill-summary {
+  background: #FFF;
+  border-top: 2px solid var(--kb-border);
+  padding-top: 1rem;
+}
+
+.bill-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  margin-bottom: 0.4rem;
+  color: var(--kb-text-secondary);
+}
+
+.bill-row.discount {
+  color: #2E7D32;
+  font-weight: 700;
+}
+
+.bill-total-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin: 0.75rem 0 1rem;
+  color: var(--kb-burgundy);
+  border-top: 1px dashed var(--kb-border);
+  padding-top: 0.65rem;
+}
+
+.btn-byob-add-cart {
+  width: 100%;
+  background: var(--kb-burgundy);
+  color: #FFF;
+  border: none;
+  font-weight: 800;
+  padding: 0.85rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-byob-add-cart:disabled {
+  background: #9E9E9E;
+  cursor: not-allowed;
+}
+
+.btn-byob-add-cart:not(:disabled):hover {
+  background: #500A15;
+  box-shadow: 0 4px 15px rgba(114, 14, 30, 0.3);
+}
+
+/* Review Modal */
+.review-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(5px);
+  z-index: 10001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.review-modal-window {
+  background: #FFF;
+  width: 100%;
+  max-width: 520px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+}
+
+.review-modal-header {
+  background: var(--kb-burgundy);
+  color: #FFF;
+  padding: 1rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.review-modal-header h3 {
+  font-family: var(--font-serif);
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.review-modal-body {
+  padding: 1.5rem;
+}
+
+.review-prod-preview {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #FFFDF9;
+  border: 1px solid var(--kb-border);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+}
+
+.rev-prod-icon {
+  font-size: 2rem;
+}
+
+.star-rating-selector {
+  font-size: 2rem;
+  color: #CFD8DC;
+  cursor: pointer;
+  display: inline-flex;
+  gap: 0.35rem;
+}
+
+.star-btn {
+  transition: transform 0.15s;
+}
+
+.star-btn:hover {
+  transform: scale(1.2);
+}
+
+.star-btn.active {
+  color: #FFB300;
+}
+
+.rating-feedback-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--kb-text-secondary);
+  margin-top: 0.35rem;
+}
+
+/* PWA Install Banner */
+.pwa-install-banner {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background: #181A1F;
+  color: #FFF;
+  border: 1.5px solid #C99726;
+  border-radius: 10px;
+  padding: 0.85rem 1.15rem;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  animation: slideUpModal 0.3s ease;
+  max-width: 440px;
+}
+
+.pwa-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.pwa-icon {
+  font-size: 2rem;
+}
+
+.pwa-banner-content strong {
+  display: block;
+  font-size: 0.9rem;
+  color: #FFE082;
+}
+
+.pwa-banner-content p {
+  font-size: 0.75rem;
+  color: #B0BEC5;
+  margin: 0;
+}
+
+.pwa-banner-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-pwa-install {
+  background: #C99726;
+  color: #3E2723;
+  border: none;
+  font-weight: 800;
+  font-size: 0.78rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-pwa-dismiss {
+  background: transparent;
+  border: none;
+  color: #90A4AE;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.2rem;
+}
+
+@media (max-width: 768px) {
+  .chai-pairing-display-card, .byob-studio-grid {
+    grid-template-columns: 1fr;
+  }
+  .byob-box-options {
+    grid-template-columns: 1fr;
+  }
+}

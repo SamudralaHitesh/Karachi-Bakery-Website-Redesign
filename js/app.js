@@ -748,6 +748,10 @@ function switchJourney(journeyId) {
     const custom = document.getElementById('customCakeSection');
     if (custom) custom.scrollIntoView({ behavior: 'smooth' });
     showToast('Welcome to Artisanal Custom Cake Studio (Day 7 Deliverable)', '🎂');
+  } else if (journeyId === 'byob') {
+    const byob = document.getElementById('byobStudioSection');
+    if (byob) byob.scrollIntoView({ behavior: 'smooth' });
+    showToast('Welcome to Build-Your-Own Gift Hamper Studio!', '🎁');
   } else if (journeyId === 'stores') {
     const stores = document.getElementById('storesSection');
     if (stores) stores.scrollIntoView({ behavior: 'smooth' });
@@ -1512,6 +1516,7 @@ function openProductDetail(productId, event) {
               <span class="star-rating">⭐ ${product.rating}</span>
               <span class="review-count">(${product.reviews.toLocaleString()} verified customer ratings)</span>
             </div>
+            <button type="button" class="btn-write-review-inline" onclick="openReviewModal('${product.id}')" style="background:rgba(201,151,38,0.15); border:1px solid #C99726; color:#8C6514; font-size:0.75rem; font-weight:700; padding:0.25rem 0.65rem; border-radius:4px; cursor:pointer;" title="Write a verified customer review">✍️ Write Review</button>
             <div class="pdp-dietary-row">
               ${dietaryBadgesHtml}
             </div>
@@ -5301,3 +5306,492 @@ function renderMonthlyBreakdownTable() {
 
   tbody.innerHTML = html;
 }
+
+
+
+// =============================================================================
+// Options 2, 3, 4, 5, 6: Advanced E-Commerce Suite
+// (Multilingual Engine, Chai Pairing Concierge, BYOB Studio, Review Modal, PWA)
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// 1. Multilingual Translation Engine (Option 3: English • తెలుగు • हिन्दी)
+// -----------------------------------------------------------------------------
+const TRANSLATIONS = {
+  en: {
+    tab_retail: '🛍️ Retail Online Shop <span class="tag">B2C</span>',
+    tab_b2b: '🏢 Corporate & Bulk Orders <span class="tag">B2B</span>',
+    tab_custom: '🎂 Custom Cake Studio',
+    tab_stores: '📍 Store Locator <span class="tag">50+ Outlets</span>',
+    search_placeholder: 'Search biscuits, cakes, mithai...',
+    pillars_title: 'Our 5 Signature Culinary Pillars',
+    btn_cart: '🛒 Cart',
+    btn_compare: '⚖️ Compare',
+    toast_lang: 'Language switched to English'
+  },
+  te: {
+    tab_retail: '🛍️ రిటైల్ ఆన్‌లైన్ షాప్ <span class="tag">B2C</span>',
+    tab_b2b: '🏢 కార్పొరేట్ బల్క్ ఆర్డర్లు <span class="tag">B2B</span>',
+    tab_custom: '🎂 కస్టమ్ కేక్ స్టూడియో',
+    tab_stores: '📍 స్టోర్ లొకేటర్ <span class="tag">50+ బ్రాంచీలు</span>',
+    search_placeholder: 'బిస్కెట్లు, కేకులు, మిఠాయిలు శోధించండి...',
+    pillars_title: 'మా 5 ప్రధాన సంప్రదాయ విభాగాలు',
+    btn_cart: '🛒 బుట్ట',
+    btn_compare: '⚖️ పోల్చండి',
+    toast_lang: 'భాష తెలుగులోకి మార్చబడింది'
+  },
+  hi: {
+    tab_retail: '🛍️ रीटेल ऑनलाइन शॉप <span class="tag">B2C</span>',
+    tab_b2b: '🏢 कॉर्पोरेट बल्क ऑर्डर्स <span class="tag">B2B</span>',
+    tab_custom: '🎂 कस्टम केक स्टूडियो',
+    tab_stores: '📍 स्टोर लोकेटर <span class="tag">50+ शाखाएं</span>',
+    search_placeholder: 'बिस्कुट, केक, मिठाई खोजें...',
+    pillars_title: 'हमारे 5 हस्ताक्षर पाक स्तंभ',
+    btn_cart: '🛒 कार्ट',
+    btn_compare: '⚖️ तुलना',
+    toast_lang: 'भाषा हिन्दी में बदली गई'
+  }
+};
+
+let currentLanguage = 'en';
+
+function switchLanguage(lang) {
+  if (!TRANSLATIONS[lang]) return;
+  currentLanguage = lang;
+  localStorage.setItem('KB_LANG', lang);
+
+  // Update button active states
+  document.querySelectorAll('.btn-lang').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+  });
+
+  const dict = TRANSLATIONS[lang];
+
+  // Apply translations to data-i18n elements
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (dict[key]) el.innerHTML = dict[key];
+  });
+
+  // Global search input placeholder
+  const searchInput = document.getElementById('globalSearchInput');
+  if (searchInput && dict.search_placeholder) {
+    searchInput.placeholder = dict.search_placeholder;
+  }
+
+  showToast(dict.toast_lang, '🌐');
+}
+
+function initLanguage() {
+  const saved = localStorage.getItem('KB_LANG') || 'en';
+  if (saved !== 'en') {
+    switchLanguage(saved);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// 2. Hyderabadi Irani Chai & Delicacy Pairing Concierge (Option 5)
+// -----------------------------------------------------------------------------
+const CHAI_PAIRINGS = {
+  irani_chai: {
+    brewName: 'Hyderabadi Irani Chai (Kadak & Sweet)',
+    emoji: '☕',
+    delicacyEmoji: '🍪',
+    badge: 'Legendary Hyderabad Tea-Room Match',
+    timing: '⏱️ The 3-Second Dip',
+    title: 'Hyderabadi Osmania Biscuits & Double-Baked Butter Rusk',
+    desc: 'Piping hot, creamy Irani Chai demands a subtle hint of salt to cut through sweet condensed milk. The Osmania biscuit’s delicate melt-in-mouth crumb absorbs hot chai perfectly without crumbling.',
+    technique: 'Submerge halfway into steaming Irani chai for exactly 3 seconds. Savor immediately for an explosion of creamy dairy butter.',
+    bundleItems: ['Hyderabadi Osmania Biscuits (400g)', 'Irani Chai Double-Baked Butter Rusk (300g)'],
+    bundlePrice: 330
+  },
+  filter_coffee: {
+    brewName: 'South Indian Filter Coffee (Chicory Foam)',
+    emoji: '☕',
+    delicacyEmoji: '🥜',
+    badge: 'Morning South Indian Tradition',
+    timing: '⏱️ Quick 2-Second Touch',
+    title: 'Royal Cashew & Pista Butter Biscuits',
+    desc: 'The rich aroma of dark roasted chicory coffee is beautifully complemented by roasted Iranian pistachios and caramelized cashews in pure dairy butter.',
+    technique: 'Touch the corner of the cashew biscuit to the hot frothy coffee crema for a crunchy nutty finish.',
+    bundleItems: ['Royal Cashew & Pista Butter Biscuits (400g)', 'Original Fruit Biscuit (400g)'],
+    bundlePrice: 460
+  },
+  kashmiri_kahwa: {
+    brewName: 'Kashmiri Saffron Kahwa & Green Tea',
+    emoji: '🍵',
+    delicacyEmoji: '🍯',
+    badge: 'Royal Saffron Harmony',
+    timing: '⏱️ Bite-and-Sip Pairing',
+    title: 'Pure Desi Ghee Motichoor Ladoo & Kaju Katli',
+    desc: 'Light herbal green tea infused with whole cinnamon and crushed almonds pairs sublimely with the rich aromatic saffron pearls of authentic desi ghee motichoor.',
+    technique: 'Take a small bite of the delicate ladoo, followed by a warm sip of Kahwa to unlock the royal saffron aroma.',
+    bundleItems: ['Pure Desi Ghee Motichoor Ladoo (500g)', 'Royal Kaju Katli (500g)'],
+    bundlePrice: 620
+  },
+  badam_milk: {
+    brewName: 'Warm Saffron Badam Malai Milk',
+    emoji: '🥛',
+    delicacyEmoji: '🌾',
+    badge: 'Nourishing Evening Wellness',
+    timing: '⏱️ 4-Second Slow Soak',
+    title: 'Sugar-Free Roasted Almond Cookies',
+    desc: 'Wholesome stone-ground almonds and cold-pressed butter provide guilt-free satisfaction with warm crushed cardamom milk.',
+    technique: 'Allow the almond cookie to soak for 4 seconds until gently softened.',
+    bundleItems: ['Sugar-Free Roasted Almond Cookies (350g)', 'Roasted Jowar Superfood Crisp (250g)'],
+    bundlePrice: 390
+  },
+  english_tea: {
+    brewName: 'English Breakfast & Earl Grey',
+    emoji: '🫖',
+    delicacyEmoji: '🍒',
+    badge: 'Nizam’s Anglo-Indian Heritage',
+    timing: '⏱️ Crisp Crunchy Companion',
+    title: 'Original Hyderabad Fruit Biscuit (Tin Edition)',
+    desc: 'The citrus bergamot notes of Earl Grey match the sweet burst of candied tutti-frutti and crunchy cashew nuts in Karachi Bakery’s 1953 masterpiece.',
+    technique: 'Nibble crisp dry morsels alongside hot black tea with lemon or cream.',
+    bundleItems: ['Original Hyderabad Fruit Biscuit (400g Tin)', 'Belgian Chocolate Truffle (500g)'],
+    bundlePrice: 570
+  }
+};
+
+let activeBrewKey = 'irani_chai';
+
+function selectBrewPairing(key, btnEl) {
+  if (!CHAI_PAIRINGS[key]) return;
+  activeBrewKey = key;
+
+  document.querySelectorAll('.btn-brew-pill').forEach(b => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+
+  const p = CHAI_PAIRINGS[key];
+  document.getElementById('pairingBrewEmoji').textContent = p.emoji;
+  document.getElementById('pairingDelicacyEmoji').textContent = p.delicacyEmoji;
+  document.getElementById('pairingTitleBadge').textContent = p.badge;
+  document.getElementById('pairingTimingBadge').textContent = p.timing;
+  document.getElementById('pairingItemTitle').textContent = p.title;
+  document.getElementById('pairingDesc').textContent = p.desc;
+  document.getElementById('pairingTechnique').textContent = p.technique;
+
+  const btnBuy = document.getElementById('btnBuyPairingBundle');
+  if (btnBuy) {
+    btnBuy.textContent = `🛒 Add Curated Tea-Time Pairing to Cart (₹${p.bundlePrice})`;
+  }
+}
+
+function addPairingBundleToCart() {
+  const p = CHAI_PAIRINGS[activeBrewKey];
+  if (!p) return;
+
+  addToCart(`Curated Pairing Bundle: ${p.title}`, p.bundlePrice);
+  showToast(`Added ${p.title} combo to cart for ₹${p.bundlePrice}!`, '☕');
+}
+
+// -----------------------------------------------------------------------------
+// 3. Build-Your-Own Gift Box (BYOB) Studio Engine (Option 2)
+// -----------------------------------------------------------------------------
+const BYOB_BOX_PRICES = {
+  royal_tin: 0,
+  velvet_chest: 150,
+  wicker_basket: 190
+};
+
+const BYOB_DELICACIES_CATALOG = [
+  { id: 'byob_fruit', name: 'Original Fruit Biscuits', unit: '200g Tin', price: 120, icon: '🍪' },
+  { id: 'byob_osmania', name: 'Hyderabadi Osmania Biscuits', unit: '200g Box', price: 105, icon: '☕' },
+  { id: 'byob_cashew', name: 'Cashew & Pista Butter Biscuits', unit: '200g Box', price: 140, icon: '🥜' },
+  { id: 'byob_rusk', name: 'Irani Double-Baked Butter Rusk', unit: '200g Pack', price: 85, icon: '🍞' },
+  { id: 'byob_kaju', name: 'Royal Kaju Katli Diamond Cut', unit: '250g Pack', price: 230, icon: '🍬' },
+  { id: 'byob_motichoor', name: 'Pure Desi Ghee Motichoor Ladoo', unit: '250g Pack', price: 195, icon: '🍯' },
+  { id: 'byob_truffle', name: 'Belgian Dark Truffle Brownie Bites', unit: '200g Box', price: 180, icon: '🍫' },
+  { id: 'byob_almond', name: 'Sugar-Free Roasted Almond Cookies', unit: '200g Box', price: 135, icon: '🌾' }
+];
+
+const BYOB_STATE = {
+  selectedBox: 'royal_tin',
+  boxName: "Nizam's Brass-Tone Tin",
+  selectedItems: [] // array of delicacy objects, max 4
+};
+
+function initByobStudio() {
+  renderByobDelicaciesList();
+  updateByobBill();
+}
+
+function selectByobBox(boxKey, labelEl) {
+  BYOB_STATE.selectedBox = boxKey;
+  const names = {
+    royal_tin: "Nizam's Brass-Tone Tin",
+    velvet_chest: 'Imperial Velvet Chest',
+    wicker_basket: 'Artisanal Wicker Basket'
+  };
+  BYOB_STATE.boxName = names[boxKey] || 'Gift Box';
+
+  document.querySelectorAll('.byob-box-card').forEach(c => c.classList.remove('active'));
+  if (labelEl) labelEl.classList.add('active');
+
+  updateByobBill();
+}
+
+function renderByobDelicaciesList() {
+  const container = document.getElementById('byobDelicaciesList');
+  if (!container) return;
+
+  let html = '';
+  BYOB_DELICACIES_CATALOG.forEach(item => {
+    const isAdded = BYOB_STATE.selectedItems.some(i => i.id === item.id);
+
+    html += `
+      <div class="byob-pick-item ${isAdded ? 'selected' : ''}" id="pick_item_${item.id}">
+        <div class="pick-item-info">
+          <span style="font-size:1.6rem;">${item.icon}</span>
+          <div>
+            <strong>${item.name}</strong>
+            <div style="font-size:0.75rem; color:#888;">${item.unit} • ₹${item.price}</div>
+          </div>
+        </div>
+        <button type="button" class="btn-add-to-byob ${isAdded ? 'added' : ''}" onclick="toggleByobItem('${item.id}')">
+          ${isAdded ? '✓ Added' : '+ Add to Tray'}
+        </button>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+function toggleByobItem(itemId) {
+  const item = BYOB_DELICACIES_CATALOG.find(i => i.id === itemId);
+  if (!item) return;
+
+  const existingIndex = BYOB_STATE.selectedItems.findIndex(i => i.id === itemId);
+
+  if (existingIndex !== -1) {
+    // Remove
+    BYOB_STATE.selectedItems.splice(existingIndex, 1);
+  } else {
+    // Add
+    if (BYOB_STATE.selectedItems.length >= 4) {
+      showToast('Tray is full! (4/4 Delicacies Selected). Remove one to replace.', '⚠️');
+      return;
+    }
+    BYOB_STATE.selectedItems.push(item);
+  }
+
+  renderByobSlots();
+  renderByobDelicaciesList();
+  updateByobBill();
+}
+
+function removeByobSlot(index) {
+  if (BYOB_STATE.selectedItems[index]) {
+    BYOB_STATE.selectedItems.splice(index, 1);
+    renderByobSlots();
+    renderByobDelicaciesList();
+    updateByobBill();
+  }
+}
+
+function renderByobSlots() {
+  const countEl = document.getElementById('byobSlotCount');
+  if (countEl) countEl.textContent = `${BYOB_STATE.selectedItems.length}/4 Selected`;
+
+  for (let i = 0; i < 4; i++) {
+    const slotEl = document.getElementById(`byobSlot${i}`);
+    if (!slotEl) continue;
+
+    const item = BYOB_STATE.selectedItems[i];
+    if (item) {
+      slotEl.className = 'byob-slot-box filled';
+      slotEl.innerHTML = `
+        <button type="button" class="btn-remove-slot" onclick="removeByobSlot(${i})" title="Remove item">✕</button>
+        <span class="slot-item-icon">${item.icon}</span>
+        <span class="slot-item-name">${item.name}</span>
+        <span style="font-size:0.7rem; color:#8C6514; font-weight:700;">₹${item.price}</span>
+      `;
+    } else {
+      slotEl.className = 'byob-slot-box empty';
+      slotEl.innerHTML = `<span>+ Empty Slot ${i + 1}</span>`;
+    }
+  }
+}
+
+function updateByobBill() {
+  const boxCost = BYOB_BOX_PRICES[BYOB_STATE.selectedBox] || 0;
+  let itemsSubtotal = 0;
+  BYOB_STATE.selectedItems.forEach(i => itemsSubtotal += i.price);
+
+  const discount = Math.round(itemsSubtotal * 0.10); // 10% combo discount
+  const grandTotal = Math.max(0, boxCost + itemsSubtotal - discount);
+
+  const boxEl = document.getElementById('byobBoxPriceDisp');
+  const subEl = document.getElementById('byobItemsSubtotalDisp');
+  const discEl = document.getElementById('byobDiscountDisp');
+  const totalEl = document.getElementById('byobGrandTotalDisp');
+  const btnAdd = document.getElementById('btnByobAddToCart');
+
+  if (boxEl) boxEl.textContent = boxCost === 0 ? 'Included (₹0)' : `+₹${boxCost}`;
+  if (subEl) subEl.textContent = `₹${itemsSubtotal}`;
+  if (discEl) discEl.textContent = `-₹${discount}`;
+  if (totalEl) totalEl.textContent = `₹${grandTotal}`;
+
+  if (btnAdd) {
+    const isFull = BYOB_STATE.selectedItems.length === 4;
+    btnAdd.disabled = !isFull;
+    if (isFull) {
+      btnAdd.innerHTML = `🎁 Add Custom ${BYOB_STATE.boxName} to Cart (₹${grandTotal})`;
+    } else {
+      btnAdd.innerHTML = `🔒 Select 4 Delicacies (${BYOB_STATE.selectedItems.length}/4 chosen)`;
+    }
+  }
+}
+
+function addByobHamperToCart() {
+  if (BYOB_STATE.selectedItems.length < 4) {
+    showToast('Please select all 4 delicacies for your keepsake box.', '⚠️');
+    return;
+  }
+
+  const boxCost = BYOB_BOX_PRICES[BYOB_STATE.selectedBox] || 0;
+  let itemsSubtotal = 0;
+  BYOB_STATE.selectedItems.forEach(i => itemsSubtotal += i.price);
+  const discount = Math.round(itemsSubtotal * 0.10);
+  const grandTotal = boxCost + itemsSubtotal - discount;
+
+  const names = BYOB_STATE.selectedItems.map(i => i.name).join(', ');
+  const recipient = document.getElementById('byobRecipientInput')?.value || 'Recipient';
+  const customTitle = `Custom Hamper (${BYOB_STATE.boxName}): ${names} [For: ${recipient}]`;
+
+  addToCart(customTitle, grandTotal);
+  showToast(`🎉 Custom ${BYOB_STATE.boxName} added to cart for ₹${grandTotal}!`, '🎁');
+}
+
+// -----------------------------------------------------------------------------
+// 4. Interactive Customer Review & 5-Star Rating Modal (Option 4)
+// -----------------------------------------------------------------------------
+let selectedReviewStars = 5;
+
+function openReviewModal(prodId = 'p1') {
+  const modal = document.getElementById('writeReviewModalBackdrop');
+  if (!modal) return;
+
+  const product = (typeof PRODUCT_CATALOG_DATA !== 'undefined' && PRODUCT_CATALOG_DATA[prodId]) ? PRODUCT_CATALOG_DATA[prodId] : null;
+  if (product) {
+    const nameEl = document.getElementById('revModalProdName');
+    const iconEl = document.getElementById('revModalProdIcon');
+    if (nameEl) nameEl.textContent = product.name;
+    if (iconEl) iconEl.textContent = product.icon || '🍪';
+  }
+
+  setReviewRating(5);
+  modal.style.display = 'flex';
+}
+
+function closeReviewModal() {
+  const modal = document.getElementById('writeReviewModalBackdrop');
+  if (modal) modal.style.display = 'none';
+}
+
+function handleReviewBackdropClick(e) {
+  if (e.target.id === 'writeReviewModalBackdrop') closeReviewModal();
+}
+
+function setReviewRating(stars) {
+  selectedReviewStars = stars;
+  const labels = {
+    1: '1.0 / 5.0 — Poor Experience',
+    2: '2.0 / 5.0 — Fair / Average Taste',
+    3: '3.0 / 5.0 — Good Heritage Recipe',
+    4: '4.0 / 5.0 — Very Good / Highly Recommended',
+    5: '5.0 / 5.0 — Outstanding! Royal Heritage Taste'
+  };
+
+  const labelEl = document.getElementById('ratingFeedbackLabel');
+  if (labelEl) labelEl.textContent = labels[stars] || `${stars}.0 / 5.0`;
+
+  document.querySelectorAll('#starRatingSelector .star-btn').forEach(btn => {
+    const btnVal = parseInt(btn.getAttribute('data-rating'), 10);
+    btn.classList.toggle('active', btnVal <= stars);
+  });
+}
+
+function handleCustomerReviewSubmit(e) {
+  e.preventDefault();
+  const author = document.getElementById('revAuthorName').value.trim();
+  const city = document.getElementById('revAuthorCity').value.trim();
+  const title = document.getElementById('revHeadline').value.trim();
+  const comments = document.getElementById('revComments').value.trim();
+
+  if (!author || !comments) return;
+
+  const reviewRecord = {
+    id: `rev_${Date.now()}`,
+    author,
+    city,
+    stars: selectedReviewStars,
+    title,
+    comments,
+    date: 'Just Now (Verified Purchase)'
+  };
+
+  // Save to localStorage
+  const saved = JSON.parse(localStorage.getItem('KB_CUSTOM_REVIEWS') || '[]');
+  saved.unshift(reviewRecord);
+  localStorage.setItem('KB_CUSTOM_REVIEWS', JSON.stringify(saved));
+
+  closeReviewModal();
+  document.getElementById('customerReviewForm').reset();
+  showToast(`Thank you ${author}! Your verified review has been published.`, '🌟');
+}
+
+// -----------------------------------------------------------------------------
+// 5. PWA Mobile App 1-Tap Installation Engine (Option 6)
+// -----------------------------------------------------------------------------
+let deferredPwaPrompt = null;
+
+function initPwaEngine() {
+  // Register Service Worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./service-worker.js')
+      .then(reg => console.log('Karachi Bakery PWA Service Worker Registered!'))
+      .catch(err => console.warn('PWA SW registration skipped:', err));
+  }
+
+  // Listen for beforeinstallprompt
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPwaPrompt = e;
+    const banner = document.getElementById('pwaInstallBanner');
+    if (banner && !sessionStorage.getItem('KB_PWA_DISMISSED')) {
+      banner.style.display = 'flex';
+    }
+  });
+}
+
+function triggerPwaInstall() {
+  if (deferredPwaPrompt) {
+    deferredPwaPrompt.prompt();
+    deferredPwaPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        showToast('Karachi Bakery App installed to your device!', '📱');
+      }
+      deferredPwaPrompt = null;
+      dismissPwaBanner();
+    });
+  } else {
+    showToast('To install: Tap your browser menu (⋮ or Share) and select "Add to Home screen"', '📱');
+  }
+}
+
+function dismissPwaBanner() {
+  const banner = document.getElementById('pwaInstallBanner');
+  if (banner) banner.style.display = 'none';
+  sessionStorage.setItem('KB_PWA_DISMISSED', 'true');
+}
+
+// Hook all new engines into page initialization
+document.addEventListener('DOMContentLoaded', () => {
+  initLanguage();
+  initByobStudio();
+  initPwaEngine();
+});

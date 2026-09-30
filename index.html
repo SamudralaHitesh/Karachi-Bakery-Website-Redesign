@@ -3,6 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- OpenGraph Social Preview & PWA Meta (Option 1 & 6) -->
+  <meta property="og:title" content="Karachi Bakery Hyderabad (Est. 1953) — Modern E-Commerce Redesign">
+  <meta property="og:description" content="Authentic Fruit Biscuits, Osmania, Pure Desi Ghee Mithai, Artisan Custom Cakes & Corporate Gifting. Delivered across 19,000+ Indian Pincodes.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://karachi-bakery-website-redesign.vercel.app">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#720E1E">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
   <title>Karachi Bakery — Est. 1953 | Hyderabad's Iconic Bakery & Confectionery</title>
   <meta name="description" content="Official Karachi Bakery Online Portal. Order authentic Osmania & Fruit Biscuits, Artisan Cakes, Mithai, and Corporate Gifting packs with pan-India delivery.">
   
@@ -12,7 +23,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
   
   <!-- Main Design System CSS -->
-  <link rel="stylesheet" href="styles/main.css?v=14.0.0">
+  <link rel="stylesheet" href="styles/main.css?v=15.0.0">
 </head>
 <body>
 
@@ -25,6 +36,14 @@
         <span class="announcement-badge" id="topAnnouncementBadge">Pan-India</span>
         <span id="topAnnouncementMessage">🚚 Shipping across 19,000+ pincodes • Same-day local delivery in Hyderabad</span>
       </div>
+              <div class="lang-switcher-wrap" aria-label="Select Language">
+          <span class="lang-globe">🌐</span>
+          <div class="lang-btn-group">
+            <button type="button" class="btn-lang active" data-lang="en" onclick="switchLanguage('en')">English</button>
+            <button type="button" class="btn-lang" data-lang="te" onclick="switchLanguage('te')">తెలుగు</button>
+            <button type="button" class="btn-lang" data-lang="hi" onclick="switchLanguage('hi')">हिन्दी</button>
+          </div>
+        </div>
       <div class="pincode-quick-check">
         <span>Delivery to:</span>
         <div class="pincode-input-group">
@@ -43,16 +62,19 @@
   <nav class="journey-switcher-bar" aria-label="Customer Journey Selector">
     <div class="container">
       <div class="journey-tabs" role="tablist">
-        <button class="journey-tab active" id="tabRetail" role="tab" aria-selected="true" data-journey="retail">
+        <button class="journey-tab active" id="tabRetail" role="tab" aria-selected="true" data-journey="retail" data-i18n="tab_retail">
           🛍️ Retail Online Shop <span class="tag">B2C</span>
         </button>
-        <button class="journey-tab" id="tabB2B" role="tab" aria-selected="false" data-journey="b2b">
+        <button class="journey-tab" id="tabB2B" role="tab" aria-selected="false" data-journey="b2b" data-i18n="tab_b2b">
           🏢 Corporate & Bulk Orders <span class="tag">B2B</span>
         </button>
-        <button class="journey-tab" id="tabCustomCakes" role="tab" aria-selected="false" data-journey="custom">
+        <button class="journey-tab" id="tabCustomCakes" role="tab" aria-selected="false" data-journey="custom" data-i18n="tab_custom">
           🎂 Custom Cake Studio
         </button>
-        <button class="journey-tab" id="tabStores" role="tab" aria-selected="false" data-journey="stores">
+        <button class="journey-tab" id="tabByob" role="tab" aria-selected="false" data-journey="byob" onclick="switchJourney('byob')">
+          🎁 Build-Your-Own Hamper <span class="tag">Studio</span>
+        </button>
+        <button class="journey-tab" id="tabStores" role="tab" aria-selected="false" data-journey="stores" data-i18n="tab_stores">
           📍 Store Locator <span class="tag">50+ Outlets</span>
         </button>
       </div>
@@ -601,6 +623,62 @@
         </div>
       </div>
     </section>
+
+  <!-- ==========================================================================
+       Option 5: Hyderabadi Irani Chai & Delicacy Pairing Concierge
+       Culinary heritage recommendation engine pairing hot brews with iconic biscuits
+       ========================================================================== -->
+  <section class="chai-pairing-section" id="chaiPairingSection" aria-label="Irani Chai & Delicacy Pairing Guide">
+    <div class="container">
+      <div class="chai-header-center">
+        <span class="section-eyebrow">☕ Authentic Hyderabadi Culture</span>
+        <h2 class="section-title">Irani Chai & Delicacy Pairing Concierge</h2>
+        <p class="section-subtitle">Since 1953, Karachi Bakery has defined tea-time across the Deccan. Select your beverage below to discover its legendary artisanal companion and authentic dip timing.</p>
+      </div>
+
+      <!-- Brew Selector Pills -->
+      <div class="brew-selector-pills">
+        <button type="button" class="btn-brew-pill active" onclick="selectBrewPairing('irani_chai', this)">☕ Hyderabadi Irani Chai</button>
+        <button type="button" class="btn-brew-pill" onclick="selectBrewPairing('filter_coffee', this)">☕ South Indian Filter Coffee</button>
+        <button type="button" class="btn-brew-pill" onclick="selectBrewPairing('kashmiri_kahwa', this)">🍵 Kashmiri Saffron Kahwa</button>
+        <button type="button" class="btn-brew-pill" onclick="selectBrewPairing('badam_milk', this)">🥛 Warm Saffron Badam Milk</button>
+        <button type="button" class="btn-brew-pill" onclick="selectBrewPairing('english_tea', this)">🫖 English Breakfast / Earl Grey</button>
+      </div>
+
+      <!-- Interactive Pairing Outcome Card -->
+      <div class="chai-pairing-display-card" id="chaiPairingDisplayCard">
+        <div class="pairing-visual-stage">
+          <div class="pairing-brew-emblem" id="pairingBrewEmoji">☕</div>
+          <div class="pairing-plus-sign">+</div>
+          <div class="pairing-delicacy-emblem" id="pairingDelicacyEmoji">🍪</div>
+        </div>
+        <div class="pairing-details-col">
+          <div class="pairing-badge-row">
+            <span class="badge-heritage" id="pairingTitleBadge">Legendary Tea-Room Match</span>
+            <span class="badge-timing" id="pairingTimingBadge">⏱️ The 3-Second Dip</span>
+          </div>
+          <h3 id="pairingItemTitle" class="pairing-item-title">Hyderabadi Osmania Biscuits & Double-Baked Butter Rusk</h3>
+          <p id="pairingDesc" class="pairing-desc">
+            Piping hot, creamy Irani Chai demands a subtle hint of salt to cut through sweet condensed milk. The Osmania biscuit’s delicate melt-in-mouth crumb absorbs hot chai perfectly without crumbling.
+          </p>
+          <div class="dip-instructions-strip">
+            <span class="dip-icon">💡</span>
+            <div>
+              <strong>Master Baker Dip Technique:</strong>
+              <span id="pairingTechnique">Submerge halfway into steaming Irani chai for exactly 3 seconds. Savor immediately for an explosion of creamy dairy butter.</span>
+            </div>
+          </div>
+          <div class="pairing-actions-row">
+            <button type="button" class="action-btn-primary" id="btnBuyPairingBundle" onclick="addPairingBundleToCart()">
+              🛒 Add Curated Tea-Time Pairing to Cart (₹330)
+            </button>
+            <span class="pairing-price-tag">Includes airtight keepsake packaging</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
 
     <!-- ==========================================================================
          Unified Shopping Experience (Resolves Issue #4 & Expands for Day 2)
@@ -1810,7 +1888,118 @@
          Eliminates confusing B2B pricing from retail shoppers while providing
          dedicated corporate inquiries, MOQ, and sample ordering.
          ========================================================================== -->
-        <!-- ==========================================================================
+          <!-- ==========================================================================
+       Option 2: Interactive "Build-Your-Own Gift Box" (BYOB) Studio
+       Allows shoppers to customize their keepsake gift box with hand-picked items
+       ========================================================================== -->
+  <section class="byob-studio-section" id="byobStudioSection" aria-label="Build Your Own Gift Hamper Studio">
+    <div class="container">
+      <div class="byob-header-center">
+        <span class="section-eyebrow">🎁 Personalized Celebrations</span>
+        <h2 class="section-title">Build-Your-Own Keepsake Gift Hamper</h2>
+        <p class="section-subtitle">Curate your own bespoke Karachi Bakery assorted hamper. Choose your signature box, hand-pick 4 iconic delicacies, and add a personalized gold-foiled greeting message with an instant 10% assortment savings!</p>
+      </div>
+
+      <div class="byob-studio-grid">
+        <!-- Left: Keepsake Box Customizer & Slots Visual Stage -->
+        <div class="byob-builder-card">
+          <!-- Step 1: Box Style -->
+          <div class="byob-step-title">
+            <span class="step-num">1</span>
+            <h4>Select Signature Keepsake Box Style</h4>
+          </div>
+          <div class="byob-box-options">
+            <label class="byob-box-card active" onclick="selectByobBox('royal_tin', this)">
+              <input type="radio" name="byobBoxSelect" checked>
+              <div class="box-card-content">
+                <span class="box-icon">🥫</span>
+                <strong>Nizam's Brass-Tone Tin</strong>
+                <span>4 Signature Slots • Collectible</span>
+                <span class="box-price-pill">Included (₹0)</span>
+              </div>
+            </label>
+            <label class="byob-box-card" onclick="selectByobBox('velvet_chest', this)">
+              <input type="radio" name="byobBoxSelect">
+              <div class="box-card-content">
+                <span class="box-icon">📦</span>
+                <strong>Imperial Velvet Chest</strong>
+                <span>4 Signature Slots • Gold Embellished</span>
+                <span class="box-price-pill">+₹150</span>
+              </div>
+            </label>
+            <label class="byob-box-card" onclick="selectByobBox('wicker_basket', this)">
+              <input type="radio" name="byobBoxSelect">
+              <div class="box-card-content">
+                <span class="box-icon">🧺</span>
+                <strong>Artisanal Wicker Basket</strong>
+                <span>4 Signature Slots • Traditional Handle</span>
+                <span class="box-price-pill">+₹190</span>
+              </div>
+            </label>
+          </div>
+
+          <!-- Step 2: 4-Slot Visual Stage -->
+          <div class="byob-step-title" style="margin-top:1.5rem;">
+            <span class="step-num">2</span>
+            <h4>Your 4-Slot Assortment Tray (<span id="byobSlotCount">0/4 Selected</span>)</h4>
+          </div>
+          <div class="byob-tray-slots-grid" id="byobSlotsGrid">
+            <div class="byob-slot-box empty" id="byobSlot0"><span>+ Empty Slot 1</span></div>
+            <div class="byob-slot-box empty" id="byobSlot1"><span>+ Empty Slot 2</span></div>
+            <div class="byob-slot-box empty" id="byobSlot2"><span>+ Empty Slot 3</span></div>
+            <div class="byob-slot-box empty" id="byobSlot3"><span>+ Empty Slot 4</span></div>
+          </div>
+
+          <!-- Step 3: Complimentary Gift Card Message -->
+          <div class="byob-step-title" style="margin-top:1.5rem;">
+            <span class="step-num">3</span>
+            <h4>Complimentary Greeting Card Message</h4>
+          </div>
+          <div class="byob-greeting-form">
+            <input type="text" id="byobRecipientInput" placeholder="Recipient Name (e.g. The Sharma Family)" value="Dear Family & Friends">
+            <textarea id="byobMessageInput" rows="2" placeholder="Write your heartfelt festive celebration message...">Wishing you warmth, happiness, and authentic sweetness from Hyderabad!</textarea>
+          </div>
+        </div>
+
+        <!-- Right: Delicacy Picker Tray & Live Total Summary -->
+        <div class="byob-picker-card">
+          <div class="byob-picker-header">
+            <h4>Select 4 Delicacies to Add into Your Box</h4>
+            <span class="picker-hint">Click any delicacy below to place it into an empty tray slot</span>
+          </div>
+
+          <div class="byob-delicacies-list" id="byobDelicaciesList">
+            <!-- Populated dynamically by JS -->
+          </div>
+
+          <!-- Sticky Bill Summary Card -->
+          <div class="byob-bill-summary">
+            <div class="bill-row">
+              <span>Keepsake Box Packaging:</span>
+              <strong id="byobBoxPriceDisp">Included (₹0)</strong>
+            </div>
+            <div class="bill-row">
+              <span>Selected 4 Delicacies:</span>
+              <strong id="byobItemsSubtotalDisp">₹0</strong>
+            </div>
+            <div class="bill-row discount">
+              <span>Combo Assortment Savings (10% OFF):</span>
+              <strong id="byobDiscountDisp">-₹0</strong>
+            </div>
+            <div class="bill-total-row">
+              <span>Total Personalized Hamper Price:</span>
+              <strong id="byobGrandTotalDisp" class="final-amt">₹0</strong>
+            </div>
+            <button type="button" class="btn-byob-add-cart" id="btnByobAddToCart" onclick="addByobHamperToCart()" disabled>
+              🔒 Select 4 Delicacies to Add to Cart
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+    <!-- ==========================================================================
          Day 6 Deliverable: Dedicated B2B & Corporate Bulk Order Suite
          (Resolves Issues #3, #7, #8, #9)
          ========================================================================== -->
@@ -3768,12 +3957,93 @@
     </div>
   </div>
 
+  
+  <!-- ==========================================================================
+       Option 4: Customer Review & Rating Submission Modal
+       Allows authenticated patrons to write reviews with star ratings
+       ========================================================================== -->
+  <div class="review-modal-backdrop" id="writeReviewModalBackdrop" style="display:none;" onclick="handleReviewBackdropClick(event)">
+    <div class="review-modal-window" role="dialog" aria-modal="true" aria-labelledby="writeReviewModalTitle">
+      <div class="review-modal-header">
+        <h3 id="writeReviewModalTitle">✍️ Write a Customer Review</h3>
+        <button type="button" class="btn-close-modal" onclick="closeReviewModal()" aria-label="Close review modal">✕</button>
+      </div>
+      <div class="review-modal-body">
+        <div class="review-prod-preview">
+          <span class="rev-prod-icon" id="revModalProdIcon">🍪</span>
+          <div>
+            <h4 id="revModalProdName">Original Hyderabad Fruit Biscuit</h4>
+            <span style="font-size:0.8rem; color:var(--kb-text-muted);">Verified Purchase Rating</span>
+          </div>
+        </div>
+
+        <form id="customerReviewForm" onsubmit="handleCustomerReviewSubmit(event)">
+          <!-- Star Rating Selector -->
+          <div class="form-group" style="text-align:center; margin:1rem 0;">
+            <label style="font-weight:700; margin-bottom:0.5rem; display:block;">Overall Experience Rating *</label>
+            <div class="star-rating-selector" id="starRatingSelector">
+              <span class="star-btn active" data-rating="1" onclick="setReviewRating(1)">★</span>
+              <span class="star-btn active" data-rating="2" onclick="setReviewRating(2)">★</span>
+              <span class="star-btn active" data-rating="3" onclick="setReviewRating(3)">★</span>
+              <span class="star-btn active" data-rating="4" onclick="setReviewRating(4)">★</span>
+              <span class="star-btn active" data-rating="5" onclick="setReviewRating(5)">★</span>
+            </div>
+            <span class="rating-feedback-label" id="ratingFeedbackLabel">5.0 / 5.0 — Outstanding! Royal Heritage Taste</span>
+          </div>
+
+          <div class="admin-form-row-3" style="grid-template-columns: 1fr 1fr;">
+            <div class="form-group">
+              <label for="revAuthorName">Your Full Name *</label>
+              <input type="text" id="revAuthorName" placeholder="e.g. Sowmya Rao" required>
+            </div>
+            <div class="form-group">
+              <label for="revAuthorCity">City & State *</label>
+              <input type="text" id="revAuthorCity" placeholder="e.g. Hyderabad, Telangana" value="Hyderabad" required>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom:0.75rem;">
+            <label for="revHeadline">Review Title / Headline *</label>
+            <input type="text" id="revHeadline" placeholder="e.g. Melt-in-mouth buttery perfection!" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label for="revComments">Detailed Feedback *</label>
+            <textarea id="revComments" rows="3" placeholder="Share your experience regarding aroma, texture, packaging, or pairing with Irani chai..." required></textarea>
+          </div>
+
+          <div class="review-actions-row">
+            <button type="submit" class="action-btn-primary" style="width:100%; padding:0.85rem;">
+              🚀 Publish Verified Customer Review
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <div class="toast-notice" id="toastNotice" role="alert" aria-live="polite">
     <span id="toastIcon">✨</span>
     <span id="toastMessage">Action completed successfully</span>
   </div>
 
   <!-- Main JavaScript Logic -->
-  <script src="js/app.js?v=14.0.0"></script>
+  <script src="js/app.js?v=15.0.0"></script>
+
+  <!-- PWA Mobile App 1-Tap Install Prompt (Option 6) -->
+  <div class="pwa-install-banner" id="pwaInstallBanner" style="display:none;">
+    <div class="pwa-banner-content">
+      <span class="pwa-icon">📱</span>
+      <div>
+        <strong>Install Karachi Bakery App</strong>
+        <p>1-tap ordering, live order tracking & offline access on your phone.</p>
+      </div>
+    </div>
+    <div class="pwa-banner-buttons">
+      <button type="button" class="btn-pwa-install" onclick="triggerPwaInstall()">Install App</button>
+      <button type="button" class="btn-pwa-dismiss" onclick="dismissPwaBanner()">✕</button>
+    </div>
+  </div>
+
 </body>
 </html>
