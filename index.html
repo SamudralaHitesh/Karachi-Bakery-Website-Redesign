@@ -2712,7 +2712,7 @@
           </div>
           <h2 class="locator-title">Karachi Bakery Outlets Across India</h2>
           <p class="locator-desc">
-            Explore 50+ iconic flagship bakeries, airport 24/7 express kiosks, and artisanal dining cafes across Hyderabad, Bengaluru, Mumbai, and Delhi NCR. Check real-time operating hours, amenities, and get 1-click Google Maps directions.
+            Explore 54+ iconic flagship bakeries, airport 24/7 express kiosks, and artisanal dining cafes across Hyderabad (22), Bengaluru (8), Mumbai (6), Delhi NCR (6), Chennai (3), Pune (3), Kolkata (2), Goa (2), and Andhra Pradesh (2). Check real-time operating hours, amenities, and get 1-click Google Maps directions.
           </p>
         </div>
 
@@ -2731,26 +2731,32 @@
         <!-- City & Outlet Type Filter Tabs -->
         <div class="locator-filters-row">
           <!-- City Filter Pills -->
-          <div class="store-city-pills" role="tablist" aria-label="City Filter">
-            <button type="button" class="city-pill active" data-city="all" onclick="filterStoresByCity('all', this)">All Cities (12)</button>
-            <button type="button" class="city-pill" data-city="hyderabad" onclick="filterStoresByCity('hyderabad', this)">Hyderabad (5)</button>
-            <button type="button" class="city-pill" data-city="bengaluru" onclick="filterStoresByCity('bengaluru', this)">Bengaluru (3)</button>
-            <button type="button" class="city-pill" data-city="mumbai" onclick="filterStoresByCity('mumbai', this)">Mumbai (2)</button>
-            <button type="button" class="city-pill" data-city="delhi" onclick="filterStoresByCity('delhi', this)">Delhi NCR (2)</button>
+          <div class="store-city-pills" id="storeCityPills" role="tablist" aria-label="City Filter">
+            <button type="button" class="city-pill active" data-city="all" onclick="filterStoresByCity('all', this)">All Cities (54)</button>
+            <button type="button" class="city-pill" data-city="hyderabad" onclick="filterStoresByCity('hyderabad', this)">Hyderabad (22)</button>
+            <button type="button" class="city-pill" data-city="bengaluru" onclick="filterStoresByCity('bengaluru', this)">Bengaluru (8)</button>
+            <button type="button" class="city-pill" data-city="mumbai" onclick="filterStoresByCity('mumbai', this)">Mumbai (6)</button>
+            <button type="button" class="city-pill" data-city="delhi" onclick="filterStoresByCity('delhi', this)">Delhi NCR (6)</button>
+            <button type="button" class="city-pill" data-city="chennai" onclick="filterStoresByCity('chennai', this)">Chennai (3)</button>
+            <button type="button" class="city-pill" data-city="pune" onclick="filterStoresByCity('pune', this)">Pune (3)</button>
+            <button type="button" class="city-pill" data-city="kolkata" onclick="filterStoresByCity('kolkata', this)">Kolkata (2)</button>
+            <button type="button" class="city-pill" data-city="goa" onclick="filterStoresByCity('goa', this)">Goa (2)</button>
+            <button type="button" class="city-pill" data-city="andhra" onclick="filterStoresByCity('andhra', this)">Andhra Pradesh (2)</button>
           </div>
 
           <!-- Outlet Type Pills -->
           <div class="store-type-pills">
-            <button type="button" class="type-pill active" data-type="all" onclick="filterStoresByType('all', this)">All Outlets</button>
-            <button type="button" class="type-pill" data-type="flagship" onclick="filterStoresByType('flagship', this)">🏛️ Heritage Flagship</button>
-            <button type="button" class="type-pill" data-type="airport" onclick="filterStoresByType('airport', this)">✈️ Airport 24/7</button>
-            <button type="button" class="type-pill" data-type="cafe" onclick="filterStoresByType('cafe', this)">☕ Cafe & Dine-In</button>
+            <button type="button" class="type-pill active" data-type="all" onclick="filterStoresByType('all', this)">All Outlets (54)</button>
+            <button type="button" class="type-pill" data-type="flagship" onclick="filterStoresByType('flagship', this)">🏛️ Heritage Flagship (9)</button>
+            <button type="button" class="type-pill" data-type="airport" onclick="filterStoresByType('airport', this)">✈️ Airport 24/7 (13)</button>
+            <button type="button" class="type-pill" data-type="cafe" onclick="filterStoresByType('cafe', this)">☕ Cafe & Dine-In (11)</button>
+            <button type="button" class="type-pill" data-type="express" onclick="filterStoresByType('express', this)">🛍️ Express Retail (21)</button>
           </div>
         </div>
 
         <!-- Results Counter & Status Summary -->
         <div class="locator-results-bar">
-          <span id="storeCountDisplay">Showing <strong>12</strong> verified outlets across India</span>
+          <span id="storeCountDisplay">Showing <strong>54</strong> verified outlets across India</span>
           <span class="live-clock-pill" id="liveClockPill">🕒 Checking outlet hours...</span>
         </div>
 
@@ -2768,28 +2774,58 @@
               <div class="map-bg-texture"></div>
               
               <!-- Metro City Map Markers with Pulse Animation -->
-              <div class="map-marker-pin marker-delhi" onclick="selectMapPin('delhi')" title="Delhi NCR Outlets">
+              <div class="map-marker-pin marker-delhi" onclick="selectMapPin('delhi')" title="Delhi NCR Outlets (6)">
                 <div class="pin-ring"></div>
                 <div class="pin-dot"></div>
-                <span class="pin-label">Delhi NCR (2)</span>
+                <span class="pin-label">Delhi NCR (6)</span>
               </div>
 
-              <div class="map-marker-pin marker-mumbai" onclick="selectMapPin('mumbai')" title="Mumbai Outlets">
+              <div class="map-marker-pin marker-mumbai" onclick="selectMapPin('mumbai')" title="Mumbai Outlets (6)">
                 <div class="pin-ring"></div>
                 <div class="pin-dot"></div>
-                <span class="pin-label">Mumbai (2)</span>
+                <span class="pin-label">Mumbai (6)</span>
               </div>
 
-              <div class="map-marker-pin marker-hyderabad active" onclick="selectMapPin('hyderabad')" title="Hyderabad Heritage Outlets">
+              <div class="map-marker-pin marker-pune" onclick="selectMapPin('pune')" title="Pune Outlets (3)">
                 <div class="pin-ring"></div>
                 <div class="pin-dot"></div>
-                <span class="pin-label">👑 Hyderabad (5)</span>
+                <span class="pin-label">Pune (3)</span>
               </div>
 
-              <div class="map-marker-pin marker-bengaluru" onclick="selectMapPin('bengaluru')" title="Bengaluru Outlets">
+              <div class="map-marker-pin marker-goa" onclick="selectMapPin('goa')" title="Goa Outlets (2)">
                 <div class="pin-ring"></div>
                 <div class="pin-dot"></div>
-                <span class="pin-label">Bengaluru (3)</span>
+                <span class="pin-label">Goa (2)</span>
+              </div>
+
+              <div class="map-marker-pin marker-hyderabad active" onclick="selectMapPin('hyderabad')" title="Hyderabad Heritage Hub (22)">
+                <div class="pin-ring"></div>
+                <div class="pin-dot"></div>
+                <span class="pin-label">👑 Hyderabad (22)</span>
+              </div>
+
+              <div class="map-marker-pin marker-andhra" onclick="selectMapPin('andhra')" title="Andhra Pradesh Outlets (2)">
+                <div class="pin-ring"></div>
+                <div class="pin-dot"></div>
+                <span class="pin-label">AP (2)</span>
+              </div>
+
+              <div class="map-marker-pin marker-bengaluru" onclick="selectMapPin('bengaluru')" title="Bengaluru Outlets (8)">
+                <div class="pin-ring"></div>
+                <div class="pin-dot"></div>
+                <span class="pin-label">Bengaluru (8)</span>
+              </div>
+
+              <div class="map-marker-pin marker-chennai" onclick="selectMapPin('chennai')" title="Chennai Outlets (3)">
+                <div class="pin-ring"></div>
+                <div class="pin-dot"></div>
+                <span class="pin-label">Chennai (3)</span>
+              </div>
+
+              <div class="map-marker-pin marker-kolkata" onclick="selectMapPin('kolkata')" title="Kolkata Outlets (2)">
+                <div class="pin-ring"></div>
+                <div class="pin-dot"></div>
+                <span class="pin-label">Kolkata (2)</span>
               </div>
             </div>
 
@@ -2834,10 +2870,13 @@
             <!-- Network Reach Quick Summary -->
             <div class="locator-stats-strip">
               <div class="stat-pill">
-                <strong>50+</strong> Outlets Nationwide
+                <strong>54+</strong> Outlets Nationwide
               </div>
               <div class="stat-pill">
-                <strong>6</strong> Airport Terminals
+                <strong>13</strong> Airport Terminals 24/7
+              </div>
+              <div class="stat-pill">
+                <strong>9</strong> Key Metro Cities
               </div>
               <div class="stat-pill">
                 <strong>Est. 1953</strong> Hyderabad Heritage

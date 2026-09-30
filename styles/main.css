@@ -5909,7 +5909,7 @@ button {
 }
 
 .india-map-canvas {
-  height: 290px;
+  height: 275px;
   background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
   border-radius: var(--radius-lg);
   position: relative;
@@ -5979,10 +5979,15 @@ button {
   background: rgba(239, 68, 68, 0.3);
 }
 
-.marker-delhi { top: 20%; left: 42%; }
-.marker-mumbai { top: 56%; left: 28%; }
-.marker-hyderabad { top: 60%; left: 48%; }
-.marker-bengaluru { top: 76%; left: 46%; }
+.marker-delhi { top: 20%; left: 38%; }
+.marker-mumbai { top: 54%; left: 24%; }
+.marker-pune { top: 60%; left: 29%; }
+.marker-goa { top: 72%; left: 27%; }
+.marker-hyderabad { top: 58%; left: 47%; }
+.marker-andhra { top: 58%; left: 63%; }
+.marker-bengaluru { top: 76%; left: 43%; }
+.marker-chennai { top: 78%; left: 54%; }
+.marker-kolkata { top: 43%; left: 74%; }
 
 .store-spotlight-card {
   background: #fff;
