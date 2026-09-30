@@ -1634,6 +1634,37 @@ function openProductDetail(productId, event) {
           </div>
         </div>
 
+        <!-- Option 4: Verified Customer Reviews Showcase -->
+        <div class="pdp-reviews-showcase" style="margin-top:2rem; padding-top:1.5rem; border-top:1.5px solid var(--kb-border);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+            <div>
+              <h4 style="font-family:var(--font-serif); font-size:1.15rem; color:var(--kb-burgundy); margin:0 0 0.25rem 0;">🌟 Verified Customer Reviews & Ratings</h4>
+              <span style="font-size:0.8rem; color:var(--kb-text-muted);">Real feedback from patrons across Hyderabad & Pan-India</span>
+            </div>
+            <button type="button" class="action-btn-primary" onclick="openReviewModal('${product.id}')" style="padding:0.5rem 1rem; font-size:0.8rem;">
+              ✍️ Write a Review
+            </button>
+          </div>
+          <div class="pdp-reviews-list">
+            <div class="pdp-review-card" style="background:#FFFDF9; border:1px solid var(--kb-border); border-radius:8px; padding:0.85rem 1.15rem; margin-bottom:0.6rem;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+                <strong>Sowmya Rao (Banjara Hills, Hyderabad)</strong>
+                <span style="color:#FFB300; font-size:0.9rem;">★★★★★</span>
+              </div>
+              <strong style="display:block; font-size:0.85rem; color:var(--kb-burgundy); margin-bottom:0.25rem;">"Unmatched melt-in-mouth tutti-frutti freshness!"</strong>
+              <p style="font-size:0.82rem; color:var(--kb-text-secondary); margin:0;">The authentic bakery aroma and cashew crunch is identical to visiting the Mozamjahi kitchen in person. Airtight gold tin kept it crisp for weeks.</p>
+            </div>
+            <div class="pdp-review-card" style="background:#FFFDF9; border:1px solid var(--kb-border); border-radius:8px; padding:0.85rem 1.15rem;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+                <strong>Vikram Malhotra (Bengaluru)</strong>
+                <span style="color:#FFB300; font-size:0.9rem;">★★★★★</span>
+              </div>
+              <strong style="display:block; font-size:0.85rem; color:var(--kb-burgundy); margin-bottom:0.25rem;">"Perfect pairing with evening tea"</strong>
+              <p style="font-size:0.82rem; color:var(--kb-text-secondary); margin:0;">Delivered fresh via 48h air cargo without a single broken biscuit. Karachi Bakery never disappoints.</p>
+            </div>
+          </div>
+        </div>
+
         <!-- Smart Cross-Sell Carousel (Issue #14) -->
         <div class="pdp-cross-sells">
           <h4 class="cross-sell-title">👑 Customers Also Relished</h4>

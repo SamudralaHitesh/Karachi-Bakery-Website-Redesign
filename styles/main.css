@@ -9001,3 +9001,10 @@ tr.highlight-selected-month {
     grid-template-columns: 1fr;
   }
 }
+
+
+.btn-card-review-action:hover {
+  background: var(--kb-gold, #C99726) !important;
+  color: #3E2723 !important;
+  transform: translateY(-1px);
+}
