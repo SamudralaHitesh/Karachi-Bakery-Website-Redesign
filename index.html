@@ -3713,14 +3713,89 @@
 
                 <div class="form-group" style="margin-bottom:1rem;">
                   <label for="newProdBranchScope">Branch Availability & Store Assignment *</label>
-                  <select id="newProdBranchScope" style="width:100%; padding:0.6rem; border:1px solid #374151; background:#1F2937; color:#ECEFF1; border-radius:6px; font-weight:600;">
-                    <option value="all" selected>🌐 All 54 Branches Nationwide + Online Express Delivery</option>
-                    <option value="hyd_flagships">🏛️ Hyderabad Heritage Flagships (Mozamjahi, Banjara, Jubilee)</option>
-                    <option value="cafes">☕ Cafe & Dine-In Bistros Only (Fresh Pastries, Cakes & Breads)</option>
-                    <option value="airports">✈️ Airport 24/7 Outlets Only (RGIA, BLR, BOM T2, DEL T3)</option>
-                    <option value="bengaluru">📍 Bengaluru Branches Only (Indiranagar, Koramangala, Whitefield)</option>
-                    <option value="mumbai">📍 Mumbai Branches Only (Bandra, Lower Parel, Airport)</option>
-                    <option value="delhi">📍 Delhi NCR Branches Only (Connaught Place, Cyber Hub, Airport)</option>
+                  <select id="newProdBranchScope" style="width:100%; padding:0.6rem; border:1px solid #374151; background:#1F2937; color:#ECEFF1; border-radius:6px; font-weight:600; font-size:0.85rem;">
+                    <!-- Regional & Nationwide Groups -->
+                    <optgroup label="── 🌐 Nationwide & Concept Scope Groups ──">
+                      <option value="all" selected>🌐 All 54 Branches Nationwide + Online Express Delivery</option>
+                      <option value="hyd_all">👑 All 22 Hyderabad & Secunderabad Branches</option>
+                      <option value="blr_all">📍 All 8 Bengaluru Branches</option>
+                      <option value="mum_all">📍 All 6 Mumbai Branches</option>
+                      <option value="del_all">📍 All 6 Delhi NCR Branches</option>
+                      <option value="airports">✈️ All Airport 24/7 Outlets Only (13 Outlets)</option>
+                      <option value="cafes">☕ All Cafe & Dine-In Bistros Only (11 Outlets)</option>
+                    </optgroup>
+                    <optgroup label="── 👑 Hyderabad & Secunderabad Individual Branches (22) ──">
+                      <option value="branch_hyd-1">🏛️ Mozamjahi Market Flagship (Est. 1953)</option>
+                      <option value="branch_hyd-2">☕ Banjara Hills Bistro & Bakery</option>
+                      <option value="branch_hyd-3">☕ Jubilee Hills Signature Cafe & Patisserie</option>
+                      <option value="branch_hyd-4">🛍️ Cyberabad Hitec City Tech Hub</option>
+                      <option value="branch_hyd-5">✈️ RGI Airport Domestic Terminal 1</option>
+                      <option value="branch_hyd-6">✈️ RGI Airport International Terminal 2</option>
+                      <option value="branch_hyd-7">🏛️ Secunderabad Heritage Clock Tower</option>
+                      <option value="branch_hyd-8">🏛️ Charminar Heritage Walk Plaza</option>
+                      <option value="branch_hyd-9">☕ Begumpet Lifestyle Boulevard</option>
+                      <option value="branch_hyd-10">🛍️ Kondapur Botanical Garden Hub</option>
+                      <option value="branch_hyd-11">☕ Madhapur Durgam Cheruvu Metro</option>
+                      <option value="branch_hyd-12">🛍️ Kukatpally KPHB Phase 1</option>
+                      <option value="branch_hyd-13">🛍️ Dilsukhnagar Konark Metro Hub</option>
+                      <option value="branch_hyd-14">🛍️ A.S. Rao Nagar Sainikpuri Hub</option>
+                      <option value="branch_hyd-15">🛍️ Somajiguda Raj Bhavan Road</option>
+                      <option value="branch_hyd-16">🛍️ Attapur PVNR Expressway Pillar 143</option>
+                      <option value="branch_hyd-17">🛍️ Tolichowki Heritage Sweets</option>
+                      <option value="branch_hyd-18">🛍️ Manikonda Puppalguda Golden Temple</option>
+                      <option value="branch_hyd-19">🛍️ Karkhana Diamond Point Secunderabad</option>
+                      <option value="branch_hyd-20">🛍️ Miyapur Metro Terminal</option>
+                      <option value="branch_hyd-21">🛍️ Chandanagar NH65 Express</option>
+                      <option value="branch_hyd-22">🛍️ Nagole Inner Ring Road Hub</option>
+                    </optgroup>
+                    <optgroup label="── 📍 Bengaluru Individual Branches (8) ──">
+                      <option value="branch_blr-1">☕ Bengaluru Indiranagar 100ft Road</option>
+                      <option value="branch_blr-2">✈️ Kempegowda Airport (BLR) T2 Departures</option>
+                      <option value="branch_blr-3">✈️ Kempegowda Airport (BLR) T1 Domestic</option>
+                      <option value="branch_blr-4">☕ Bengaluru Koramangala 5th Block</option>
+                      <option value="branch_blr-5">🛍️ Whitefield Forum Neighbourhood Mall</option>
+                      <option value="branch_blr-6">🛍️ Jayanagar 4th Block Heritage Store</option>
+                      <option value="branch_blr-7">☕ HSR Layout Sector 1 Hub</option>
+                      <option value="branch_blr-8">🛍️ MG Road Metro Boulevard</option>
+                    </optgroup>
+                    <optgroup label="── 📍 Mumbai Individual Branches (6) ──">
+                      <option value="branch_mum-1">🏛️ Mumbai Bandra Linking Road Flagship</option>
+                      <option value="branch_mum-2">✈️ Mumbai CSMI Airport (BOM) T2 Departures</option>
+                      <option value="branch_mum-3">✈️ Mumbai CSMI Airport (BOM) T1 Arrivals</option>
+                      <option value="branch_mum-4">☕ Lower Parel High Street Phoenix</option>
+                      <option value="branch_mum-5">🛍️ Colaba Causeway Heritage Boutique</option>
+                      <option value="branch_mum-6">☕ Juhu Tara Road Seaside Boutique</option>
+                    </optgroup>
+                    <optgroup label="── 📍 Delhi NCR Individual Branches (6) ──">
+                      <option value="branch_del-1">🏛️ Delhi NCR Connaught Place Flagship</option>
+                      <option value="branch_del-2">✈️ Delhi IGI Airport (DEL) T3 Departures</option>
+                      <option value="branch_del-3">✈️ Delhi IGI Airport (DEL) T1 Domestic</option>
+                      <option value="branch_del-4">☕ Cyber Hub Gurgaon DLF Phase 2</option>
+                      <option value="branch_del-5">🛍️ Noida Sector 18 Wave Silver Tower</option>
+                      <option value="branch_del-6">🛍️ South Extension Part 2 Main Market</option>
+                    </optgroup>
+                    <optgroup label="── 📍 Chennai Individual Branches (3) ──">
+                      <option value="branch_chn-1">🏛️ Chennai T. Nagar Usman Road Flagship</option>
+                      <option value="branch_chn-2">✈️ Chennai International Airport (MAA) T1</option>
+                      <option value="branch_chn-3">🛍️ Phoenix Marketcity Velachery</option>
+                    </optgroup>
+                    <optgroup label="── 📍 Pune Individual Branches (3) ──">
+                      <option value="branch_pun-1">☕ Pune Koregaon Park North Main Road</option>
+                      <option value="branch_pun-2">🛍️ Pune Phoenix Marketcity Viman Nagar</option>
+                      <option value="branch_pun-3">✈️ Pune Lohegaon Airport (PNQ) Departures</option>
+                    </optgroup>
+                    <optgroup label="── 📍 Kolkata Individual Branches (2) ──">
+                      <option value="branch_ccu-1">✈️ Kolkata NSCBI Airport (CCU) Departures</option>
+                      <option value="branch_ccu-2">🏛️ Kolkata Park Street Heritage Corner</option>
+                    </optgroup>
+                    <optgroup label="── 📍 Goa Individual Branches (2) ──">
+                      <option value="branch_goa-1">✈️ Goa Dabolim Airport (GOI) T1 Departures</option>
+                      <option value="branch_goa-2">✈️ Manohar International Airport (GOX) Mopa</option>
+                    </optgroup>
+                    <optgroup label="── 📍 Andhra Pradesh Individual Branches (2) ──">
+                      <option value="branch_ap-1">🏛️ Vijayawada Benz Circle Heritage Hub</option>
+                      <option value="branch_ap-2">🏛️ Visakhapatnam VIP Road Heritage Parlour</option>
+                    </optgroup>
                   </select>
                 </div>
 

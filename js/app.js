@@ -5396,16 +5396,26 @@ function handleAddNewProductSubmit(e) {
   const branchScope = document.getElementById('newProdBranchScope')?.value || 'all';
   const desc = document.getElementById('newProdDesc').value.trim();
 
-  const branchLabels = {
-    all: 'All 54 Branches & Pan-India',
-    hyd_flagships: 'Hyderabad Heritage Flagships Only',
-    cafes: 'Fresh Daily at Dine-In Bistros',
-    airports: 'Airport 24/7 Outlets Only',
-    bengaluru: 'Bengaluru Branches Only',
-    mumbai: 'Mumbai Branches Only',
-    delhi: 'Delhi NCR Branches Only'
-  };
-  const branchLabel = branchLabels[branchScope] || 'All 54 Branches & Pan-India';
+  let branchLabel = 'All 54 Branches & Pan-India';
+  if (branchScope === 'all') {
+    branchLabel = 'All 54 Branches & Pan-India';
+  } else if (branchScope === 'hyd_all' || branchScope === 'hyd_flagships') {
+    branchLabel = 'All 22 Hyderabad Branches';
+  } else if (branchScope === 'blr_all' || branchScope === 'bengaluru') {
+    branchLabel = 'All 8 Bengaluru Branches';
+  } else if (branchScope === 'mum_all' || branchScope === 'mumbai') {
+    branchLabel = 'All 6 Mumbai Branches';
+  } else if (branchScope === 'del_all' || branchScope === 'delhi') {
+    branchLabel = 'All 6 Delhi NCR Branches';
+  } else if (branchScope === 'airports') {
+    branchLabel = 'Airport 24/7 Outlets Only';
+  } else if (branchScope === 'cafes') {
+    branchLabel = 'Fresh Daily at Dine-In Bistros';
+  } else if (branchScope.startsWith('branch_')) {
+    const storeId = branchScope.replace('branch_', '');
+    const foundStore = STORE_LOCATIONS_DATA.find(s => s.id === storeId);
+    branchLabel = foundStore ? `${foundStore.name}` : 'Specific Branch Exclusive';
+  }
 
   if (!name || isNaN(price)) {
     showToast('Please fill in required product details.', '⚠️');
@@ -7020,6 +7030,27 @@ function checkPdpBranchStock(productId, branchKey) {
 
   if (branchKey === 'online_cargo') {
     resultEl.innerHTML = '🚚 <strong>Pan-India Express Air Cargo</strong> • Dispatched fresh from Central Mozamjahi Kitchen across 19,000+ pincodes.';
+    return;
+  }
+
+  if (scope.startsWith('branch_')) {
+    const targetStoreId = scope.replace('branch_', '');
+    const isDirectMatch = (branchKey === 'hyd_mj' && targetStoreId === 'hyd-1') ||
+                          (branchKey === 'hyd_banjara' && targetStoreId === 'hyd-2') ||
+                          (branchKey === 'hyd_jubilee' && targetStoreId === 'hyd-3') ||
+                          (branchKey === 'hyd_rgia' && targetStoreId === 'hyd-5') ||
+                          (branchKey === 'blr_indira' && targetStoreId === 'blr-1') ||
+                          (branchKey === 'blr_airport' && targetStoreId === 'blr-2') ||
+                          (branchKey === 'mum_bandra' && targetStoreId === 'mum-1') ||
+                          (branchKey === 'mum_airport' && targetStoreId === 'mum-2') ||
+                          (branchKey === 'del_cp' && targetStoreId === 'del-1') ||
+                          (branchKey === 'del_airport' && targetStoreId === 'del-2') ||
+                          (branchKey === 'chn_tnagar' && targetStoreId === 'chn-1');
+    if (isDirectMatch) {
+      resultEl.innerHTML = `🟢 <strong>In Stock at this Exclusive Branch:</strong> Ready at the counter in 30 mins!`;
+    } else {
+      resultEl.innerHTML = `📍 <strong>Branch Exclusive:</strong> Available exclusively at <em>${product.branchLabel}</em> (or via Pan-India Online Delivery).`;
+    }
     return;
   }
 

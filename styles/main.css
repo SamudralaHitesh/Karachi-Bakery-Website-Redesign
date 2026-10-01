@@ -9166,3 +9166,10 @@ tr.highlight-selected-month {
 .admin-branch-badge.cafes { background: #DCFCE7; color: #15803D; }
 .admin-branch-badge.airports { background: #EDE9FE; color: #6D28D9; }
 .admin-branch-badge.bengaluru, .admin-branch-badge.mumbai, .admin-branch-badge.delhi { background: #FEF3C7; color: #92400E; }
+
+
+.admin-branch-badge.specific {
+  background: #FFF7ED;
+  color: #C2410C;
+  border: 1px solid #FFEDD5;
+}
