@@ -4940,46 +4940,63 @@ function completeOrderPayment() {
     }
 
     const orderId = `KB-ORD-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    const methodLabels = {
+      upi: 'UPI Instant Pay (GPay / PhonePe QR)',
+      card: 'Credit / Debit Card (Visa/Mastercard)',
+      netbanking: 'Net Banking (HDFC / SBI / ICICI)',
+      cod: 'Cash on Delivery (COD)'
+    };
+    const paymentMethodLabel = methodLabels[CheckoutState.paymentMethod] || 'UPI Instant Pay (GPay / PhonePe QR)';
+    const finalAmount = CheckoutState.finalCalculatedTotal || 126;
+    const orderItems = (AppState.cartItems && AppState.cartItems.length > 0)
+      ? AppState.cartItems.map(i => typeof i === 'string' ? i : (i.name + (i.unit ? ` (${i.unit})` : '')))
+      : ['Original Hyderabad Fruit Biscuit (400g Collectible Tin)'];
+
     // Store in Admin System
     const newAdminOrder = {
       orderId,
       date: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) + ' Today',
       customerName: name,
       phone,
-      destination: `${address} (${CheckoutState.pincode})`,
-      items: AppState.cartItems.map(i => i.name),
-      amount: CheckoutState.finalCalculatedTotal || 578,
-      paymentMethod: selectedMethod || 'Instant UPI',
+      destination: `${address} (${CheckoutState.pincode || '500001'})`,
+      items: orderItems,
+      amount: finalAmount,
+      paymentMethod: paymentMethodLabel,
       status: 'placed',
       statusLabel: 'Order Placed & Verified'
     };
+
     if (typeof AdminStore !== 'undefined') {
+      if (!AdminStore.orders) AdminStore.orders = [];
       AdminStore.orders.unshift(newAdminOrder);
       localStorage.setItem('KB_ADMIN_ORDERS', JSON.stringify(AdminStore.orders));
-    // Asynchronously sync order to MongoDB Atlas API
-    fetch('/api/orders', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        orderId,
-        customer: { name, phone },
-        items: AppState.cartItems.map(i => ({ name: i.name, price: i.price, qty: i.qty || 1 })),
-        grandTotal: CheckoutState.finalCalculatedTotal,
-        paymentMethod: selectedMethod || 'Instant UPI',
-        address: `${address} (${CheckoutState.pincode})`
-      })
-    }).then(r => r.json()).then(data => {
-      console.log('Order synced to MongoDB backend:', data);
-    }).catch(() => {});
+
+      // Asynchronously sync order to MongoDB Atlas API
+      fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId,
+          customer: { name, phone },
+          items: orderItems.map(item => ({ name: item, price: finalAmount, qty: 1 })),
+          grandTotal: finalAmount,
+          paymentMethod: paymentMethodLabel,
+          address: `${address} (${CheckoutState.pincode || '500001'})`
+        })
+      }).then(r => r.json()).then(data => {
+        console.log('Order synced to MongoDB backend:', data);
+      }).catch(() => {});
     }
+
     CheckoutState.lastPlacedOrder = {
       orderId,
       name,
       phone,
       address,
-      amount: CheckoutState.finalCalculatedTotal || 578,
-      transit: CheckoutState.transitModeTitle,
-      deliveryDate: CheckoutState.deliveryDateStr
+      amount: finalAmount,
+      transit: CheckoutState.transitModeTitle || 'Hyderabad Local Express Dispatch',
+      deliveryDate: CheckoutState.deliveryDateStr || 'Tomorrow, by 1:00 PM'
     };
 
     // Open Animated Tracking Modal
@@ -5176,6 +5193,14 @@ function showAdminDashboardView() {
   if (loginSec) loginSec.style.display = 'none';
   if (dashSec) dashSec.style.display = 'block';
 
+  // Always hydrate latest orders from localStorage
+  const savedOrders = localStorage.getItem('KB_ADMIN_ORDERS');
+  if (savedOrders) {
+    try {
+      AdminStore.orders = JSON.parse(savedOrders);
+    } catch (e) {}
+  }
+
   renderAdminKpis();
   renderAdminProductsTable();
   renderAdminOrdersTable();
@@ -5229,7 +5254,16 @@ function switchAdminTab(tabName) {
   });
 
   if (tabName === 'products') renderAdminProductsTable();
-  if (tabName === 'orders') renderAdminOrdersTable();
+  if (tabName === 'orders') {
+    const savedOrders = localStorage.getItem('KB_ADMIN_ORDERS');
+    if (savedOrders) {
+      try {
+        AdminStore.orders = JSON.parse(savedOrders);
+      } catch (e) {}
+    }
+    renderAdminOrdersTable();
+    renderAdminKpis();
+  }
   if (tabName === 'coupons') renderAdminCouponsTable();
   if (tabName === 'b2bcakes') renderAdminB2bTable();
   if (tabName === 'announcement') previewThemePreset(document.getElementById('adminFestiveThemeSelect')?.value || 'heritage');
