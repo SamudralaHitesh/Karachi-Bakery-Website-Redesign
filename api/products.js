@@ -50,6 +50,8 @@ module.exports = async function handler(req, res) {
         dietary: body.dietary || ['veg', 'eggless'],
         shelfLife: body.shelfLife || '6 Months',
         description: body.description || '',
+        branchScope: body.branchScope || 'all',
+        branchLabel: body.branchLabel || 'All 54 Branches & Pan-India',
         createdAt: new Date().toISOString()
       };
 

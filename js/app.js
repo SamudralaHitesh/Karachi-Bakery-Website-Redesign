@@ -32,6 +32,8 @@ const AppState = {
 const PRODUCT_CATALOG_DATA = {
   p1: {
     id: 'p1',
+    branchScope: 'all',
+    branchLabel: 'All 54 Branches & Pan-India',
     name: 'Original Hyderabad Fruit Biscuit',
     category: 'biscuits',
     categoryLabel: 'Iconic Biscuits & Cookies',
@@ -73,6 +75,8 @@ const PRODUCT_CATALOG_DATA = {
   },
   p2: {
     id: 'p2',
+    branchScope: 'all',
+    branchLabel: 'All 54 Branches & Pan-India',
     name: 'Hyderabadi Osmania Biscuits',
     category: 'biscuits',
     categoryLabel: 'Iconic Biscuits & Cookies',
@@ -114,6 +118,8 @@ const PRODUCT_CATALOG_DATA = {
   },
   p3: {
     id: 'p3',
+    branchScope: 'all',
+    branchLabel: 'All 54 Branches & Pan-India',
     name: 'Royal Cashew & Pista Butter Biscuits',
     category: 'biscuits',
     categoryLabel: 'Iconic Biscuits & Cookies',
@@ -155,6 +161,8 @@ const PRODUCT_CATALOG_DATA = {
   },
   p4: {
     id: 'p4',
+    branchScope: 'all',
+    branchLabel: 'All 54 Branches & Pan-India',
     name: 'Irani Chai Double-Baked Butter Rusk',
     category: 'biscuits',
     categoryLabel: 'Iconic Biscuits & Cookies',
@@ -196,6 +204,8 @@ const PRODUCT_CATALOG_DATA = {
   },
   p5: {
     id: 'p5',
+    branchScope: 'all',
+    branchLabel: 'All 54 Branches & Pan-India',
     name: 'Belgian Dark Chocolate Truffle Cake',
     category: 'cakes',
     categoryLabel: 'Artisanal Cakes & Pastries',
@@ -237,6 +247,8 @@ const PRODUCT_CATALOG_DATA = {
   },
   p6: {
     id: 'p6',
+    branchScope: 'all',
+    branchLabel: 'All 54 Branches & Pan-India',
     name: 'Heritage Rich Plum & Dry Fruit Cake',
     category: 'cakes',
     categoryLabel: 'Artisanal Cakes & Pastries',
@@ -278,6 +290,8 @@ const PRODUCT_CATALOG_DATA = {
   },
   p7: {
     id: 'p7',
+    branchScope: 'cafes',
+    branchLabel: 'Fresh Daily at Dine-In Bistros & Flagships',
     name: 'Red Velvet & Cream Cheese Pastry Pack',
     category: 'cakes',
     categoryLabel: 'Artisanal Cakes & Pastries',
@@ -319,6 +333,8 @@ const PRODUCT_CATALOG_DATA = {
   },
   p8: {
     id: 'p8',
+    branchScope: 'cafes',
+    branchLabel: 'Fresh Daily at Dine-In Bistros & Flagships',
     name: 'Royal Kaju Katli (Diamond Cut)',
     category: 'sweets',
     categoryLabel: 'Royal Mithai & Confectionery',
@@ -360,6 +376,8 @@ const PRODUCT_CATALOG_DATA = {
   },
   p9: {
     id: 'p9',
+    branchScope: 'all',
+    branchLabel: 'All 54 Branches & Pan-India',
     name: 'Pure Desi Ghee Motichoor Ladoo',
     category: 'sweets',
     categoryLabel: 'Royal Mithai & Confectionery',
@@ -401,6 +419,8 @@ const PRODUCT_CATALOG_DATA = {
   },
   p10: {
     id: 'p10',
+    branchScope: 'hyd_flagships',
+    branchLabel: 'Hyderabad Heritage Flagships Only',
     name: 'Roasted Badam & Anjeer Royal Barfi',
     category: 'sweets',
     categoryLabel: 'Royal Mithai & Confectionery',
@@ -442,6 +462,8 @@ const PRODUCT_CATALOG_DATA = {
   },
   p11: {
     id: 'p11',
+    branchScope: 'cafes',
+    branchLabel: 'Fresh Daily at Dine-In Bistros & Flagships',
     name: "Nizam's Royal Heritage 3-in-1 Tin",
     category: 'hampers',
     categoryLabel: 'Luxury Hampers & Gift Tins',
@@ -483,6 +505,8 @@ const PRODUCT_CATALOG_DATA = {
   },
   p12: {
     id: 'p12',
+    branchScope: 'all',
+    branchLabel: 'All 54 Branches & Pan-India',
     name: 'Vintage Hyderabad Festive Hamper',
     category: 'hampers',
     categoryLabel: 'Luxury Hampers & Gift Tins',
@@ -524,6 +548,8 @@ const PRODUCT_CATALOG_DATA = {
   },
   p13: {
     id: 'p13',
+    branchScope: 'all',
+    branchLabel: 'All 54 Branches & Pan-India',
     name: 'Corporate Executive Wooden Gift Crate',
     category: 'hampers',
     categoryLabel: 'Luxury Hampers & Gift Tins',
@@ -565,6 +591,8 @@ const PRODUCT_CATALOG_DATA = {
   },
   p14: {
     id: 'p14',
+    branchScope: 'all',
+    branchLabel: 'All 54 Branches & Pan-India',
     name: 'Sugar-Free Roasted Almond Cookies',
     category: 'healthy',
     categoryLabel: 'Healthy Bakes & Savoury',
@@ -606,6 +634,8 @@ const PRODUCT_CATALOG_DATA = {
   },
   p15: {
     id: 'p15',
+    branchScope: 'cafes',
+    branchLabel: 'Fresh Daily at Dine-In Bistros & Flagships',
     name: 'Roasted Jowar & Millet Superfood Crisp',
     category: 'healthy',
     categoryLabel: 'Healthy Bakes & Savoury',
@@ -647,6 +677,8 @@ const PRODUCT_CATALOG_DATA = {
   },
   p16: {
     id: 'p16',
+    branchScope: 'airports',
+    branchLabel: 'Airport 24/7 Outlets & Travel Terminals',
     name: 'Hyderabadi Royal Teekha Mixture',
     category: 'healthy',
     categoryLabel: 'Healthy Bakes & Savoury',
@@ -1519,6 +1551,34 @@ function openProductDetail(productId, event) {
             <button type="button" class="btn-write-review-inline" onclick="openReviewModal('${product.id}')" style="background:rgba(201,151,38,0.15); border:1px solid #C99726; color:#8C6514; font-size:0.75rem; font-weight:700; padding:0.25rem 0.65rem; border-radius:4px; cursor:pointer;" title="Write a verified customer review">✍️ Write Review</button>
             <div class="pdp-dietary-row">
               ${dietaryBadgesHtml}
+            </div>
+          </div>
+
+          <!-- Branch In-Store Pickup & Stock Checker -->
+          <div class="pdp-branch-availability-box">
+            <div class="branch-avail-header">
+              <span>📍 Check In-Store Pickup & Branch Availability:</span>
+              <span class="branch-scope-tag">${product.branchLabel || 'All 54 Branches & Pan-India'}</span>
+            </div>
+            <div class="branch-picker-row">
+              <select id="pdpBranchSelector" class="pdp-branch-select" onchange="checkPdpBranchStock('${product.id}', this.value)">
+                <option value="hyd_mj">🏛️ Mozamjahi Market Flagship (Hyderabad)</option>
+                <option value="hyd_banjara">☕ Banjara Hills Bistro & Bakery (Hyderabad)</option>
+                <option value="hyd_jubilee">☕ Jubilee Hills Road 36 Cafe (Hyderabad)</option>
+                <option value="hyd_rgia">✈️ RGI Airport T1 Departures (Hyderabad 24/7)</option>
+                <option value="blr_indira">☕ Indiranagar 100ft Road (Bengaluru)</option>
+                <option value="blr_airport">✈️ Kempegowda Airport T2 (Bengaluru 24/7)</option>
+                <option value="mum_bandra">🏛️ Bandra Linking Road (Mumbai)</option>
+                <option value="mum_airport">✈️ CSMI Airport T2 (Mumbai 24/7)</option>
+                <option value="del_cp">🏛️ Connaught Place L-Block (Delhi NCR)</option>
+                <option value="del_airport">✈️ IGI Airport T3 (Delhi NCR 24/7)</option>
+                <option value="chn_tnagar">🏛️ T. Nagar Usman Road (Chennai)</option>
+                <option value="pun_koregaon">☕ Koregaon Park (Pune)</option>
+                <option value="online_cargo">🚚 Pan-India Online Delivery (19,000+ Pincodes)</option>
+              </select>
+            </div>
+            <div class="branch-status-result" id="pdpBranchStatusResult">
+              🟢 <strong>Available for Instant Store Pickup</strong> • Ready at counter in 30 mins (or Pan-India Express Delivery)
             </div>
           </div>
 
@@ -5185,6 +5245,8 @@ function renderAdminProductsTable(filterTerm = '') {
       price: AdminStore.priceOverrides[p.id] !== undefined ? AdminStore.priceOverrides[p.id] : p.price,
       unit: p.unit || '400g Tin',
       emoji: p.icon || '🍪',
+      branchScope: p.branchScope || 'all',
+      branchLabel: p.branchLabel || 'All 54 Branches & Pan-India',
       isCustom: false
     });
   });
@@ -5197,6 +5259,8 @@ function renderAdminProductsTable(filterTerm = '') {
       price: AdminStore.priceOverrides[cp.id] !== undefined ? AdminStore.priceOverrides[cp.id] : cp.price,
       unit: cp.unit || '400g Box',
       emoji: cp.icon || '🍪',
+      branchScope: cp.branchScope || 'all',
+      branchLabel: cp.branchLabel || 'All 54 Branches & Pan-India',
       isCustom: true
     });
   });
@@ -5220,6 +5284,7 @@ function renderAdminProductsTable(filterTerm = '') {
           </div>
         </td>
         <td><span class="tag" style="background:#2C323B; color:#ECEFF1;">${p.category}</span></td>
+        <td><span class="admin-branch-badge ${p.branchScope || 'all'}">${p.branchLabel || 'All 54 Branches'}</span></td>
         <td>
           <div class="admin-price-cell">
             <span>₹</span>
@@ -5328,7 +5393,19 @@ function handleAddNewProductSubmit(e) {
   const unit = document.getElementById('newProdUnit').value.trim();
   const dietary = document.getElementById('newProdDietary').value;
   const emoji = document.getElementById('newProdEmoji').value;
+  const branchScope = document.getElementById('newProdBranchScope')?.value || 'all';
   const desc = document.getElementById('newProdDesc').value.trim();
+
+  const branchLabels = {
+    all: 'All 54 Branches & Pan-India',
+    hyd_flagships: 'Hyderabad Heritage Flagships Only',
+    cafes: 'Fresh Daily at Dine-In Bistros',
+    airports: 'Airport 24/7 Outlets Only',
+    bengaluru: 'Bengaluru Branches Only',
+    mumbai: 'Mumbai Branches Only',
+    delhi: 'Delhi NCR Branches Only'
+  };
+  const branchLabel = branchLabels[branchScope] || 'All 54 Branches & Pan-India';
 
   if (!name || isNaN(price)) {
     showToast('Please fill in required product details.', '⚠️');
@@ -5348,7 +5425,9 @@ function handleAddNewProductSubmit(e) {
     dietary: [dietary],
     description: desc,
     rating: 5.0,
-    reviews: 1
+    reviews: 1,
+    branchScope,
+    branchLabel
   };
 
   AdminStore.customProducts.push(newProduct);
@@ -5403,6 +5482,10 @@ function insertCustomProductToStorefront(p) {
         <span>📦 ${p.unit}</span>
         <span>•</span>
         <span>⏳ 6 Months</span>
+      </div>
+      <div class="product-branch-pill">
+        <span class="branch-dot"></span>
+        <span class="branch-text">${p.branchLabel || 'All 54 Branches & Pan-India'}</span>
       </div>
       <p class="product-card-desc">${p.description}</p>
       <div class="product-pricing">
@@ -6921,5 +7004,48 @@ async function triggerMongoSeed() {
     }
   } catch (e) {
     showToast('Connect MONGODB_URI in Vercel settings to seed the cloud database.', 'ℹ️');
+  }
+}
+
+
+// =============================================================================
+// PDP Interactive Branch Stock & In-Store Pickup Checker
+// =============================================================================
+function checkPdpBranchStock(productId, branchKey) {
+  const product = PRODUCT_CATALOG_DATA[productId];
+  const resultEl = document.getElementById('pdpBranchStatusResult');
+  if (!product || !resultEl) return;
+
+  const scope = product.branchScope || 'all';
+
+  if (branchKey === 'online_cargo') {
+    resultEl.innerHTML = '🚚 <strong>Pan-India Express Air Cargo</strong> • Dispatched fresh from Central Mozamjahi Kitchen across 19,000+ pincodes.';
+    return;
+  }
+
+  if (scope === 'all') {
+    resultEl.innerHTML = '🟢 <strong>In Stock for Instant In-Store Pickup</strong> • Counter ready in 30 mins at this outlet.';
+  } else if (scope === 'cafes') {
+    if (branchKey.includes('banjara') || branchKey.includes('jubilee') || branchKey.includes('indira') || branchKey.includes('koregaon')) {
+      resultEl.innerHTML = '🟢 <strong>Fresh Daily in Bistro Showcase</strong> • Handcrafted today by master pastry chefs. Dine-in & takeout ready!';
+    } else if (branchKey.includes('airport')) {
+      resultEl.innerHTML = '⚠️ <strong>Fresh Bistro Item:</strong> Fresh celebration cakes/pastries are not stocked at airport travel kiosks. Available at Banjara Hills Bistro or for Hyderabad home delivery.';
+    } else {
+      resultEl.innerHTML = '🟢 <strong>Available for Next-Day Bakery Dispatch</strong> from central hub to this branch.';
+    }
+  } else if (scope === 'airports') {
+    if (branchKey.includes('airport')) {
+      resultEl.innerHTML = '✈️ <strong>Travel Sealed Edition in Stock</strong> • 24/7 Flight-Ready Departure Counter.';
+    } else {
+      resultEl.innerHTML = '📦 <strong>Available at this store</strong> and across all Airport 24/7 Kiosks.';
+    }
+  } else if (scope === 'hyd_flagships') {
+    if (branchKey.startsWith('hyd_')) {
+      resultEl.innerHTML = '🟢 <strong>In Stock at Heritage Mithai Counter</strong> (Fresh daily at Mozamjahi & Banjara Hills).';
+    } else {
+      resultEl.innerHTML = '🚚 <strong>Regional Specialty:</strong> Ships fresh from Mozamjahi Central Hub via Express Air Cargo to your city.';
+    }
+  } else {
+    resultEl.innerHTML = '🟢 <strong>Verified Available at this Branch</strong> • Open for counter orders & pickup.';
   }
 }

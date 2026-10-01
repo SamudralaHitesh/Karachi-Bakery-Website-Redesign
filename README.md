@@ -57,6 +57,7 @@ To provide a complete enterprise e-commerce architecture beyond the customer sto
   7. **Artisanal Custom Cake Studio Registry**: Manage bespoke tiered cake bookings, track chef assignments (Chef Farhan, Chef Anjali), inspect plaque messages, and monitor refrigerated cold-chain dispatch.
   8. **Live Announcement & 1-Click Festive Ambience Controller**: Live-edit the top announcement strip text/badge without code and transform the storefront with 1-click festive theme presets (Diwali Saffron 🪔, Eid Emerald 🌙, Christmas Plum 🎄).
   9. **Month-Wise Revenue & Orders Financial Hub**: Interactive month reporting period selector (Sep 2026 Current, Aug 2026, Jul 2026, Jun 2026, May 2026, Apr 2026, FY 2026 YTD), visual MoM bar chart, and comprehensive financial breakdown ledger with Corporate B2B vs Retail Online B2C revenue split and Average Order Value (AOV).
+  11. **Multi-Branch Store Assignment & Inventory Scope**: Assign product fulfillment scope (*All 54 Branches Nationwide*, *Hyderabad Flagships Only*, *Dine-In Cafes & Bistros Only*, *Airport 24/7 Outlets Only*). Customers see real-time branch availability pills on product cards and can check instant in-store pickup across landmark outlets directly in the Product Detail (PDP) modal.
   10. **Business Analytics & CSV Export**: Category sales share breakdown, payment gateway distribution, and 1-click order spreadsheet export.
 
 ---

@@ -9066,3 +9066,103 @@ tr.highlight-selected-month {
   color: #3E2723 !important;
   transform: translateY(-1px);
 }
+
+
+/* Product Branch Availability Pills & PDP Modal Checker */
+.product-branch-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #374151;
+  background: #F3F4F6;
+  padding: 0.18rem 0.55rem;
+  border-radius: 4px;
+  margin: 0.35rem 0 0.2rem 0;
+  border: 1px solid #E5E7EB;
+  width: fit-content;
+}
+
+.product-branch-pill .branch-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #16A34A;
+  box-shadow: 0 0 4px rgba(22, 163, 74, 0.6);
+  display: inline-block;
+}
+
+.pdp-branch-availability-box {
+  margin: 1.1rem 0;
+  padding: 0.9rem 1.1rem;
+  background: #F8FAFC;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 8px;
+}
+
+.branch-avail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--kb-burgundy, #720E1E);
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.branch-scope-tag {
+  font-size: 0.72rem;
+  font-weight: 800;
+  background: rgba(114, 14, 30, 0.08);
+  color: var(--kb-burgundy, #720E1E);
+  padding: 0.18rem 0.55rem;
+  border-radius: 12px;
+  border: 1px solid rgba(114, 14, 30, 0.15);
+}
+
+.pdp-branch-select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1.5px solid #CBD5E1;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  background: #fff;
+  color: #1E293B;
+  font-weight: 600;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.pdp-branch-select:focus {
+  border-color: var(--kb-gold, #C99726);
+  box-shadow: 0 0 0 2px rgba(201, 151, 38, 0.2);
+}
+
+.branch-status-result {
+  margin-top: 0.55rem;
+  font-size: 0.8rem;
+  color: #334155;
+  line-height: 1.45;
+  padding: 0.4rem 0.6rem;
+  background: #fff;
+  border-radius: 4px;
+  border-left: 3px solid #16A34A;
+}
+
+.admin-branch-badge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.admin-branch-badge.all { background: #E0F2FE; color: #0369A1; }
+.admin-branch-badge.hyd_flagships { background: #FCE7F3; color: #9D174D; }
+.admin-branch-badge.cafes { background: #DCFCE7; color: #15803D; }
+.admin-branch-badge.airports { background: #EDE9FE; color: #6D28D9; }
+.admin-branch-badge.bengaluru, .admin-branch-badge.mumbai, .admin-branch-badge.delhi { background: #FEF3C7; color: #92400E; }
