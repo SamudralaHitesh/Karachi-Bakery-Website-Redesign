@@ -47,8 +47,8 @@
       <div class="pincode-quick-check">
         <span>Delivery to:</span>
         <div class="pincode-input-group">
-          <input type="text" id="quickPincodeInput" placeholder="Enter Pincode" maxlength="6" aria-label="Enter your 6-digit delivery pincode">
-          <button type="button" id="btnQuickPincodeCheck">Check</button>
+          <input type="text" id="quickPincodeInput" placeholder="Pincode (e.g. 500001)" maxlength="6" aria-label="Enter your 6-digit delivery pincode" onkeypress="if(event.key==='Enter') checkQuickPincode()">
+          <button type="button" id="btnQuickPincodeCheck" onclick="checkQuickPincode()">Check</button>
         </div>
         <span id="pincodeStatusBadge" style="display:none; font-weight:700; font-size:0.75rem;"></span>
       </div>
@@ -98,6 +98,19 @@
             <span>Hyderabad • Est. 1953</span>
           </div>
         </a>
+
+        <!-- Top Location & Delivery Branch Switcher Pill (Blinkit/Swiggy-style) -->
+        <button type="button" class="header-location-pill" id="headerLocationPill" onclick="openLocationModal()" aria-label="Select Delivery Location and Karachi Bakery Branch" title="Click to switch delivery branch, city or detect nearest outlet">
+          <div class="loc-pill-icon-wrap">
+            <span class="loc-pill-pin">📍</span>
+            <span class="loc-pill-pulse"></span>
+          </div>
+          <div class="loc-pill-details">
+            <span class="loc-pill-label">Delivering to: <span class="loc-speed-tag" id="headerSpeedBadge">⚡ 2-Hr</span></span>
+            <span class="loc-pill-val" id="headerLocationVal">Hyderabad • Mozamjahi Flagship</span>
+          </div>
+          <span class="loc-pill-arrow">▾</span>
+        </button>
 
         <!-- Global Search Bar with Autocomplete Preview (Addresses Issue #2) -->
         <div class="header-search">
@@ -4284,6 +4297,87 @@
             </button>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       Location & Delivery Branch Switcher Modal
+       Allows customers to choose city/branch, auto-detect GPS, or enter pincode
+       ========================================================================== -->
+  <div class="location-modal-backdrop" id="locationModalBackdrop" style="display:none;" onclick="handleLocationBackdropClick(event)">
+    <div class="location-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="locModalTitle">
+      <div class="location-modal-header">
+        <div class="loc-modal-title-wrap">
+          <span class="loc-hub-icon">📍</span>
+          <div>
+            <h3 id="locModalTitle">Select Delivery Location & Branch</h3>
+            <p>Choose your city or landmark branch for live stock and same-day 2-hour express delivery.</p>
+          </div>
+        </div>
+        <button type="button" class="loc-modal-close" onclick="closeLocationModal()" aria-label="Close location selector">✕</button>
+      </div>
+
+      <!-- GPS & Search Actions -->
+      <div class="location-modal-top-actions">
+        <button type="button" class="btn-gps-detect" id="btnGpsDetect" onclick="detectUserLocationGPS()">
+          <span class="gps-icon">🛰️</span>
+          <div class="gps-text">
+            <strong>Auto-Detect My Location (GPS)</strong>
+            <span id="gpsStatusSubtext">Uses browser location to connect to your nearest Karachi Bakery branch</span>
+          </div>
+          <span class="gps-action-arrow">➔</span>
+        </button>
+
+        <div class="loc-modal-search-wrapper">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="locModalSearchInput" placeholder="Search by 6-digit Pincode, City or Locality (e.g. 500034, Banjara, Indiranagar, Bandra)..." oninput="filterLocationModalBranches()">
+          <button type="button" class="btn-loc-search-clear" id="btnLocClear" onclick="clearLocationSearch()" style="display:none;">✕</button>
+        </div>
+      </div>
+
+      <!-- Active Selection Banner -->
+      <div class="loc-current-active-banner" id="locCurrentActiveBanner">
+        <div class="loc-active-info">
+          <span class="loc-active-pulse">●</span>
+          <span>Active Branch: <strong id="locActiveBranchName">Mozamjahi Market Flagship (Hyderabad)</strong></span>
+        </div>
+        <span class="loc-active-speed" id="locActiveSpeedBadge">⚡ 2-Hour Express Active</span>
+      </div>
+
+      <!-- City Filter Tabs Row -->
+      <div class="loc-city-tabs-scroll">
+        <div class="loc-city-tabs" id="locCityTabs">
+          <button type="button" class="loc-city-pill active" data-city="all" onclick="filterLocModalByCity('all', this)">All Cities (54)</button>
+          <button type="button" class="loc-city-pill" data-city="hyderabad" onclick="filterLocModalByCity('hyderabad', this)">Hyderabad (22)</button>
+          <button type="button" class="loc-city-pill" data-city="bengaluru" onclick="filterLocModalByCity('bengaluru', this)">Bengaluru (8)</button>
+          <button type="button" class="loc-city-pill" data-city="mumbai" onclick="filterLocModalByCity('mumbai', this)">Mumbai (6)</button>
+          <button type="button" class="loc-city-pill" data-city="delhi" onclick="filterLocModalByCity('delhi', this)">Delhi NCR (6)</button>
+          <button type="button" class="loc-city-pill" data-city="chennai" onclick="filterLocModalByCity('chennai', this)">Chennai (3)</button>
+          <button type="button" class="loc-city-pill" data-city="pune" onclick="filterLocModalByCity('pune', this)">Pune (3)</button>
+          <button type="button" class="loc-city-pill" data-city="kolkata" onclick="filterLocModalByCity('kolkata', this)">Kolkata (2)</button>
+          <button type="button" class="loc-city-pill" data-city="goa" onclick="filterLocModalByCity('goa', this)">Goa (2)</button>
+          <button type="button" class="loc-city-pill" data-city="andhra" onclick="filterLocModalByCity('andhra', this)">Andhra (2)</button>
+        </div>
+      </div>
+
+      <!-- Scrollable Branches Grid Container -->
+      <div class="loc-modal-scroll-area">
+        <!-- Pan-India Option Card -->
+        <div class="loc-panindia-card" id="cardPanIndia" onclick="selectUserLocation('pan_india')">
+          <div class="panindia-icon">✈️</div>
+          <div class="panindia-info">
+            <h4>Pan-India Express Air Cargo (19,000+ Indian Pincodes)</h4>
+            <p>Not living near a flagship branch? We deliver freshly baked biscuits & sweets nationwide in protective vintage tins via Blue Dart / Delhivery Air Cargo.</p>
+            <span class="panindia-speed">✈️ 2-3 Business Days Delivery Nationwide</span>
+          </div>
+          <button type="button" class="btn-select-branch" id="btnSelect_pan_india">Select Air Cargo</button>
+        </div>
+
+        <!-- Outlet Cards List -->
+        <div class="loc-branches-grid" id="locBranchesGrid">
+          <!-- Populated dynamically via JS -->
+        </div>
       </div>
     </div>
   </div>

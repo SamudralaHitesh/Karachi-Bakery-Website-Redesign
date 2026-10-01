@@ -16,6 +16,16 @@ const AppState = {
   activePdpId: null,
   pdpQuantity: 1,
   pincodeVerified: null,
+  userLocation: {
+    branchId: 'hyd-1',
+    branchName: 'Mozamjahi Market Flagship (Est. 1953)',
+    city: 'hyderabad',
+    cityLabel: 'Hyderabad, Telangana',
+    pincode: '500001',
+    address: 'MJ Market, Abids, Hyderabad - 500001 (Opp. Heritage Clock Tower)',
+    deliverySpeed: '⚡ 2-Hour Express Delivery',
+    isPanIndia: false
+  },
   filters: {
     searchQuery: '',
     category: 'all',
@@ -723,6 +733,7 @@ const PRODUCT_CATALOG_DATA = {
 // DOM Content Loaded Handler
 document.addEventListener('DOMContentLoaded', () => {
   initJourneyTabs();
+  initUserLocation();
   initPincodeChecker();
   initGlobalSearch();
   initCatalogFilterHub();
@@ -799,6 +810,16 @@ function initPincodeChecker() {
     btn.addEventListener('click', () => verifyPincode(input.value.trim()));
     input.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') verifyPincode(input.value.trim());
+    });
+  }
+
+  // Also wire top-announcement quick pincode check
+  const quickInput = document.getElementById('quickPincodeInput');
+  const quickBtn = document.getElementById('btnQuickPincodeCheck');
+  if (quickBtn && quickInput) {
+    quickBtn.addEventListener('click', () => checkQuickPincode(quickInput.value.trim()));
+    quickInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') checkQuickPincode(quickInput.value.trim());
     });
   }
 }
@@ -1738,6 +1759,29 @@ function openProductDetail(productId, event) {
 
   modal.style.display = 'flex';
   document.body.style.overflow = 'hidden';
+
+  // Auto-sync PDP branch picker with user's active branch location
+  const branchSel = document.getElementById('pdpBranchSelector');
+  if (branchSel && AppState.userLocation) {
+    if (AppState.userLocation.isPanIndia) {
+      branchSel.value = 'online_cargo';
+    } else if (AppState.userLocation.branchId === 'hyd-2') {
+      branchSel.value = 'hyd_banjara';
+    } else if (AppState.userLocation.branchId === 'hyd-3') {
+      branchSel.value = 'hyd_jubilee';
+    } else if (AppState.userLocation.branchId === 'hyd-4') {
+      branchSel.value = 'hyd_rgia';
+    } else if (AppState.userLocation.branchId === 'blr-1') {
+      branchSel.value = 'blr_indira';
+    } else if (AppState.userLocation.branchId === 'mum-1') {
+      branchSel.value = 'mum_bandra';
+    } else if (AppState.userLocation.branchId === 'del-1') {
+      branchSel.value = 'del_cp';
+    } else {
+      branchSel.value = 'hyd_mj';
+    }
+    checkPdpBranchStock(productId, branchSel.value);
+  }
 }
 
 function closeProductDetail() {
@@ -4439,6 +4483,11 @@ function renderCartDrawerContent() {
       <strong>₹${grandTotal.toLocaleString('en-IN')}</strong>
     </div>
 
+    <div class="cart-fulfillment-info" style="margin: 0.75rem 0; padding: 0.6rem 0.85rem; background: #FFF9F3; border: 1px dashed var(--kb-gold); border-radius: 10px; font-size: 0.78rem; display: flex; align-items: center; justify-content: space-between;">
+      <span>📍 Dispatching from: <strong>${AppState.userLocation ? (AppState.userLocation.branchName.includes('(') ? AppState.userLocation.branchName.split('(')[0].trim() : AppState.userLocation.branchName) : 'Mozamjahi Flagship'}</strong></span>
+      <span style="color:#2E7D32; font-weight:700;">${AppState.userLocation ? AppState.userLocation.deliverySpeed : '⚡ 2-Hour Delivery'}</span>
+    </div>
+
     <button type="button" class="btn-checkout-primary" onclick="proceedToCheckout(${grandTotal})">
       <span>Proceed to Secure Checkout (₹${grandTotal.toLocaleString('en-IN')})</span> →
     </button>
@@ -7080,3 +7129,531 @@ function checkPdpBranchStock(productId, branchKey) {
     resultEl.innerHTML = '🟢 <strong>Verified Available at this Branch</strong> • Open for counter orders & pickup.';
   }
 }
+
+
+// =============================================================================
+// Top Header Location & Delivery Branch Switcher Engine (Blinkit/Swiggy style)
+// =============================================================================
+
+const CITY_GEO_LOOKUP = {
+  hyderabad: { lat: 17.3850, lng: 78.4867, defaultId: 'hyd-1', label: 'Hyderabad' },
+  bengaluru: { lat: 12.9716, lng: 77.5946, defaultId: 'blr-1', label: 'Bengaluru' },
+  mumbai: { lat: 19.0760, lng: 72.8777, defaultId: 'mum-1', label: 'Mumbai' },
+  delhi: { lat: 28.6139, lng: 77.2090, defaultId: 'del-1', label: 'Delhi NCR' },
+  chennai: { lat: 13.0827, lng: 80.2707, defaultId: 'che-1', label: 'Chennai' },
+  pune: { lat: 18.5204, lng: 73.8567, defaultId: 'pun-1', label: 'Pune' },
+  kolkata: { lat: 22.5726, lng: 88.3639, defaultId: 'kol-1', label: 'Kolkata' },
+  goa: { lat: 15.2993, lng: 74.1240, defaultId: 'goa-1', label: 'Goa' },
+  andhra: { lat: 16.5062, lng: 80.6480, defaultId: 'ap-1', label: 'Andhra Pradesh' }
+};
+
+let locModalActiveCity = 'all';
+
+function initUserLocation() {
+  const saved = localStorage.getItem('KB_USER_LOCATION');
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      if (parsed && (parsed.branchId || parsed.isPanIndia)) {
+        AppState.userLocation = parsed;
+      }
+    } catch (e) {
+      console.warn('Could not parse stored location', e);
+    }
+  } else {
+    // Default to Hyderabad Mozamjahi Flagship
+    AppState.userLocation = {
+      branchId: 'hyd-1',
+      branchName: 'Mozamjahi Market Flagship (Est. 1953)',
+      city: 'hyderabad',
+      cityLabel: 'Hyderabad, Telangana',
+      pincode: '500001',
+      address: 'MJ Market, Abids, Hyderabad - 500001 (Opp. Heritage Clock Tower)',
+      deliverySpeed: '⚡ 2-Hour Express Delivery',
+      isPanIndia: false
+    };
+  }
+
+  syncUserLocationUI();
+}
+
+function syncUserLocationUI() {
+  const loc = AppState.userLocation;
+  if (!loc) return;
+
+  const headerVal = document.getElementById('headerLocationVal');
+  const speedBadge = document.getElementById('headerSpeedBadge');
+  const announcementMsg = document.getElementById('topAnnouncementMessage');
+  const modalActiveBranch = document.getElementById('locActiveBranchName');
+  const modalActiveSpeed = document.getElementById('locActiveSpeedBadge');
+  const quickPincode = document.getElementById('quickPincodeInput');
+
+  if (loc.isPanIndia) {
+    if (headerVal) headerVal.textContent = 'Pan-India • Express Air';
+    if (speedBadge) {
+      speedBadge.textContent = '✈️ Air';
+      speedBadge.style.background = '#EBF8FF';
+      speedBadge.style.color = '#2B6CB0';
+    }
+    if (announcementMsg) {
+      announcementMsg.innerHTML = '✈️ Delivering Pan-India across 19,000+ pincodes • <strong>Blue Dart Express Air Cargo (2-3 Days)</strong>';
+    }
+    if (modalActiveBranch) modalActiveBranch.textContent = 'Pan-India Express Air Cargo (Central Bakery Kitchen)';
+    if (modalActiveSpeed) {
+      modalActiveSpeed.textContent = '✈️ Express Air (2-3 Days)';
+      modalActiveSpeed.style.color = '#2B6CB0';
+    }
+  } else {
+    const isHyd = loc.city === 'hyderabad';
+    const isMetro = ['bengaluru', 'mumbai', 'delhi'].includes(loc.city);
+    
+    // Friendly shortened name
+    let shortName = loc.branchName;
+    if (shortName.includes('(')) shortName = shortName.split('(')[0].trim();
+    if (shortName.length > 22) shortName = shortName.substring(0, 20) + '...';
+
+    if (headerVal) {
+      const cityPrefix = isHyd ? 'Hyderabad' : (loc.cityLabel ? loc.cityLabel.split(',')[0].trim() : 'Store');
+      headerVal.textContent = `${cityPrefix} • ${shortName}`;
+    }
+
+    if (speedBadge) {
+      speedBadge.textContent = isHyd ? '⚡ 2-Hr' : (isMetro ? '⚡ 3-Hr' : '⚡ Today');
+      speedBadge.style.background = '#E8F5E9';
+      speedBadge.style.color = '#2E7D32';
+    }
+
+    if (announcementMsg) {
+      announcementMsg.innerHTML = `📍 Delivering from: <strong>${loc.branchName}</strong> (${loc.cityLabel ? loc.cityLabel.split(',')[0] : 'Local'}) • <span style="color:#D4AF37; font-weight:700;">${loc.deliverySpeed} Active</span>`;
+    }
+
+    if (modalActiveBranch) modalActiveBranch.textContent = `${loc.branchName} (${loc.cityLabel || ''})`;
+    if (modalActiveSpeed) {
+      modalActiveSpeed.textContent = loc.deliverySpeed;
+      modalActiveSpeed.style.color = '#2E7D32';
+    }
+
+    if (quickPincode && loc.pincode && !quickPincode.value) {
+      quickPincode.value = loc.pincode;
+    }
+  }
+
+  // Pre-fill CheckoutState if available
+  if (typeof CheckoutState !== 'undefined' && CheckoutState) {
+    if (loc.isPanIndia) {
+      CheckoutState.shippingZone = 'national';
+      CheckoutState.transitModeTitle = 'Blue Dart Express Air Cargo (Dispatched from Central Hub)';
+    } else {
+      CheckoutState.city = loc.cityLabel ? loc.cityLabel.split(',')[0].trim() : 'Hyderabad';
+      CheckoutState.pincode = loc.pincode || '500001';
+      CheckoutState.shippingZone = loc.city === 'hyderabad' ? 'hyderabad' : 'south';
+      CheckoutState.transitModeTitle = `${loc.branchName} Local Express Dispatch`;
+    }
+  }
+
+  // Update dynamic branch badges across catalog product cards
+  updateCatalogBranchAvailability();
+}
+
+function openLocationModal() {
+  const modal = document.getElementById('locationModalBackdrop');
+  if (!modal) return;
+
+  renderLocationModalBranches(locModalActiveCity, '');
+  modal.style.display = 'flex';
+  requestAnimationFrame(() => modal.classList.add('active'));
+
+  const searchInput = document.getElementById('locModalSearchInput');
+  if (searchInput) {
+    searchInput.value = '';
+    setTimeout(() => searchInput.focus(), 150);
+  }
+}
+
+function closeLocationModal() {
+  const modal = document.getElementById('locationModalBackdrop');
+  if (!modal) return;
+
+  modal.classList.remove('active');
+  setTimeout(() => { modal.style.display = 'none'; }, 280);
+}
+
+function handleLocationBackdropClick(e) {
+  if (e.target.id === 'locationModalBackdrop') {
+    closeLocationModal();
+  }
+}
+
+function renderLocationModalBranches(filterCity = 'all', searchQuery = '') {
+  const container = document.getElementById('locBranchesGrid');
+  const panIndiaCard = document.getElementById('cardPanIndia');
+  const panIndiaBtn = document.getElementById('btnSelect_pan_india');
+  if (!container || !STORE_LOCATIONS_DATA) return;
+
+  const currentLoc = AppState.userLocation || {};
+  const isPanIndiaActive = !!currentLoc.isPanIndia;
+
+  if (panIndiaCard && panIndiaBtn) {
+    if (isPanIndiaActive) {
+      panIndiaCard.classList.add('active');
+      panIndiaBtn.textContent = '✓ Active Air Cargo';
+    } else {
+      panIndiaCard.classList.remove('active');
+      panIndiaBtn.textContent = 'Select Air Cargo';
+    }
+  }
+
+  const query = (searchQuery || '').toLowerCase().trim();
+
+  const filtered = STORE_LOCATIONS_DATA.filter(store => {
+    // City filter
+    if (filterCity !== 'all' && store.city !== filterCity) return false;
+
+    // Search query filter
+    if (query) {
+      const matchName = store.name.toLowerCase().includes(query);
+      const matchAddr = store.address.toLowerCase().includes(query);
+      const matchCity = store.cityLabel.toLowerCase().includes(query);
+      const matchType = (store.typeLabel || '').toLowerCase().includes(query);
+      return matchName || matchAddr || matchCity || matchType;
+    }
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column: 1 / -1; padding: 2rem; text-align: center; background: #FFF9F3; border-radius: 12px; border: 1px dashed var(--kb-gold);">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔍</div>
+        <h4 style="color: var(--kb-burgundy); margin: 0 0 0.35rem 0;">No Outlets Found Matching "${searchQuery}"</h4>
+        <p style="font-size: 0.85rem; color: #64748B; margin: 0 0 1rem 0;">Try searching for "Banjara", "Mozamjahi", "Airport", or a 6-digit postal code.</p>
+        <button type="button" class="btn-select-branch" onclick="clearLocationSearch()" style="padding: 0.45rem 1rem;">View All 54 Outlets</button>
+      </div>
+    `;
+    return;
+  }
+
+  let html = '';
+  filtered.forEach(store => {
+    const isSelected = !isPanIndiaActive && currentLoc.branchId === store.id;
+    const isHyd = store.city === 'hyderabad';
+    const isMetro = ['bengaluru', 'mumbai', 'delhi'].includes(store.city);
+    const speedTag = isHyd ? '⚡ 2-Hour Express Delivery' : (isMetro ? '⚡ 3-Hour Delivery' : '⚡ Same-Day Delivery');
+
+    html += `
+      <div class="loc-branch-card ${isSelected ? 'active' : ''}" onclick="selectUserLocation('${store.id}')">
+        <div class="loc-branch-card-header">
+          <div class="loc-branch-name">${store.name}</div>
+          <span class="loc-branch-type-pill">${store.typeLabel || 'Karachi Bakery'}</span>
+        </div>
+        <div class="loc-branch-addr">📍 ${store.address}</div>
+        <div class="loc-branch-meta">
+          <span class="loc-branch-speed">${speedTag}</span>
+          <button type="button" class="btn-select-branch">
+            ${isSelected ? '✓ Selected Branch' : 'Select Branch'}
+          </button>
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+function filterLocModalByCity(city, btn) {
+  locModalActiveCity = city;
+  const pills = document.querySelectorAll('.loc-city-pill');
+  pills.forEach(p => p.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  const searchInput = document.getElementById('locModalSearchInput');
+  const query = searchInput ? searchInput.value : '';
+  renderLocationModalBranches(city, query);
+}
+
+function filterLocationModalBranches() {
+  const input = document.getElementById('locModalSearchInput');
+  const clearBtn = document.getElementById('btnLocClear');
+  const query = input ? input.value : '';
+
+  if (clearBtn) {
+    clearBtn.style.display = query ? 'block' : 'none';
+  }
+
+  renderLocationModalBranches(locModalActiveCity, query);
+}
+
+function clearLocationSearch() {
+  const input = document.getElementById('locModalSearchInput');
+  const clearBtn = document.getElementById('btnLocClear');
+  if (input) input.value = '';
+  if (clearBtn) clearBtn.style.display = 'none';
+  renderLocationModalBranches(locModalActiveCity, '');
+}
+
+function selectUserLocation(branchId) {
+  if (branchId === 'pan_india') {
+    AppState.userLocation = {
+      branchId: 'pan_india',
+      branchName: 'Pan-India Express Air Cargo',
+      city: 'all',
+      cityLabel: 'Pan-India Nationwide',
+      pincode: '',
+      address: 'Central Bakery Hub, Mozamjahi Market, Hyderabad (Dispatched via Air Cargo)',
+      deliverySpeed: '✈️ Express Air Cargo (2-3 Days)',
+      isPanIndia: true
+    };
+  } else {
+    const store = STORE_LOCATIONS_DATA.find(s => s.id === branchId);
+    if (!store) return;
+
+    const isHyd = store.city === 'hyderabad';
+    const isMetro = ['bengaluru', 'mumbai', 'delhi'].includes(store.city);
+    const speed = isHyd ? '⚡ 2-Hour Express Delivery' : (isMetro ? '⚡ 3-Hour Express Delivery' : '⚡ Same-Day Delivery');
+
+    // Extract 6-digit pincode from address if present
+    const pinMatch = store.address.match(/[1-9][0-9]{5}/);
+    const pin = pinMatch ? pinMatch[0] : (isHyd ? '500001' : '560001');
+
+    AppState.userLocation = {
+      branchId: store.id,
+      branchName: store.name,
+      city: store.city,
+      cityLabel: store.cityLabel,
+      pincode: pin,
+      address: store.address,
+      deliverySpeed: speed,
+      isPanIndia: false
+    };
+  }
+
+  localStorage.setItem('KB_USER_LOCATION', JSON.stringify(AppState.userLocation));
+  syncUserLocationUI();
+  closeLocationModal();
+
+  showToast(`Delivering from ${AppState.userLocation.branchName}! (${AppState.userLocation.deliverySpeed})`, '📍');
+}
+
+function detectUserLocationGPS() {
+  const btn = document.getElementById('btnGpsDetect');
+  const subtext = document.getElementById('gpsStatusSubtext');
+
+  if (!navigator.geolocation) {
+    showToast('GPS geolocation is not supported in your browser.', '⚠️');
+    return;
+  }
+
+  if (subtext) subtext.textContent = '📡 Contacting GPS satellites & calculating nearest outlet...';
+  if (btn) btn.style.opacity = '0.7';
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const userLat = position.coords.latitude;
+      const userLng = position.coords.longitude;
+
+      if (subtext) subtext.textContent = 'Finding closest Karachi Bakery branch...';
+
+      // Haversine formula
+      let nearestCity = 'hyderabad';
+      let shortestDist = Infinity;
+
+      Object.entries(CITY_GEO_LOOKUP).forEach(([cityKey, info]) => {
+        const R = 6371; // km
+        const dLat = (info.lat - userLat) * Math.PI / 180;
+        const dLon = (info.lng - userLng) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                  Math.cos(userLat * Math.PI / 180) * Math.cos(info.lat * Math.PI / 180) *
+                  Math.sin(dLon/2) * Math.sin(dLon/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        const dist = R * c;
+
+        if (dist < shortestDist) {
+          shortestDist = dist;
+          nearestCity = cityKey;
+        }
+      });
+
+      if (btn) btn.style.opacity = '1';
+      if (subtext) subtext.textContent = 'Uses browser location to connect to your nearest Karachi Bakery branch';
+
+      // If within 150km of any Karachi Bakery city hub:
+      if (shortestDist <= 150) {
+        const cityInfo = CITY_GEO_LOOKUP[nearestCity];
+        selectUserLocation(cityInfo.defaultId);
+        showToast(`GPS Connected: Nearest branch found in ${cityInfo.label}! (${Math.round(shortestDist)} km away)`, '🛰️');
+      } else {
+        // More than 150km away from any branch, activate Pan-India Express Air Cargo
+        selectUserLocation('pan_india');
+        showToast(`GPS Connected: Express Air Cargo active for your location (${Math.round(shortestDist)} km from central hub)!`, '✈️');
+      }
+    },
+    (err) => {
+      if (btn) btn.style.opacity = '1';
+      if (subtext) subtext.textContent = 'Uses browser location to connect to your nearest Karachi Bakery branch';
+
+      // On permission denied or timeout, fallback gracefully to Hyderabad Flagship
+      selectUserLocation('hyd-1');
+      showToast('Location permission unavailable. Defaulting to Hyderabad Mozamjahi Flagship (Est. 1953).', '📍');
+    },
+    { timeout: 8000, maximumAge: 60000 }
+  );
+}
+
+function checkQuickPincode(explicitPin) {
+  const input = document.getElementById('quickPincodeInput');
+  const badge = document.getElementById('pincodeStatusBadge');
+  const pin = (explicitPin || (input ? input.value : '')).trim();
+
+  if (!/^[1-9][0-9]{5}$/.test(pin)) {
+    if (badge) {
+      badge.textContent = '⚠️ Invalid 6-digit pincode';
+      badge.style.color = '#D32F2F';
+      badge.style.display = 'inline-block';
+    }
+    showToast('Please enter a valid 6-digit Indian postal code.', '⚠️');
+    return;
+  }
+
+  // Pincode matching:
+  if (pin.startsWith('500') || pin.startsWith('501') || pin.startsWith('502')) {
+    // Hyderabad! Check special localities
+    let branchId = 'hyd-1';
+    if (pin === '500034') branchId = 'hyd-2'; // Banjara
+    else if (pin === '500033') branchId = 'hyd-3'; // Jubilee
+    else if (pin === '500108') branchId = 'hyd-4'; // Airport
+    else if (pin === '500081' || pin === '500032') branchId = 'hyd-6'; // Gachibowli/Madhapur
+
+    selectUserLocation(branchId);
+    if (badge) {
+      badge.textContent = `⚡ 2-Hour Delivery to ${pin}!`;
+      badge.style.color = '#2E7D32';
+      badge.style.display = 'inline-block';
+    }
+  } else if (pin.startsWith('560')) {
+    selectUserLocation('blr-1'); // Bengaluru
+    if (badge) {
+      badge.textContent = `⚡ 3-Hour Delivery to Bengaluru (${pin})!`;
+      badge.style.color = '#2E7D32';
+      badge.style.display = 'inline-block';
+    }
+  } else if (pin.startsWith('400')) {
+    selectUserLocation('mum-1'); // Mumbai
+    if (badge) {
+      badge.textContent = `⚡ 3-Hour Delivery to Mumbai (${pin})!`;
+      badge.style.color = '#2E7D32';
+      badge.style.display = 'inline-block';
+    }
+  } else if (pin.startsWith('110') || pin.startsWith('122') || pin.startsWith('201')) {
+    selectUserLocation('del-1'); // Delhi NCR
+    if (badge) {
+      badge.textContent = `⚡ 3-Hour Delivery to Delhi NCR (${pin})!`;
+      badge.style.color = '#2E7D32';
+      badge.style.display = 'inline-block';
+    }
+  } else if (pin.startsWith('600')) {
+    selectUserLocation('che-1'); // Chennai
+    if (badge) {
+      badge.textContent = `⚡ Same-Day Delivery to Chennai (${pin})!`;
+      badge.style.color = '#2E7D32';
+      badge.style.display = 'inline-block';
+    }
+  } else if (pin.startsWith('411')) {
+    selectUserLocation('pun-1'); // Pune
+    if (badge) {
+      badge.textContent = `⚡ Same-Day Delivery to Pune (${pin})!`;
+      badge.style.color = '#2E7D32';
+      badge.style.display = 'inline-block';
+    }
+  } else if (pin.startsWith('700')) {
+    selectUserLocation('kol-1'); // Kolkata
+    if (badge) {
+      badge.textContent = `⚡ Same-Day Delivery to Kolkata (${pin})!`;
+      badge.style.color = '#2E7D32';
+      badge.style.display = 'inline-block';
+    }
+  } else if (pin.startsWith('403')) {
+    selectUserLocation('goa-1'); // Goa
+    if (badge) {
+      badge.textContent = `⚡ Same-Day Delivery to Goa (${pin})!`;
+      badge.style.color = '#2E7D32';
+      badge.style.display = 'inline-block';
+    }
+  } else if (pin.startsWith('520') || pin.startsWith('530')) {
+    selectUserLocation('ap-1'); // Andhra
+    if (badge) {
+      badge.textContent = `⚡ Same-Day Delivery to AP (${pin})!`;
+      badge.style.color = '#2E7D32';
+      badge.style.display = 'inline-block';
+    }
+  } else {
+    selectUserLocation('pan_india');
+    if (badge) {
+      badge.textContent = `✈️ Air Shipping Active for ${pin}`;
+      badge.style.color = '#2B6CB0';
+      badge.style.display = 'inline-block';
+    }
+  }
+}
+
+function updateCatalogBranchAvailability() {
+  const loc = AppState.userLocation;
+  if (!loc) return;
+
+  const cards = document.querySelectorAll('.product-card');
+  cards.forEach(card => {
+    const pId = card.getAttribute('data-id');
+    const p = PRODUCT_CATALOG_DATA[pId] || (AdminStore.customProducts ? AdminStore.customProducts.find(cp => cp.id === pId) : null);
+    if (!p) return;
+
+    const pill = card.querySelector('.product-branch-pill');
+    if (!pill) return;
+
+    const scope = p.branchScope || 'all';
+
+    if (loc.isPanIndia) {
+      pill.className = 'product-branch-pill';
+      pill.innerHTML = `<span class="branch-dot"></span><span class="branch-text">✈️ Pan-India Air Shipping Available</span>`;
+      return;
+    }
+
+    const currentCity = loc.city; // 'hyderabad', 'bengaluru', etc.
+    const currentBranchId = loc.branchId;
+
+    if (scope === 'all') {
+      const speedShort = currentCity === 'hyderabad' ? '2-Hr Delivery' : 'Same-Day';
+      pill.className = 'product-branch-pill';
+      pill.innerHTML = `<span class="branch-dot"></span><span class="branch-text">✅ In Stock for ${speedShort} from ${loc.branchName.split(' ')[0]}</span>`;
+    } else if (scope.startsWith('hyd') && currentCity === 'hyderabad') {
+      pill.className = 'product-branch-pill';
+      pill.innerHTML = `<span class="branch-dot" style="background:#2E7D32;"></span><span class="branch-text">⚡ Fresh Daily at ${loc.branchName.split(' ')[0]}</span>`;
+    } else if (scope.startsWith('blr') && currentCity === 'bengaluru') {
+      pill.className = 'product-branch-pill';
+      pill.innerHTML = `<span class="branch-dot" style="background:#2E7D32;"></span><span class="branch-text">⚡ Fresh Daily at ${loc.branchName.split(' ')[0]}</span>`;
+    } else if (scope.startsWith('mum') && currentCity === 'mumbai') {
+      pill.className = 'product-branch-pill';
+      pill.innerHTML = `<span class="branch-dot" style="background:#2E7D32;"></span><span class="branch-text">⚡ Fresh Daily at ${loc.branchName.split(' ')[0]}</span>`;
+    } else if (scope.startsWith('del') && currentCity === 'delhi') {
+      pill.className = 'product-branch-pill';
+      pill.innerHTML = `<span class="branch-dot" style="background:#2E7D32;"></span><span class="branch-text">⚡ Fresh Daily at ${loc.branchName.split(' ')[0]}</span>`;
+    } else if (scope === 'cafes') {
+      pill.className = 'product-branch-pill';
+      pill.innerHTML = `<span class="branch-dot" style="background:#D4AF37;"></span><span class="branch-text">☕ Fresh Daily at Bistros & Flagships</span>`;
+    } else if (scope.startsWith('branch_') && scope.replace('branch_', '') === currentBranchId) {
+      pill.className = 'product-branch-pill';
+      pill.innerHTML = `<span class="branch-dot" style="background:#2E7D32;"></span><span class="branch-text">🟢 Exclusive to this Branch: Ready in 30 mins!</span>`;
+    } else {
+      // Product restricted to another branch/city
+      pill.className = 'product-branch-pill';
+      pill.innerHTML = `<span class="branch-dot" style="background:#C53030;"></span><span class="branch-text" style="color:#C53030;">⚠️ Only at ${p.branchLabel || 'Specific Outlet'} (Switch Branch)</span>`;
+    }
+  });
+}
+
+// ESC Key listener to close location modal
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const locModal = document.getElementById('locationModalBackdrop');
+    if (locModal && locModal.classList.contains('active')) {
+      closeLocationModal();
+    }
+  }
+});
