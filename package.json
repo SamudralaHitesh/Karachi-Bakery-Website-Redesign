@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "mongodb": "^7.7.0",
+    "razorpay": "^2.9.8",
     "serve": "^14.2.4"
   }
 }

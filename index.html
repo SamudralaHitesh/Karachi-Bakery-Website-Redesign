@@ -24,6 +24,9 @@
   
   <!-- Main Design System CSS -->
   <link rel="stylesheet" href="styles/main.css?v=15.0.0">
+
+  <!-- Official Razorpay Checkout SDK (v1) -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 <body>
 
@@ -3269,6 +3272,19 @@
               <span class="secure-badge">🔒 100% PCI-DSS Compliant</span>
             </div>
 
+            <!-- Official Razorpay Trust & Integration Banner -->
+            <div class="razorpay-trust-banner">
+              <div class="rzp-banner-header">
+                <div class="rzp-brand-tag">
+                  <span class="rzp-blue-dot"></span>
+                  <strong>Official Razorpay Gateway</strong>
+                  <span class="rzp-test-mode-pill" id="rzpTestModePill">Test Mode Active</span>
+                </div>
+                <span class="rzp-encryption-tag">🔒 256-Bit SSL Encrypted</span>
+              </div>
+              <p class="rzp-banner-subtext">Clicking pay securely opens the official Razorpay checkout popup with real-time UPI (GPay/PhonePe QR), Cards & Net Banking.</p>
+            </div>
+
             <!-- Payment Method Tabs -->
             <div class="payment-tabs-row">
               <button type="button" class="pay-tab active" id="payTabUPI" onclick="selectPaymentMethod('upi')">
@@ -3430,6 +3446,9 @@
         <h2 id="trackingModalHeading">Celebration Order Confirmed!</h2>
         <p>Thank you for choosing Karachi Bakery. Your bakes are being prepared fresh in our kitchen!</p>
         <span class="tracking-order-id" id="trackingOrderIdDisplay">Order Ref: KB-ORD-2026-9281</span>
+        <div class="tracking-rzp-pill" id="trackingRzpBadge" style="display:inline-block; margin-top:0.45rem; padding:0.25rem 0.75rem; background:rgba(13,71,161,0.12); color:#0D47A1; border:1px solid rgba(13,71,161,0.3); border-radius:99px; font-size:0.75rem; font-weight:700;">
+          💳 Razorpay Gateway Verified: <span id="trackingPaymentIdText">pay_test_verified</span>
+        </div>
       </div>
 
       <div class="tracking-body">
@@ -3664,6 +3683,9 @@
             <button type="button" class="admin-nav-tab" id="adminTabBtnMongo" onclick="switchAdminTab('mongo')">
               🍃 MongoDB Cloud Sync
             </button>
+            <button type="button" class="admin-nav-tab" id="adminTabBtnRazorpay" onclick="switchAdminTab('razorpay')">
+              💳 Razorpay Gateway
+            </button>
           </div>
 
           <!-- PANEL 1: Products & Price Management -->
@@ -3855,6 +3877,75 @@
               </div>
             </div>
           </div>
+
+                    <!-- PANEL 8: Official Razorpay Payment Gateway Hub -->
+          <div class="admin-tab-panel" id="adminPanelRazorpay" style="display:none;">
+            <div class="admin-card">
+              <div class="admin-card-header flex-between">
+                <div>
+                  <h4>💳 Official Razorpay Payment Gateway Hub</h4>
+                  <p>Manage test/live API keys, inspect verified payment IDs (pay_...), and launch test transactions.</p>
+                </div>
+                <div style="display:flex; align-items:center; gap:0.5rem;">
+                  <span class="tag" style="background:#0D47A1; color:#fff; font-weight:700;">🔷 Razorpay v1.0</span>
+                  <span class="tag" id="adminRzpStatusPill" style="background:#2E7D32; color:#fff; font-weight:700;">🟢 Gateway Active</span>
+                </div>
+              </div>
+
+              <!-- Configuration Card -->
+              <div class="admin-rzp-config-card" style="margin-bottom:1.5rem; padding:1.25rem; background:linear-gradient(135deg, rgba(13,71,161,0.06), rgba(13,71,161,0.02)); border:1.5px solid rgba(13,71,161,0.25); border-radius:14px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                  <strong style="color:#0D47A1; font-size:0.95rem;">Razorpay API Credentials (Test / Live)</strong>
+                  <span style="font-size:0.75rem; color:#607D8B;">Default Test Key is pre-configured and ready</span>
+                </div>
+                <div class="admin-form-row-3" style="grid-template-columns: 1fr 1fr auto; gap:1rem; align-items:flex-end;">
+                  <div class="form-group">
+                    <label for="adminRzpKeyIdInput">Razorpay Key ID *</label>
+                    <input type="text" id="adminRzpKeyIdInput" placeholder="rzp_test_..." value="rzp_test_1DP5mmOlF5G5ag" style="font-family:monospace; font-size:0.85rem;">
+                  </div>
+                  <div class="form-group">
+                    <label for="adminRzpKeySecretInput">Razorpay Key Secret (Optional for client)</label>
+                    <input type="password" id="adminRzpKeySecretInput" placeholder="••••••••••••••••" value="test_secret_karachi2026" style="font-family:monospace; font-size:0.85rem;">
+                  </div>
+                  <div>
+                    <button type="button" class="action-btn-primary" style="padding:0.65rem 1.25rem; height:42px;" onclick="adminSaveRazorpayKeys()">
+                      💾 Save Keys
+                    </button>
+                  </div>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.85rem; font-size:0.8rem; color:#546E7A;">
+                  <span>🔒 Stored securely in client storage & sent with serverless API requests.</span>
+                  <button type="button" class="btn-save-price" style="background:#0D47A1; color:#fff; border:none; padding:0.35rem 0.85rem;" onclick="adminTestLaunchRazorpay()">
+                    ⚡ Test Launch Razorpay Modal (₹1 Demo)
+                  </button>
+                </div>
+              </div>
+
+              <!-- Razorpay Transactions Ledger -->
+              <div class="admin-table-container">
+                <div class="flex-between" style="margin-bottom:0.75rem;">
+                  <strong style="color:#ECEFF1; font-size:0.95rem;">Verified Razorpay Online Transactions</strong>
+                  <button type="button" class="btn-order-filter active" onclick="renderAdminRazorpayTransactions()">🔄 Refresh Transactions</button>
+                </div>
+                <table class="admin-table" id="adminRazorpayTable">
+                  <thead>
+                    <tr>
+                      <th>Payment Reference (pay_...)</th>
+                      <th>Order ID</th>
+                      <th>Customer Details</th>
+                      <th>Amount Paid</th>
+                      <th>Payment Gateway Mode</th>
+                      <th>Verification Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adminRazorpayTableBody">
+                    <!-- Populated dynamically via JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
 
           <!-- PANEL 2: Live Orders & Kitchen Dispatch Manager -->
           <div class="admin-tab-panel" id="adminPanelOrders" style="display:none;">

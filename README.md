@@ -58,8 +58,8 @@ To provide a complete enterprise e-commerce architecture beyond the customer sto
   8. **Live Announcement & 1-Click Festive Ambience Controller**: Live-edit the top announcement strip text/badge without code and transform the storefront with 1-click festive theme presets (Diwali Saffron 🪔, Eid Emerald 🌙, Christmas Plum 🎄).
   9. **Month-Wise Revenue & Orders Financial Hub**: Interactive month reporting period selector (Sep 2026 Current, Aug 2026, Jul 2026, Jun 2026, May 2026, Apr 2026, FY 2026 YTD), visual MoM bar chart, and comprehensive financial breakdown ledger with Corporate B2B vs Retail Online B2C revenue split and Average Order Value (AOV).
   11. **Multi-Branch Store Assignment & Inventory Scope**: Assign product fulfillment scope (*All 54 Branches Nationwide*, *Hyderabad Flagships Only*, *Dine-In Cafes & Bistros Only*, *Airport 24/7 Outlets Only*). Customers see real-time branch availability pills on product cards and can check instant in-store pickup across landmark outlets directly in the Product Detail (PDP) modal.
-  10. **Business Analytics & CSV Export**: Category sales share breakdown, payment gateway distribution, and 1-click order spreadsheet export.
   12. **Top Header Location & Delivery Branch Switcher (Blinkit/Swiggy-Style)**: Header location pill and modal with 1-click GPS auto-detect, 6-digit pincode lookup, and branch-specific delivery SLA (2-Hour Hyderabad express vs 3-Hour metro vs Pan-India Air Cargo). Dynamically updates catalog product badges and pre-fills checkout fulfillment.
+  13. **💳 Razorpay Payment Gateway Hub & Key Vault**: Configure live or test Razorpay API credentials (`RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`), inspect verified `pay_...` transaction signatures, and test-launch the Razorpay checkout modal directly from the back-office without redeploying code.
 
 ---
 
@@ -88,6 +88,11 @@ To elevate the platform beyond conventional storefronts, 5 advanced experiential
 5. **📱 Installable Mobile PWA (Progressive Web App) & Rich Social OpenGraph**:
    - `manifest.json` and `service-worker.js` offline caching enable 1-tap installation on Android & iOS home screens.
    - Rich OpenGraph and Twitter Card meta tags for preview cards on WhatsApp, LinkedIn, and Twitter.
+6. **💳 Official Razorpay Payment Gateway & Checkout SDK Integration**:
+   - Authentic Razorpay Checkout SDK (`checkout.js`) modal offering instant UPI (GPay, PhonePe, Paytm, QR code scanning), Credit/Debit cards, Net Banking, and Wallets.
+   - Robust serverless backend (`/api/razorpay`) with automated order generation in paise, HMAC-SHA256 signature verification, and MongoDB Atlas database order syncing.
+   - Dual-mode resilience with seamless fallback simulator to guarantee zero-downtime demo presentations.
+   - Dynamic pay button indicators and verified Razorpay transaction badge with payment ID tracking.
 
 ---
 
@@ -257,6 +262,7 @@ The platform includes a production-grade **MongoDB NoSQL Cloud Architecture** ru
 
 ### 2. Serverless API Endpoints
 - `GET /api/health`: Diagnostic endpoint reporting MongoDB connection status, latency (ms), and active collections.
+- `GET /api/razorpay` & `POST /api/razorpay`: Razorpay gateway configuration retrieval, order creation (`create_order` in paise), and HMAC-SHA256 signature verification (`verify_payment`).
 - `GET /api/orders` & `POST /api/orders` & `PATCH /api/orders`: Order placement, retrieval, and kitchen dispatch status progression.
 - `GET /api/products` & `POST /api/products` & `PATCH /api/products`: Catalog retrieval, delicacy publisher, and live stock/price overrides.
 - `GET /api/reviews` & `POST /api/reviews`: Customer 5-star review submission and display.
@@ -264,15 +270,17 @@ The platform includes a production-grade **MongoDB NoSQL Cloud Architecture** ru
 - `GET /api/b2b` & `POST /api/b2b`: Corporate quote inquiries pipeline.
 - `POST /api/seed`: 1-click database initialization seeding collections with products and stores.
 
-### 3. How to Connect Your Free MongoDB Atlas Cluster
+### 3. How to Connect Your Free MongoDB Atlas Cluster & Razorpay Keys
 1. Create a free account on [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) and deploy a free **M0 Shared Cluster** (AWS Mumbai).
 2. Create a Database User with password under **Database Access**.
 3. Allow IP access from anywhere (`0.0.0.0/0`) under **Network Access** (required for Vercel Serverless).
-4. Add `MONGODB_URI` in **Vercel Dashboard ➔ Project Settings ➔ Environment Variables**:
-   ```
+4. Add the following in **Vercel Dashboard ➔ Project Settings ➔ Environment Variables**:
+   ```env
    MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.xxxxx.mongodb.net/karachi_bakery?retryWrites=true&w=majority
+   RAZORPAY_KEY_ID=rzp_test_... (or your live key)
+   RAZORPAY_KEY_SECRET=your_razorpay_secret
    ```
-5. Click **Redeploy**. The application automatically detects the cloud database and synchronizes all records!
+5. Click **Redeploy**. The application automatically connects to both the cloud database and active Razorpay gateway! (Alternatively, keys can be configured directly in the Admin Operations Portal without redeploying).
 
 ## 💻 How to Run Locally
 
