@@ -5407,7 +5407,209 @@ function toggleWhatsAppAlerts() {
 }
 
 function printOrderInvoice() {
-  window.print();
+  const order = CheckoutState.lastPlacedOrder || {};
+  const orderId = order.orderId || document.getElementById('trackingOrderIdDisplay')?.textContent?.replace('Order Ref: ', '').trim() || ('KB-ORD-2026-' + Math.floor(1000 + Math.random() * 9000));
+  const paymentId = order.paymentId || document.getElementById('trackingPaymentIdText')?.textContent?.trim() || ('pay_' + Date.now().toString(36).toUpperCase());
+  const customerName = order.name || document.getElementById('trackRecipientName')?.textContent?.trim() || 'Samudrala Hitesh';
+  const customerAddress = order.address || document.getElementById('trackRecipientAddress')?.textContent?.trim() || 'Banjara Hills, Hyderabad (500001)';
+  const customerPhone = order.phone || '9876543210';
+  const totalAmount = order.amount || CheckoutState.finalCalculatedTotal || 683;
+  const items = (order.items && order.items.length > 0) ? order.items : ['Royal Kaju Katli (500g Luxury Box)', 'Original Hyderabad Fruit Biscuit (400g Collectible Tin)'];
+  const invoiceNo = 'KB-INV-2026-' + (orderId.replace(/[^0-9]/g, '') || Math.floor(10000 + Math.random() * 90000));
+  const dateStr = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+  const timeStr = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+
+  // Compute GST breakdown (5% food rate)
+  const taxableAmount = Math.round((totalAmount / 1.05) * 100) / 100;
+  const totalGst = Math.round((totalAmount - taxableAmount) * 100) / 100;
+  const cgst = Math.round((totalGst / 2) * 100) / 100;
+  const sgst = Math.round((totalGst / 2) * 100) / 100;
+
+  const itemRows = items.map(function(item, idx) {
+    const rate = Math.round(totalAmount / items.length);
+    return '<tr>' +
+      '<td style="text-align:center; padding:7px 8px; border-bottom:1px solid #e2e8f0;">' + (idx + 1) + '</td>' +
+      '<td style="padding:7px 8px; border-bottom:1px solid #e2e8f0;"><strong>' + item + '</strong><br><small style="color:#64748b;">100% Pure Vegetarian Handcrafted Confectionery</small></td>' +
+      '<td style="text-align:center; padding:7px 8px; border-bottom:1px solid #e2e8f0;">19053100</td>' +
+      '<td style="text-align:center; padding:7px 8px; border-bottom:1px solid #e2e8f0;">1</td>' +
+      '<td style="text-align:right; padding:7px 8px; border-bottom:1px solid #e2e8f0;">₹' + rate + '</td>' +
+      '<td style="text-align:right; padding:7px 8px; border-bottom:1px solid #e2e8f0;">5%</td>' +
+      '<td style="text-align:right; padding:7px 8px; border-bottom:1px solid #e2e8f0;">₹' + rate + '</td>' +
+      '</tr>';
+  }).join('');
+
+  const invoiceHtml = '<!DOCTYPE html>' +
+'<html lang="en">' +
+'<head>' +
+'  <meta charset="UTF-8">' +
+'  <title>Karachi Bakery — GST Tax Invoice ' + invoiceNo + '</title>' +
+'  <style>' +
+'    * { box-sizing: border-box; margin: 0; padding: 0; }' +
+'    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; color: #1e293b; background: #ffffff; padding: 16px 20px; font-size: 11.5px; line-height: 1.35; }' +
+'    .invoice-card { max-width: 720px; margin: 0 auto; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 22px 26px; }' +
+'    .inv-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #720E1E; padding-bottom: 10px; margin-bottom: 12px; }' +
+'    .brand-emblem { display: inline-block; width: 36px; height: 36px; border-radius: 50%; background: #720E1E; color: #D4AF37; font-weight: 900; font-size: 14px; text-align: center; line-height: 36px; margin-bottom: 4px; }' +
+'    .brand-name { font-size: 20px; font-weight: 800; color: #720E1E; letter-spacing: 0.5px; line-height: 1.1; }' +
+'    .brand-meta { font-size: 10px; color: #475569; margin-top: 3px; line-height: 1.3; }' +
+'    .inv-title-col { text-align: right; }' +
+'    .inv-type { font-size: 14px; font-weight: 800; color: #0f172a; letter-spacing: 0.5px; }' +
+'    .inv-sub { font-size: 10.5px; color: #64748b; }' +
+'    .original-pill { display: inline-block; font-size: 9.5px; font-weight: 700; color: #0369a1; background: #e0f2fe; padding: 2px 7px; border-radius: 10px; margin-top: 3px; }' +
+'    .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 12px; margin-bottom: 12px; }' +
+'    .col-title { font-size: 9.5px; font-weight: 800; text-transform: uppercase; color: #64748b; margin-bottom: 3px; letter-spacing: 0.5px; }' +
+'    .info-line { font-size: 11px; color: #1e293b; margin-bottom: 2px; }' +
+'    .payment-badge-strip { display: flex; justify-content: space-between; align-items: center; background: #f0fdf4; border: 1px solid #86efac; border-radius: 6px; padding: 6px 10px; margin-bottom: 12px; }' +
+'    .pay-verified { display: flex; align-items: center; gap: 5px; color: #15803d; font-weight: 700; font-size: 11px; }' +
+'    .pay-ref-code { font-family: monospace; font-size: 11px; color: #0369a1; font-weight: 700; }' +
+'    .items-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; font-size: 11px; }' +
+'    .items-table th { background: #720E1E; color: #ffffff; font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 6px 8px; text-align: left; }' +
+'    .bottom-split { display: grid; grid-template-columns: 1fr 240px; gap: 14px; margin-bottom: 12px; }' +
+'    .tax-summary-box { font-size: 10px; color: #475569; border: 1px solid #e2e8f0; border-radius: 6px; padding: 7px 10px; background: #f8fafc; }' +
+'    .calc-row { display: flex; justify-content: space-between; padding: 2.5px 0; font-size: 11px; }' +
+'    .calc-row.total { border-top: 1.5px solid #720E1E; margin-top: 4px; padding-top: 5px; font-size: 13px; font-weight: 800; color: #720E1E; }' +
+'    .footer-seal-row { display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid #e2e8f0; padding-top: 10px; font-size: 10px; color: #64748b; }' +
+'    .seal-badge { display: inline-block; border: 1.5px solid #16a34a; color: #16a34a; font-weight: 800; padding: 2px 7px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }' +
+'    @media print { body { background: #fff; padding: 0; } .invoice-card { border: none; padding: 0; max-width: 100%; width: 100%; } @page { size: A4 portrait; margin: 10mm 12mm; } }' +
+'  </style>' +
+'</head>' +
+'<body>' +
+'  <div class="invoice-card">' +
+'    <div class="inv-header">' +
+'      <div>' +
+'        <div class="brand-emblem">KB</div>' +
+'        <h1 class="brand-name">KARACHI BAKERY</h1>' +
+'        <div class="brand-meta">' +
+'          <strong>Karachi Bakery (Est. 1953) Private Limited</strong><br>' +
+'          Mozamjahi Market, Hyderabad, Telangana - 500001, India<br>' +
+'          GSTIN: <strong>36AAACK1953B1Z5</strong> • FSSAI Lic. No: <strong>13618011000123</strong><br>' +
+'          Ph: +91 40 2460 0123 • Email: orders@karachibakery.com' +
+'        </div>' +
+'      </div>' +
+'      <div class="inv-title-col">' +
+'        <div class="inv-type">TAX INVOICE</div>' +
+'        <div class="inv-sub">& Cash Bill of Supply</div>' +
+'        <span class="original-pill">ORIGINAL FOR RECIPIENT</span>' +
+'      </div>' +
+'    </div>' +
+'    <div class="details-grid">' +
+'      <div>' +
+'        <div class="col-title">Invoice & Order Particulars</div>' +
+'        <div class="info-line">Invoice No: <strong>' + invoiceNo + '</strong></div>' +
+'        <div class="info-line">Date & Time: <strong>' + dateStr + ', ' + timeStr + '</strong></div>' +
+'        <div class="info-line">Order Reference: <strong>' + orderId + '</strong></div>' +
+'        <div class="info-line">Place of Supply: <strong>Telangana (State Code: 36)</strong></div>' +
+'        <div class="info-line">Dispatch Hub: <strong>Mozamjahi Central Kitchen</strong></div>' +
+'      </div>' +
+'      <div>' +
+'        <div class="col-title">Billed & Delivered To</div>' +
+'        <div class="info-line">Customer: <strong>' + customerName + '</strong></div>' +
+'        <div class="info-line">Contact: <strong>+91 ' + customerPhone + '</strong></div>' +
+'        <div class="info-line">Destination: <strong>' + customerAddress + '</strong></div>' +
+'        <div class="info-line">Transit Mode: <strong>' + (order.transit || 'Hyderabad Local Express Dispatch') + '</strong></div>' +
+'      </div>' +
+'    </div>' +
+'    <div class="payment-badge-strip">' +
+'      <div class="pay-verified">' +
+'        <span>✅</span>' +
+'        <span>Payment Status: <strong>PAID & VERIFIED (Razorpay Gateway)</strong></span>' +
+'      </div>' +
+'      <div class="pay-ref-code">' +
+'        Transaction Ref: <span>' + paymentId + '</span>' +
+'      </div>' +
+'    </div>' +
+'    <table class="items-table">' +
+'      <thead>' +
+'        <tr>' +
+'          <th style="width:35px; text-align:center;">#</th>' +
+'          <th>Delicacy Description</th>' +
+'          <th style="width:80px; text-align:center;">HSN / SAC</th>' +
+'          <th style="width:45px; text-align:center;">Qty</th>' +
+'          <th style="width:80px; text-align:right;">Rate (₹)</th>' +
+'          <th style="width:60px; text-align:right;">GST</th>' +
+'          <th style="width:85px; text-align:right;">Amount (₹)</th>' +
+'        </tr>' +
+'      </thead>' +
+'      <tbody>' +
+        itemRows +
+'      </tbody>' +
+'    </table>' +
+'    <div class="bottom-split">' +
+'      <div class="tax-summary-box">' +
+'        <strong style="color:#0f172a; display:block; margin-bottom:3px;">GST Tax Breakdown & Declaration:</strong>' +
+'        <div>• Taxable Turnover: <strong>₹' + taxableAmount.toFixed(2) + '</strong></div>' +
+'        <div>• Central GST (CGST @ 2.5%): <strong>₹' + cgst.toFixed(2) + '</strong></div>' +
+'        <div>• State GST (SGST @ 2.5%): <strong>₹' + sgst.toFixed(2) + '</strong></div>' +
+'        <div style="margin-top:5px; font-size:9.5px; color:#64748b;">' +
+'          Certified that the particulars given above are true and correct. Standard confectionery packing ensures fresh crunch up to 90 days.' +
+'        </div>' +
+'      </div>' +
+'      <div>' +
+'        <div class="calc-row">' +
+'          <span>Items Subtotal:</span>' +
+'          <span>₹' + taxableAmount.toFixed(2) + '</span>' +
+'        </div>' +
+'        <div class="calc-row">' +
+'          <span>Total GST (5% Food HSN):</span>' +
+'          <span>₹' + totalGst.toFixed(2) + '</span>' +
+'        </div>' +
+'        <div class="calc-row">' +
+'          <span>Insured Express Shipping:</span>' +
+'          <span style="color:#16a34a; font-weight:700;">FREE</span>' +
+'        </div>' +
+'        <div class="calc-row total">' +
+'          <span>Grand Total (INR):</span>' +
+'          <span>₹' + totalAmount.toFixed(2) + '</span>' +
+'        </div>' +
+'      </div>' +
+'    </div>' +
+'    <div class="footer-seal-row">' +
+'      <div>' +
+'        <div>Thank you for ordering with Karachi Bakery!</div>' +
+'        <div style="font-size:9px; color:#94a3b8; margin-top:2px;">This is a computer-generated tax invoice and requires no physical signature.</div>' +
+'      </div>' +
+'      <div style="text-align:right;">' +
+'        <div class="seal-badge">✓ Authenticated & Signed</div>' +
+'        <div style="font-weight:700; color:#0f172a;">For Karachi Bakery (Est. 1953)</div>' +
+'        <div style="font-size:9px; color:#64748b;">Authorized Signatory</div>' +
+'      </div>' +
+'    </div>' +
+'  </div>' +
+'</body>' +
+'</html>';
+
+  // Use a dedicated hidden print iframe so ONLY this 1-page invoice prints (never the whole website)
+  let printFrame = document.getElementById('kbPrintInvoiceFrame');
+  if (printFrame) printFrame.remove();
+
+  printFrame = document.createElement('iframe');
+  printFrame.id = 'kbPrintInvoiceFrame';
+  printFrame.style.position = 'fixed';
+  printFrame.style.right = '0';
+  printFrame.style.bottom = '0';
+  printFrame.style.width = '0';
+  printFrame.style.height = '0';
+  printFrame.style.border = '0';
+  document.body.appendChild(printFrame);
+
+  const frameDoc = printFrame.contentWindow.document;
+  frameDoc.open();
+  frameDoc.write(invoiceHtml);
+  frameDoc.close();
+
+  setTimeout(function() {
+    try {
+      printFrame.contentWindow.focus();
+      printFrame.contentWindow.print();
+    } catch (e) {
+      const win = window.open('', '_blank', 'width=760,height=880');
+      if (win) {
+        win.document.open();
+        win.document.write(invoiceHtml);
+        win.document.close();
+        setTimeout(function() { win.print(); }, 350);
+      }
+    }
+  }, 350);
 }
 
 

@@ -10495,3 +10495,20 @@ tr.highlight-selected-month {
   }
 }
 
+
+/* =============================================================================
+   Print Optimization: Prevent whole-page sprawl on Ctrl+P
+   ============================================================================= */
+@media print {
+  body > *:not(#kbPrintInvoiceFrame) {
+    display: none !important;
+  }
+  #kbPrintInvoiceFrame {
+    display: block !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
