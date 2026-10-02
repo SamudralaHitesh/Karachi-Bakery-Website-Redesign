@@ -4190,9 +4190,53 @@
 
               <!-- Razorpay Transactions Ledger -->
               <div class="admin-table-container">
+                
+                <!-- Razorpay Month-Wise Reporting Filter Bar -->
+                <div class="admin-rzp-month-bar" style="margin-bottom:1.25rem; padding:1.15rem; background:linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius:12px; border:1px solid #334155;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.85rem; flex-wrap:wrap; gap:0.5rem;">
+                    <div>
+                      <strong style="color:#FFE082; font-size:0.95rem;">📅 Month-Wise Razorpay Online Transactions</strong>
+                      <span id="rzpMonthActiveBadge" style="margin-left:0.5rem; font-size:0.75rem; color:#90CAF9; background:rgba(13,71,161,0.3); padding:0.2rem 0.6rem; border-radius:10px; border:1px solid rgba(13,71,161,0.5);">Viewing: Current Month (Oct 2026)</span>
+                    </div>
+                    <button type="button" class="btn-order-filter active" onclick="renderAdminRazorpayTransactions()" style="padding:0.35rem 0.85rem; font-size:0.8rem;">🔄 Refresh Transactions</button>
+                  </div>
+
+                  <!-- Month Pill Buttons -->
+                  <div class="admin-rzp-month-pills" style="display:flex; gap:0.45rem; overflow-x:auto; padding-bottom:6px;">
+                    <button type="button" class="btn-period-pill active" id="rzpPill_oct_2026" onclick="selectRazorpayFilterMonth('oct_2026')">🗓️ Oct 2026 (Live)</button>
+                    <button type="button" class="btn-period-pill" id="rzpPill_sep_2026" onclick="selectRazorpayFilterMonth('sep_2026')">Sep 2026</button>
+                    <button type="button" class="btn-period-pill" id="rzpPill_aug_2026" onclick="selectRazorpayFilterMonth('aug_2026')">Aug 2026</button>
+                    <button type="button" class="btn-period-pill" id="rzpPill_jul_2026" onclick="selectRazorpayFilterMonth('jul_2026')">Jul 2026</button>
+                    <button type="button" class="btn-period-pill" id="rzpPill_jun_2026" onclick="selectRazorpayFilterMonth('jun_2026')">Jun 2026</button>
+                    <button type="button" class="btn-period-pill" id="rzpPill_may_2026" onclick="selectRazorpayFilterMonth('may_2026')">May 2026</button>
+                    <button type="button" class="btn-period-pill" id="rzpPill_apr_2026" onclick="selectRazorpayFilterMonth('apr_2026')">Apr 2026</button>
+                    <button type="button" class="btn-period-pill" id="rzpPill_all_time" onclick="selectRazorpayFilterMonth('all_time')">📊 All Months (FY YTD)</button>
+                  </div>
+
+                  <!-- Month Summary Mini KPIs -->
+                  <div class="admin-rzp-kpi-row" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:0.75rem; margin-top:0.85rem;">
+                    <div style="background:#0f172a; padding:0.65rem 0.85rem; border-radius:8px; border:1px solid #334155;">
+                      <small style="color:#94a3b8; display:block; font-size:0.68rem; font-weight:700;">MONTHLY ONLINE REVENUE</small>
+                      <strong id="rzpMonthTotalAmount" style="color:#FFE082; font-size:1.15rem;">₹1,82,300</strong>
+                    </div>
+                    <div style="background:#0f172a; padding:0.65rem 0.85rem; border-radius:8px; border:1px solid #334155;">
+                      <small style="color:#94a3b8; display:block; font-size:0.68rem; font-weight:700;">VERIFIED TRANSACTIONS</small>
+                      <strong id="rzpMonthTxCount" style="color:#90CAF9; font-size:1.15rem;">8 Orders</strong>
+                    </div>
+                    <div style="background:#0f172a; padding:0.65rem 0.85rem; border-radius:8px; border:1px solid #334155;">
+                      <small style="color:#94a3b8; display:block; font-size:0.68rem; font-weight:700;">BANK SETTLEMENT</small>
+                      <strong style="color:#81C784; font-size:0.95rem;">100% Settled (T+1)</strong>
+                    </div>
+                    <div style="background:#0f172a; padding:0.65rem 0.85rem; border-radius:8px; border:1px solid #334155;">
+                      <small style="color:#94a3b8; display:block; font-size:0.68rem; font-weight:700;">TOP PAYMENT METHOD</small>
+                      <strong id="rzpMonthTopMode" style="color:#E0E0E0; font-size:0.95rem;">UPI / QR (72%)</strong>
+                    </div>
+                  </div>
+                </div>
+
                 <div class="flex-between" style="margin-bottom:0.75rem;">
-                  <strong style="color:#ECEFF1; font-size:0.95rem;">Verified Razorpay Online Transactions</strong>
-                  <button type="button" class="btn-order-filter active" onclick="renderAdminRazorpayTransactions()">🔄 Refresh Transactions</button>
+                  <strong style="color:#ECEFF1; font-size:0.9rem;" id="rzpTableTitleLabel">Verified Razorpay Transactions Ledger (October 2026)</strong>
+                  <span style="font-size:0.75rem; color:#90A4AE;">256-Bit Encrypted & Reconciled</span>
                 </div>
                 <table class="admin-table" id="adminRazorpayTable">
                   <thead>

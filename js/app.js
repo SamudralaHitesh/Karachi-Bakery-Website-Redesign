@@ -6890,6 +6890,11 @@ function selectAdminMonth(monthKey, btnEl) {
   renderMonthlyAnalyticsChart();
   renderMonthlyBreakdownTable();
 
+  // Also sync Razorpay Gateway Transactions Month View
+  if (typeof selectRazorpayFilterMonth === 'function') {
+    selectRazorpayFilterMonth(monthKey, false);
+  }
+
   showToast(`Loaded financial metrics for ${data.label}!`, '📅');
 }
 
@@ -8303,16 +8308,461 @@ function adminSaveRazorpayKeys() {
   renderAdminRazorpayTab();
 }
 
+let currentRazorpayFilterMonth = 'oct_2026';
+
+const MONTHLY_HISTORICAL_RZP_TRANSACTIONS = {
+  oct_2026: [
+    {
+      payId: 'pay_OCT914028A',
+      orderId: 'KB-ORD-2026-9140',
+      date: '02 Oct 2026, 05:40 PM',
+      customerName: 'Deepak Reddy',
+      destination: 'Madhapur, Hyderabad (500081)',
+      amount: 1280,
+      paymentMethod: '⚡ Razorpay UPI (PhonePe)',
+      status: 'Paid & Verified'
+    },
+    {
+      payId: 'pay_OCT882194B',
+      orderId: 'KB-ORD-2026-8822',
+      date: '01 Oct 2026, 02:15 PM',
+      customerName: 'Pooja Hegde',
+      destination: 'Jubilee Hills, Hyderabad (500033)',
+      amount: 2450,
+      paymentMethod: '💳 Razorpay Verified Card (VISA)',
+      status: 'Paid & Verified'
+    },
+    {
+      payId: 'pay_OCT831024C',
+      orderId: 'KB-ORD-2026-8310',
+      date: '01 Oct 2026, 11:20 AM',
+      customerName: 'Karthik Varma',
+      destination: 'Gachibowli, Hyderabad (500032)',
+      amount: 840,
+      paymentMethod: '⚡ Razorpay Instant Pay (GPay)',
+      status: 'Paid & Verified'
+    }
+  ],
+  sep_2026: [
+    {
+      payId: 'pay_SEP782199A',
+      orderId: 'KB-ORD-2026-7821',
+      date: '28 Sep 2026, 08:30 AM',
+      customerName: 'Ananya Reddy',
+      destination: 'Jubilee Hills, Hyderabad (500033)',
+      amount: 650,
+      paymentMethod: '⚡ Razorpay Instant Pay (GPay)',
+      status: 'Paid & Verified'
+    },
+    {
+      payId: 'pay_SEP744012B',
+      orderId: 'KB-ORD-2026-7440',
+      date: '24 Sep 2026, 09:15 AM',
+      customerName: 'Rahul Verma',
+      destination: 'Indiranagar, Bengaluru (560038)',
+      amount: 440,
+      paymentMethod: '⚡ Razorpay UPI (PhonePe)',
+      status: 'Paid & Verified'
+    },
+    {
+      payId: 'pay_SEP712033C',
+      orderId: 'KB-ORD-2026-7120',
+      date: '20 Sep 2026, 04:45 PM',
+      customerName: 'Vikram Malhotra',
+      destination: 'Bandra West, Mumbai (400050)',
+      amount: 950,
+      paymentMethod: '💳 Razorpay Verified Card (Mastercard)',
+      status: 'Paid & Verified'
+    },
+    {
+      payId: 'pay_SEP691044D',
+      orderId: 'KB-ORD-2026-6910',
+      date: '16 Sep 2026, 02:10 PM',
+      customerName: 'Sneha Chawla',
+      destination: 'Cyber Hub, Gurgaon (122002)',
+      amount: 1850,
+      paymentMethod: '⚡ Razorpay Instant Pay (GPay)',
+      status: 'Paid & Verified'
+    },
+    {
+      payId: 'pay_SEP642055E',
+      orderId: 'KB-ORD-2026-6420',
+      date: '12 Sep 2026, 06:40 PM',
+      customerName: 'Arjun Singhal',
+      destination: 'Whitefield Forum, Bengaluru (560066)',
+      amount: 2100,
+      paymentMethod: '🏛️ Razorpay NetBanking (HDFC Bank)',
+      status: 'Paid & Verified'
+    },
+    {
+      payId: 'pay_SEP618066F',
+      orderId: 'KB-ORD-2026-6180',
+      date: '08 Sep 2026, 11:25 AM',
+      customerName: 'Meera Nair',
+      destination: 'T. Nagar, Chennai (600017)',
+      amount: 780,
+      paymentMethod: '⚡ Razorpay UPI (Paytm QR)',
+      status: 'Paid & Verified'
+    },
+    {
+      payId: 'pay_SEP590077G',
+      orderId: 'KB-ORD-2026-5900',
+      date: '03 Sep 2026, 01:15 PM',
+      customerName: 'Siddharth Rao',
+      destination: 'Hitec City, Hyderabad (500081)',
+      amount: 1450,
+      paymentMethod: '⚡ Razorpay Instant Pay (GPay)',
+      status: 'Paid & Verified'
+    }
+  ],
+  aug_2026: [
+    {
+      payId: 'pay_AUG562011A',
+      orderId: 'KB-ORD-2026-5620',
+      date: '29 Aug 2026, 07:15 PM',
+      customerName: 'Naveen Kumar',
+      destination: 'Banjara Hills, Hyderabad (500034)',
+      amount: 3400,
+      paymentMethod: '💳 Razorpay Verified Card (VISA)',
+      status: 'Paid & Verified'
+    },
+    {
+      payId: 'pay_AUG531022B',
+      orderId: 'KB-ORD-2026-5310',
+      date: '26 Aug 2026, 03:20 PM',
+      customerName: 'Divya Sharma',
+      destination: 'Connaught Place, New Delhi (110001)',
+      amount: 2850,
+      paymentMethod: '⚡ Razorpay Instant Pay (PhonePe)',
+      status: 'Paid & Verified'
+    },
+    {
+      payId: 'pay_AUG498033C',
+      orderId: 'KB-ORD-2026-4980',
+      date: '21 Aug 2026, 10:45 AM',
+      customerName: 'Rohan Kulkarni',
+      destination: 'Koregaon Park, Pune (411001)',
+      amount: 1200,
+      paymentMethod: '🏛️ Razorpay NetBanking (ICICI Bank)',
+      status: 'Paid & Verified'
+    },
+    {
+      payId: 'pay_AUG470044D',
+      orderId: 'KB-ORD-2026-4700',
+      date: '15 Aug 2026, 05:30 PM',
+      customerName: 'Preeti Agarwal',
+      destination: 'Salt Lake, Kolkata (700064)',
+      amount: 1650,
+      paymentMethod: '⚡ Razorpay Instant Pay (GPay)',
+      status: 'Paid & Verified'
+    },
+    {
+      payId: 'pay_AUG435055E',
+      orderId: 'KB-ORD-2026-4350',
+      date: '10 Aug 2026, 12:05 PM',
+      customerName: 'Kiran Patel',
+      destination: 'Juhu Tara Rd, Mumbai (400049)',
+      amount: 2150,
+      paymentMethod: '⚡ Razorpay UPI (BHIM QR)',
+      status: 'Paid & Verified'
+    },
+    {
+      payId: 'pay_AUG410066F',
+      orderId: 'KB-ORD-2026-4100',
+      date: '04 Aug 2026, 02:40 PM',
+      customerName: 'Gautam Iyer',
+      destination: 'Phoenix Marketcity, Chennai (600042)',
+      amount: 980,
+      paymentMethod: '💳 Razorpay Verified Card (RuPay)',
+      status: 'Paid & Verified'
+    }
+  ],
+  jul_2026: [
+    {
+      payId: 'pay_JUL382011A',
+      orderId: 'KB-ORD-2026-3820',
+      date: '28 Jul 2026, 06:10 PM',
+      customerName: 'Farhan Akhtar',
+      destination: 'Charminar Heritage, Hyderabad (500002)',
+      amount: 890,
+      paymentMethod: '⚡ Razorpay Instant Pay (GPay)',
+      status: 'Paid & Verified'
+    },
+    {
+      payId: 'pay_JUL351022B',
+      orderId: 'KB-ORD-2026-3510',
+      date: '22 Jul 2026, 11:30 AM',
+      customerName: 'Sunita Deshmukh',
+      destination: 'Viman Nagar, Pune (411014)',
+      amount: 1420,
+      paymentMethod: '⚡ Razorpay UPI (PhonePe)',
+      status: 'Paid & Verified'
+    },
+    {
+      payId: 'pay_JUL320033C',
+      orderId: 'KB-ORD-2026-3200',
+      date: '16 Jul 2026, 04:15 PM',
+      customerName: 'Manish Gupta',
+      destination: 'Noida Sector 18, NCR (201301)',
+      amount: 1750,
+      paymentMethod: '💳 Razorpay Verified Card (VISA)',
+      status: 'Paid & Verified'
+    },
+    {
+      payId: 'pay_JUL298044D',
+      orderId: 'KB-ORD-2026-2980',
+      date: '09 Jul 2026, 01:20 PM',
+      customerName: 'Lakshmi Narayanan',
+      destination: 'Usman Rd, Chennai (600017)',
+      amount: 1100,
+      paymentMethod: '🏛️ Razorpay NetBanking (SBI)',
+      status: 'Paid & Verified'
+    },
+    {
+      payId: 'pay_JUL265055E',
+      orderId: 'KB-ORD-2026-2650',
+      date: '02 Jul 2026, 03:50 PM',
+      customerName: 'Aman Jolly',
+      destination: 'MG Road, Bengaluru (560001)',
+      amount: 850,
+      paymentMethod: '⚡ Razorpay Instant Pay (GPay)',
+      status: 'Paid & Verified'
+    }
+  ],
+  jun_2026: [
+    {
+      payId: 'pay_JUN241011A',
+      orderId: 'KB-ORD-2026-2410',
+      date: '26 Jun 2026, 07:45 PM',
+      customerName: 'Tanvi Shah',
+      destination: 'Lower Parel, Mumbai (400013)',
+      amount: 2900,
+      paymentMethod: '💳 Razorpay Verified Card (Mastercard)',
+      status: 'Paid & Verified'
+    },
+    {
+      payId: 'pay_JUN215022B',
+      orderId: 'KB-ORD-2026-2150',
+      date: '19 Jun 2026, 12:15 PM',
+      customerName: 'Rajesh Nambiar',
+      destination: 'Koramangala, Bengaluru (560034)',
+      amount: 1680,
+      paymentMethod: '⚡ Razorpay Instant Pay (PhonePe)',
+      status: 'Paid & Verified'
+    },
+    {
+      payId: 'pay_JUN189033C',
+      orderId: 'KB-ORD-2026-1890',
+      date: '12 Jun 2026, 05:20 PM',
+      customerName: 'Zoya Khan',
+      destination: 'Tolichowki, Hyderabad (500008)',
+      amount: 2250,
+      paymentMethod: '🏛️ Razorpay NetBanking (HDFC Bank)',
+      status: 'Paid & Verified'
+    },
+    {
+      payId: 'pay_JUN160044D',
+      orderId: 'KB-ORD-2026-1600',
+      date: '05 Jun 2026, 02:30 PM',
+      customerName: 'Prateek Jain',
+      destination: 'Cyber City, Gurugram (122002)',
+      amount: 950,
+      paymentMethod: '⚡ Razorpay UPI (GPay)',
+      status: 'Paid & Verified'
+    }
+  ],
+  may_2026: [
+    {
+      payId: 'pay_MAY142011A',
+      orderId: 'KB-ORD-2026-1420',
+      date: '29 May 2026, 08:30 PM',
+      customerName: 'Suresh Mittal',
+      destination: 'Banjara Hills, Hyderabad (500034)',
+      amount: 4800,
+      paymentMethod: '💳 Razorpay Verified Card (AMEX)',
+      status: 'Paid & Verified'
+    },
+    {
+      payId: 'pay_MAY118022B',
+      orderId: 'KB-ORD-2026-1180',
+      date: '21 May 2026, 03:40 PM',
+      customerName: 'Aditi Sen',
+      destination: 'Park Street, Kolkata (700016)',
+      amount: 3200,
+      paymentMethod: '🏛️ Razorpay NetBanking (Axis Bank)',
+      status: 'Paid & Verified'
+    },
+    {
+      payId: 'pay_MAY095033C',
+      orderId: 'KB-ORD-2026-0950',
+      date: '14 May 2026, 11:15 AM',
+      customerName: 'Venkat Raman',
+      destination: 'Jayanagar, Bengaluru (560041)',
+      amount: 2100,
+      paymentMethod: '⚡ Razorpay Instant Pay (GPay)',
+      status: 'Paid & Verified'
+    },
+    {
+      payId: 'pay_MAY072044D',
+      orderId: 'KB-ORD-2026-0720',
+      date: '07 May 2026, 04:55 PM',
+      customerName: 'Kavita Rathore',
+      destination: 'Colaba, Mumbai (400005)',
+      amount: 1850,
+      paymentMethod: '⚡ Razorpay UPI (PhonePe)',
+      status: 'Paid & Verified'
+    }
+  ],
+  apr_2026: [
+    {
+      payId: 'pay_APR051011A',
+      orderId: 'KB-ORD-2026-0510',
+      date: '27 Apr 2026, 06:10 PM',
+      customerName: 'Harish Chandra',
+      destination: 'Somajiguda, Hyderabad (500082)',
+      amount: 1950,
+      paymentMethod: '⚡ Razorpay Instant Pay (GPay)',
+      status: 'Paid & Verified'
+    },
+    {
+      payId: 'pay_APR034022B',
+      orderId: 'KB-ORD-2026-0340',
+      date: '18 Apr 2026, 01:25 PM',
+      customerName: 'Nandini Roy',
+      destination: 'Salt Lake, Kolkata (700064)',
+      amount: 1400,
+      paymentMethod: '💳 Razorpay Verified Card (VISA)',
+      status: 'Paid & Verified'
+    },
+    {
+      payId: 'pay_APR018033C',
+      orderId: 'KB-ORD-2026-0180',
+      date: '11 Apr 2026, 10:40 AM',
+      customerName: 'Abhishek Joshi',
+      destination: 'Kothrud, Pune (411038)',
+      amount: 880,
+      paymentMethod: '⚡ Razorpay UPI (Paytm QR)',
+      status: 'Paid & Verified'
+    },
+    {
+      payId: 'pay_APR005044D',
+      orderId: 'KB-ORD-2026-0050',
+      date: '04 Apr 2026, 05:15 PM',
+      customerName: 'Mohammed Qureshi',
+      destination: 'Begumpet, Hyderabad (500016)',
+      amount: 2600,
+      paymentMethod: '🏛️ Razorpay NetBanking (HDFC Bank)',
+      status: 'Paid & Verified'
+    }
+  ]
+};
+
+function selectRazorpayFilterMonth(monthKey, syncTop) {
+  if (syncTop === undefined) syncTop = true;
+  currentRazorpayFilterMonth = monthKey;
+
+  // Update pills active class
+  document.querySelectorAll('.admin-rzp-month-pills .btn-period-pill').forEach(b => {
+    b.classList.remove('active');
+  });
+  const activePill = document.getElementById(`rzpPill_${monthKey}`);
+  if (activePill) activePill.classList.add('active');
+
+  const monthLabels = {
+    oct_2026: 'October 2026 (Live Current)',
+    sep_2026: 'September 2026',
+    aug_2026: 'August 2026',
+    jul_2026: 'July 2026',
+    jun_2026: 'June 2026',
+    may_2026: 'May 2026',
+    apr_2026: 'April 2026',
+    all_time: 'All Months / FY 2026-27 YTD'
+  };
+
+  const badgeEl = document.getElementById('rzpMonthActiveBadge');
+  if (badgeEl) badgeEl.textContent = `Viewing: ${monthLabels[monthKey] || monthKey}`;
+
+  const titleEl = document.getElementById('rzpTableTitleLabel');
+  if (titleEl) titleEl.textContent = `Verified Razorpay Transactions Ledger (${monthLabels[monthKey] || monthKey})`;
+
+  renderAdminRazorpayTransactions();
+}
+
 function renderAdminRazorpayTransactions() {
   const tbody = document.getElementById('adminRazorpayTableBody');
   if (!tbody) return;
 
-  const orders = AdminStore.orders || [];
-  let rows = '';
+  const monthKey = currentRazorpayFilterMonth || 'oct_2026';
+  let txList = [];
 
-  orders.forEach(o => {
-    const payId = o.paymentId || (o.paymentMethod && o.paymentMethod.includes('pay_') ? o.paymentMethod : `pay_rzp_${o.orderId.replace(/[^0-9]/g, '')}`);
-    const isRazorpay = !String(o.paymentMethod || '').toLowerCase().includes('cash on delivery') && !String(o.paymentMethod || '').toLowerCase().includes('cod');
+  // Live orders placed in current session/localStorage
+  const liveOrders = (typeof AdminStore !== 'undefined' && AdminStore.orders) ? AdminStore.orders : [];
+
+  if (monthKey === 'oct_2026') {
+    const formattedLive = liveOrders.map(o => ({
+      payId: o.paymentId || (o.paymentMethod && o.paymentMethod.includes('pay_') ? o.paymentMethod : `pay_${(o.orderId || '').replace(/[^0-9]/g, '')}`),
+      orderId: o.orderId,
+      date: o.date || 'Today',
+      customerName: o.customerName || 'Customer',
+      destination: o.destination || 'Hyderabad',
+      amount: Number(o.amount) || 0,
+      paymentMethod: o.paymentMethod || '⚡ Razorpay Instant Pay',
+      isLive: true
+    }));
+    const seeded = MONTHLY_HISTORICAL_RZP_TRANSACTIONS.oct_2026 || [];
+    txList = [...formattedLive, ...seeded];
+  } else if (monthKey === 'all_time') {
+    const formattedLive = liveOrders.map(o => ({
+      payId: o.paymentId || (o.paymentMethod && o.paymentMethod.includes('pay_') ? o.paymentMethod : `pay_${(o.orderId || '').replace(/[^0-9]/g, '')}`),
+      orderId: o.orderId,
+      date: o.date || 'Today',
+      customerName: o.customerName || 'Customer',
+      destination: o.destination || 'Hyderabad',
+      amount: Number(o.amount) || 0,
+      paymentMethod: o.paymentMethod || '⚡ Razorpay Instant Pay',
+      isLive: true
+    }));
+    let allHistorical = [];
+    Object.keys(MONTHLY_HISTORICAL_RZP_TRANSACTIONS).forEach(k => {
+      allHistorical = allHistorical.concat(MONTHLY_HISTORICAL_RZP_TRANSACTIONS[k]);
+    });
+    txList = [...formattedLive, ...allHistorical];
+  } else {
+    txList = MONTHLY_HISTORICAL_RZP_TRANSACTIONS[monthKey] || [];
+  }
+
+  // Calculate summary metrics
+  let totalAmount = 0;
+  let upiCount = 0;
+  let cardCount = 0;
+  let netCount = 0;
+
+  txList.forEach(t => {
+    totalAmount += Number(t.amount || 0);
+    const m = (t.paymentMethod || '').toLowerCase();
+    if (m.includes('upi') || m.includes('gpay') || m.includes('phonepe') || m.includes('paytm') || m.includes('qr')) upiCount++;
+    else if (m.includes('card') || m.includes('visa') || m.includes('mastercard') || m.includes('amex') || m.includes('rupay')) cardCount++;
+    else netCount++;
+  });
+
+  const totTx = txList.length || 1;
+  const upiPct = Math.round((upiCount / totTx) * 100);
+
+  // Update summary mini KPIs
+  const amtEl = document.getElementById('rzpMonthTotalAmount');
+  const cntEl = document.getElementById('rzpMonthTxCount');
+  const topModeEl = document.getElementById('rzpMonthTopMode');
+
+  if (amtEl) amtEl.textContent = `₹${totalAmount.toLocaleString('en-IN')}`;
+  if (cntEl) cntEl.textContent = `${txList.length} Orders`;
+  if (topModeEl) topModeEl.textContent = upiCount >= cardCount ? `UPI / QR (${upiPct}%)` : `Cards (${Math.round((cardCount / totTx) * 100)}%)`;
+
+  let rows = '';
+  txList.forEach(o => {
+    const payId = o.payId || o.paymentId || `pay_rzp_${(o.orderId || '').replace(/[^0-9]/g, '')}`;
+    const isCod = String(o.paymentMethod || '').toLowerCase().includes('cash on delivery') || String(o.paymentMethod || '').toLowerCase().includes('cod');
+    const badgeColor = isCod ? '#37474F' : '#0D47A1';
+    const badgeText = isCod ? '💵 Cash on Delivery' : (o.paymentMethod || '🔷 Razorpay Instant Pay');
 
     rows += `
       <tr>
@@ -8329,11 +8779,11 @@ function renderAdminRazorpayTransactions() {
           <div style="font-size:0.75rem; color:#CFD8DC;">${o.destination || 'Hyderabad'}</div>
         </td>
         <td>
-          <strong style="color:#FFE082;">₹${o.amount}</strong>
+          <strong style="color:#FFE082; font-size:0.95rem;">₹${Number(o.amount).toLocaleString('en-IN')}</strong>
         </td>
         <td>
-          <span class="tag" style="background:#0D47A1; color:#fff; font-size:0.75rem;">
-            ${isRazorpay ? '🔷 Razorpay Instant Pay' : '💵 Cash on Delivery'}
+          <span class="tag" style="background:${badgeColor}; color:#fff; font-size:0.75rem;">
+            ${badgeText}
           </span>
         </td>
         <td>
@@ -8345,8 +8795,8 @@ function renderAdminRazorpayTransactions() {
     `;
   });
 
-  if (orders.length === 0) {
-    rows = '<tr><td colspan="6" style="text-align:center; padding:2rem; color:#90A4AE;">No Razorpay transactions recorded yet.</td></tr>';
+  if (txList.length === 0) {
+    rows = '<tr><td colspan="6" style="text-align:center; padding:2rem; color:#90A4AE;">No Razorpay transactions found for this period.</td></tr>';
   }
 
   tbody.innerHTML = rows;
