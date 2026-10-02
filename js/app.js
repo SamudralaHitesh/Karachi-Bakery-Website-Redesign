@@ -4982,16 +4982,16 @@ function resetCheckoutPayButton() {
   }
 }
 
+function isCustomRazorpayKeyConfigured() {
+  const keyId = getActiveRazorpayKeyId();
+  return Boolean(keyId && keyId !== 'rzp_test_1DP5mmOlF5G5ag' && !keyId.startsWith('rzp_test_1DP5'));
+}
+
 function launchRazorpayGateway() {
   const btnPay = document.getElementById('btnFinalPlaceOrder');
   const amount = CheckoutState.finalCalculatedTotal || 126;
   const orderRef = `KB-ORD-2026-${Math.floor(1000 + Math.random() * 9000)}`;
   const keyId = getActiveRazorpayKeyId();
-
-  if (btnPay) {
-    btnPay.innerHTML = '<span>⏳ Contacting Razorpay Gateway...</span>';
-    btnPay.disabled = true;
-  }
 
   const customerName = document.getElementById('chkFullName')?.value.trim() || 'Samudrala Hitesh';
   const customerPhone = document.getElementById('chkPhone')?.value.trim() || '9876543210';
@@ -5006,6 +5006,18 @@ function launchRazorpayGateway() {
     keyId
   };
   currentRzpOrderData = orderData;
+
+  // If using default placeholder key, launch high-fidelity in-app Razorpay modal directly
+  // This prevents Razorpay's "No appropriate payment method found" error on unactivated documentation keys
+  if (!isCustomRazorpayKeyConfigured()) {
+    openRazorpayCheckoutModal(orderData);
+    return;
+  }
+
+  if (btnPay) {
+    btnPay.innerHTML = '<span>⏳ Contacting Razorpay Gateway...</span>';
+    btnPay.disabled = true;
+  }
 
   let handledByOfficialSdk = false;
 
@@ -8144,7 +8156,7 @@ function adminTestLaunchRazorpay() {
     customerAddress: 'Mozamjahi Flagship, Hyderabad'
   };
 
-  if (typeof Razorpay === 'undefined') {
+  if (!isCustomRazorpayKeyConfigured() || typeof Razorpay === 'undefined') {
     openRazorpayCheckoutModal(testData);
     return;
   }
