@@ -64,7 +64,7 @@ module.exports = async function handler(req, res) {
           console.warn('Direct Razorpay API order create warning:', apiErr.message);
           // Graceful fallback for demo test keys so customer checkout never halts
           razorpayOrder = {
-            id: `order_${Math.random().toString(36).substring(2, 14)}`,
+            id: null,
             entity: 'order',
             amount: amountInPaise,
             amount_paid: 0,
@@ -81,6 +81,7 @@ module.exports = async function handler(req, res) {
         return res.status(200).json({
           success: true,
           keyId: keyId,
+          isLiveOrder: !!(razorpayOrder && razorpayOrder.id),
           order: razorpayOrder
         });
       }
