@@ -3319,12 +3319,12 @@
                     </div>
                   </div>
                   <div class="upi-id-box">
-                    <label for="chkUpiId">Or Enter Your Virtual Payment Address (VPA):</label>
+                    <label for="chkUpiId">Customer's UPI ID (To pay from your GPay / PhonePe / Paytm):</label>
                     <div class="upi-input-wrap">
-                      <input type="text" id="chkUpiId" class="chk-input" value="hitesh@okaxis" placeholder="yourname@upi">
-                      <button type="button" class="btn-verify-upi" onclick="showToast('UPI VPA Verified ✓', '⚡')">Verify</button>
+                      <input type="text" id="chkUpiId" class="chk-input" value="customer@okhdfcbank" placeholder="yourname@okhdfcbank">
+                      <button type="button" class="btn-verify-upi" onclick="showToast('Customer UPI VPA Verified ✓', '⚡')">Verify</button>
                     </div>
-                    <small style="color:var(--kb-text-muted); display:block; margin-top:0.35rem;">A payment request will be sent to your UPI app upon confirmation.</small>
+                    <small style="color:var(--kb-text-muted); display:block; margin-top:0.35rem;">A payment collect request will be sent to your UPI app. Payout settles into Karachi Bakery merchant account.</small>
                   </div>
                 </div>
               </div>
@@ -3626,11 +3626,11 @@
                 </div>
               </div>
 
-              <div class="rzp-divider-or"><span>OR ENTER VPA / UPI ID</span></div>
+              <div class="rzp-divider-or"><span>OR ENTER CUSTOMER'S UPI ID TO PAY</span></div>
 
               <div class="rzp-vpa-row">
-                <input type="text" id="rzpModalVpaInput" class="rzp-input" value="hitesh@okaxis" placeholder="username@okhdfcbank">
-                <button type="button" class="rzp-btn-vpa-pay" onclick="submitRazorpayModalPayment('Razorpay UPI (' + (document.getElementById('rzpModalVpaInput').value || 'hitesh@okaxis') + ')')">Request & Pay</button>
+                <input type="text" id="rzpModalVpaInput" class="rzp-input" value="customer@okhdfcbank" placeholder="customer@okhdfcbank (Enter customer UPI ID)">
+                <button type="button" class="rzp-btn-vpa-pay" onclick="submitRazorpayModalPayment('Razorpay UPI (' + (document.getElementById('rzpModalVpaInput').value || 'customer@okhdfcbank') + ')')">Request & Pay</button>
               </div>
 
               <!-- 1-Click Instant Simulator -->
@@ -4156,6 +4156,35 @@
                   <button type="button" class="btn-save-price" style="background:#0D47A1; color:#fff; border:none; padding:0.35rem 0.85rem;" onclick="adminTestLaunchRazorpay()">
                     ⚡ Test Launch Razorpay Modal (₹1 Demo)
                   </button>
+                </div>
+
+                <!-- Store Owner Receiving Bank & UPI Information -->
+                <div class="admin-rzp-bank-card" style="margin-top:1.25rem; padding:1.25rem; background:rgba(46,125,50,0.06); border:1.5px solid rgba(46,125,50,0.25); border-radius:14px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+                    <div style="display:flex; align-items:center; gap:0.5rem;">
+                      <span style="font-size:1.3rem;">🏦</span>
+                      <strong style="color:#2E7D32; font-size:0.95rem;">Store Owner Payout & Bank Account Settlement</strong>
+                    </div>
+                    <span class="tag" style="background:#2E7D32; color:#fff; font-size:0.75rem;">Automated Bank Payouts</span>
+                  </div>
+                  <p style="font-size:0.83rem; color:#CFD8DC; line-height:1.5; margin-bottom:1rem;">
+                    <strong>Where do customer payments go?</strong> Customers pay via UPI, GPay, Cards, or Net Banking on the website. Razorpay verifies the payment and automatically deposits the funds directly into the <strong>Owner's Linked Bank Current Account</strong> on an automated settlement schedule.
+                  </p>
+                  <div class="admin-form-row-3" style="grid-template-columns: 1fr 1fr auto; gap:1rem; align-items:flex-end;">
+                    <div class="form-group">
+                      <label for="adminStoreUpiInput">Karachi Bakery Receiving UPI ID (Optional VPA)</label>
+                      <input type="text" id="adminStoreUpiInput" placeholder="karachibakery@okhdfcbank" value="karachibakery@okhdfcbank" style="font-family:monospace; font-size:0.85rem;">
+                    </div>
+                    <div class="form-group">
+                      <label>Razorpay Bank Account Status</label>
+                      <input type="text" value="Configured in Razorpay Dashboard" disabled style="background:rgba(255,255,255,0.05); color:#81C784; font-size:0.85rem;">
+                    </div>
+                    <div>
+                      <a href="https://dashboard.razorpay.com/app/keys" target="_blank" rel="noopener" class="action-btn-primary" style="display:inline-flex; align-items:center; justify-content:center; text-decoration:none; padding:0.65rem 1.25rem; height:42px; background:#1B5E20; color:#fff; font-size:0.82rem; font-weight:700;">
+                        🔗 Razorpay Dashboard
+                      </a>
+                    </div>
+                  </div>
                 </div>
               </div>
 

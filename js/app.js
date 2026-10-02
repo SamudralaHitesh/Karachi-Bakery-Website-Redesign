@@ -8070,10 +8070,12 @@ function renderAdminRazorpayTab() {
 
   const keyIdInput = document.getElementById('adminRzpKeyIdInput');
   const keySecretInput = document.getElementById('adminRzpKeySecretInput');
+  const storeUpiInput = document.getElementById('adminStoreUpiInput');
   const modePill = document.getElementById('adminRzpStatusPill');
 
   if (keyIdInput) keyIdInput.value = keyId;
   if (keySecretInput) keySecretInput.value = keySecret;
+  if (storeUpiInput) storeUpiInput.value = localStorage.getItem('KB_STORE_UPI_ID') || 'karachibakery@okhdfcbank';
   if (modePill) {
     const isLive = keyId.startsWith('rzp_live');
     modePill.textContent = isLive ? '🔴 Live Mode Active' : '🟢 Test Mode Active';
@@ -8086,14 +8088,16 @@ function renderAdminRazorpayTab() {
 function adminSaveRazorpayKeys() {
   const keyId = document.getElementById('adminRzpKeyIdInput')?.value.trim() || 'rzp_test_1DP5mmOlF5G5ag';
   const keySecret = document.getElementById('adminRzpKeySecretInput')?.value.trim() || 'test_secret_karachi2026';
+  const storeUpi = document.getElementById('adminStoreUpiInput')?.value.trim() || 'karachibakery@okhdfcbank';
 
   localStorage.setItem('KB_RAZORPAY_CONFIG', JSON.stringify({
     keyId,
     keySecret,
     updatedAt: new Date().toISOString()
   }));
+  localStorage.setItem('KB_STORE_UPI_ID', storeUpi);
 
-  showToast(`Razorpay API Keys saved successfully (${keyId.substring(0, 14)}...)!`, '💳');
+  showToast(`Razorpay API Keys & Store UPI (${storeUpi}) saved successfully!`, '💳');
   renderAdminRazorpayTab();
 }
 
