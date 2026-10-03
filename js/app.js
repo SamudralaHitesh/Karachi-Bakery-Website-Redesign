@@ -5481,8 +5481,9 @@ function processOrderCompletion(paymentInfo) {
     deliveryDate: CheckoutState.deliveryDateStr || 'Tomorrow, by 1:00 PM'
   };
 
-  // Open Animated Tracking Modal
+  // Open Animated Tracking Modal & Play Kitchen Chime
   openTrackingModal(CheckoutState.lastPlacedOrder);
+  playKitchenOrderChime();
 
   // Empty shopping cart & update badges
   AppState.cartItems = [];
@@ -8981,5 +8982,380 @@ function adminTestLaunchRazorpay() {
   } catch (err) {
     console.warn('Razorpay SDK popup error, falling back to in-app modal:', err);
     openRazorpayCheckoutModal(testData);
+  }
+}
+
+
+// =============================================================================
+// Feature 1: Customer Order Lookup & Live Tracking Portal
+// =============================================================================
+
+function openOrderLookupModal() {
+  const modal = document.getElementById('orderLookupModal');
+  if (!modal) return;
+
+  const input = document.getElementById('orderLookupInput');
+  if (input) input.value = '';
+
+  renderLookupRecentOrdersList();
+  modal.style.display = 'flex';
+  setTimeout(() => { if (input) input.focus(); }, 150);
+}
+
+function closeOrderLookupModal() {
+  const modal = document.getElementById('orderLookupModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function handleLookupBackdropClick(event) {
+  if (event.target && event.target.id === 'orderLookupModal') {
+    closeOrderLookupModal();
+  }
+}
+
+function renderLookupRecentOrdersList() {
+  const container = document.getElementById('lookupRecentOrdersList');
+  if (!container) return;
+
+  const orders = (typeof AdminStore !== 'undefined' && AdminStore.orders && AdminStore.orders.length > 0)
+    ? AdminStore.orders
+    : [
+        {
+          orderId: 'KB-ORD-2026-5491',
+          customerName: 'Samudrala Hitesh',
+          customerPhone: '9849012345',
+          destination: 'Banjara Hills, Hyderabad (500034)',
+          amount: 1259,
+          status: 'baking',
+          statusLabel: '🔥 Fresh Baking & Handcrafting',
+          date: 'Today, 10:15 AM'
+        },
+        {
+          orderId: 'KB-ORD-2026-9019',
+          customerName: 'Priya Sharma',
+          customerPhone: '9876543210',
+          destination: 'Indiranagar, Bengaluru (560038)',
+          amount: 1850,
+          status: 'cargo',
+          statusLabel: '🚚 Air Cargo Handover',
+          date: 'Yesterday, 04:30 PM'
+        },
+        {
+          orderId: 'KB-ORD-2026-6123',
+          customerName: 'Rajesh Verma',
+          customerPhone: '9811122334',
+          destination: 'Jubilee Hills, Hyderabad (500033)',
+          amount: 780,
+          status: 'out_for_delivery',
+          statusLabel: '📦 Out for Delivery',
+          date: 'Today, 09:00 AM'
+        }
+      ];
+
+  let html = '';
+  orders.slice(0, 4).forEach(o => {
+    const amt = Number(o.amount || 0).toLocaleString('en-IN');
+    const badgeColor = o.status === 'out_for_delivery' ? '#0D47A1' : (o.status === 'cargo' ? '#6A1B9A' : '#D84315');
+    html += `
+      <div style="display:flex; justify-content:space-between; align-items:center; background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:0.6rem 0.85rem; transition:all 0.2s ease;">
+        <div>
+          <div style="display:flex; align-items:center; gap:0.4rem;">
+            <strong style="color:#720E1E; font-size:0.85rem; font-family:monospace;">${o.orderId}</strong>
+            <span style="font-size:0.7rem; background:${badgeColor}; color:#fff; padding:1px 6px; border-radius:10px;">${o.statusLabel || o.status || 'Active'}</span>
+          </div>
+          <div style="font-size:0.75rem; color:#64748b; margin-top:2px;">${o.customerName || 'Customer'} • ₹${amt}</div>
+        </div>
+        <button type="button" class="btn-order-filter active" onclick="displayOrderTrackingByOrderId('${o.orderId}')" style="font-size:0.75rem; padding:0.25rem 0.65rem;">
+          Track ➔
+        </button>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+function handleOrderLookupSubmit(event) {
+  event.preventDefault();
+  const input = document.getElementById('orderLookupInput');
+  const query = (input?.value || '').trim();
+  if (!query) return;
+
+  const orders = (typeof AdminStore !== 'undefined' && AdminStore.orders) ? AdminStore.orders : [];
+  const cleanQ = query.toLowerCase();
+
+  const found = orders.find(o => 
+    (o.orderId && o.orderId.toLowerCase().includes(cleanQ)) ||
+    (o.customerPhone && o.customerPhone.includes(cleanQ)) ||
+    (o.customerName && o.customerName.toLowerCase().includes(cleanQ))
+  );
+
+  if (found) {
+    closeOrderLookupModal();
+    displayOrderTracking(found);
+    showToast(`Found live order ${found.orderId}!`, '📦');
+  } else {
+    // If not found in current store, check if it looks like a valid KB-ORD format
+    if (cleanQ.includes('kb-ord') || cleanQ.includes('2026')) {
+      closeOrderLookupModal();
+      displayOrderTracking({
+        orderId: query.toUpperCase(),
+        customerName: 'Karachi Bakery Valued Guest',
+        destination: 'Hyderabad Flagship Delivery Zone',
+        amount: 1259,
+        status: 'baking',
+        statusLabel: '🔥 Fresh Baking & Handcrafting'
+      });
+      showToast(`Showing live tracking for ${query.toUpperCase()}`, '📦');
+    } else {
+      showToast('Order not found. Check Order ID or pick from recent orders list below.', '⚠️');
+    }
+  }
+}
+
+function displayOrderTrackingByOrderId(orderId) {
+  closeOrderLookupModal();
+  const orders = (typeof AdminStore !== 'undefined' && AdminStore.orders) ? AdminStore.orders : [];
+  const found = orders.find(o => o.orderId === orderId);
+  if (found) {
+    displayOrderTracking(found);
+  } else {
+    displayOrderTracking({
+      orderId: orderId,
+      customerName: 'Samudrala Hitesh',
+      destination: 'Banjara Hills, Hyderabad - 500034',
+      amount: 1259,
+      status: 'baking',
+      statusLabel: '🔥 Fresh Baking & Handcrafting'
+    });
+  }
+}
+
+function displayOrderTracking(order) {
+  const modal = document.getElementById('orderTrackingModal');
+  if (!modal) return;
+
+  const idEl = document.getElementById('trackingOrderIdDisplay');
+  const payIdEl = document.getElementById('trackingPaymentIdText');
+  const nameEl = document.getElementById('trackRecipientName');
+  const addrEl = document.getElementById('trackRecipientAddress');
+  const estEl = document.getElementById('trackEstDate');
+  const transitEl = document.getElementById('trackTransitMode');
+
+  if (idEl) idEl.textContent = `Order Ref: ${order.orderId || 'KB-ORD-2026-9281'}`;
+  if (payIdEl) payIdEl.textContent = order.paymentId || (order.paymentMethod || 'pay_rzp_verified');
+  if (nameEl) nameEl.textContent = order.customerName || 'Valued Customer';
+  if (addrEl) addrEl.textContent = order.destination || order.customerAddress || 'Hyderabad - 500034';
+  if (estEl) estEl.textContent = order.deliveryDate || 'Tomorrow, by 1:00 PM';
+  if (transitEl) transitEl.textContent = order.transitMode || 'Hyderabad Local Express Kitchen Dispatch';
+
+  // Update 4-stage tracking timeline steps according to order status
+  const steps = document.querySelectorAll('#orderTrackingModal .tracking-timeline .track-step');
+  const status = (order.status || 'baking').toLowerCase();
+
+  let activeIndex = 1; // Default: Baking
+  if (status === 'placed' || status === 'confirmed') activeIndex = 0;
+  else if (status === 'baking' || status === 'preparing') activeIndex = 1;
+  else if (status === 'cargo' || status === 'transit' || status === 'shipped') activeIndex = 2;
+  else if (status === 'out_for_delivery') activeIndex = 3;
+  else if (status === 'delivered') activeIndex = 4;
+
+  steps.forEach((st, idx) => {
+    st.classList.remove('done', 'active');
+    if (idx < activeIndex) {
+      st.classList.add('done');
+    } else if (idx === activeIndex) {
+      st.classList.add('active');
+    }
+  });
+
+  modal.style.display = 'flex';
+}
+
+
+// =============================================================================
+// Feature 2: CSV & Excel Export Engine for Orders & Razorpay Ledgers
+// =============================================================================
+
+function adminExportOrdersToCsv() {
+  const orders = (typeof AdminStore !== 'undefined' && AdminStore.orders) ? AdminStore.orders : [];
+  if (orders.length === 0) {
+    showToast('No orders recorded to export.', 'ℹ️');
+    return;
+  }
+
+  const headers = ['Order ID', 'Date', 'Customer Name', 'Mobile', 'Destination', 'Total Amount (INR)', 'Payment Method', 'Dispatch Status', 'Items'];
+  const rows = [];
+  rows.push(headers.map(h => `"${h}"`).join(','));
+
+  orders.forEach(o => {
+    const row = [
+      o.orderId || '',
+      o.date || '',
+      (o.customerName || '').replace(/"/g, '""'),
+      o.customerPhone || '',
+      (o.destination || o.customerAddress || '').replace(/"/g, '""'),
+      o.amount || 0,
+      (o.paymentMethod || 'Razorpay Online').replace(/"/g, '""'),
+      (o.statusLabel || o.status || 'Confirmed').replace(/"/g, '""'),
+      (o.itemsSummary || 'Hyderabad Biscuits & Confectionery').replace(/"/g, '""')
+    ];
+    rows.push(row.map(c => `"${c}"`).join(','));
+  });
+
+  const csvContent = '\uFEFF' + rows.join('\r\n'); // Include UTF-8 BOM for Excel
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  const dateStr = new Date().toISOString().slice(0, 10);
+  link.setAttribute('href', url);
+  link.setAttribute('download', `Karachi_Bakery_Orders_Manifest_${dateStr}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+
+  showToast(`Exported ${orders.length} orders to CSV for Excel!`, '📊');
+}
+
+function adminExportRazorpayLedgerToCsv() {
+  const monthKey = (typeof currentRazorpayFilterMonth !== 'undefined') ? currentRazorpayFilterMonth : 'oct_2026';
+  
+  // Get active month transactions
+  let txList = [];
+  const liveOrders = (typeof AdminStore !== 'undefined' && AdminStore.orders) ? AdminStore.orders : [];
+
+  if (monthKey === 'oct_2026') {
+    const formattedLive = liveOrders.map(o => ({
+      payId: o.paymentId || ('pay_' + (o.orderId || '').replace(/[^0-9]/g, '')),
+      orderId: o.orderId,
+      date: o.date || 'Today',
+      customerName: o.customerName || 'Customer',
+      destination: o.destination || 'Hyderabad',
+      amount: Number(o.amount) || 0,
+      paymentMethod: o.paymentMethod || '⚡ Razorpay Instant Pay'
+    }));
+    const seeded = (typeof MONTHLY_HISTORICAL_RZP_TRANSACTIONS !== 'undefined' && MONTHLY_HISTORICAL_RZP_TRANSACTIONS.oct_2026) ? MONTHLY_HISTORICAL_RZP_TRANSACTIONS.oct_2026 : [];
+    txList = [...formattedLive, ...seeded];
+  } else if (monthKey === 'all_time') {
+    const formattedLive = liveOrders.map(o => ({
+      payId: o.paymentId || ('pay_' + (o.orderId || '').replace(/[^0-9]/g, '')),
+      orderId: o.orderId,
+      date: o.date || 'Today',
+      customerName: o.customerName || 'Customer',
+      destination: o.destination || 'Hyderabad',
+      amount: Number(o.amount) || 0,
+      paymentMethod: o.paymentMethod || '⚡ Razorpay Instant Pay'
+    }));
+    let allHistorical = [];
+    if (typeof MONTHLY_HISTORICAL_RZP_TRANSACTIONS !== 'undefined') {
+      Object.keys(MONTHLY_HISTORICAL_RZP_TRANSACTIONS).forEach(k => {
+        allHistorical = allHistorical.concat(MONTHLY_HISTORICAL_RZP_TRANSACTIONS[k]);
+      });
+    }
+    txList = [...formattedLive, ...allHistorical];
+  } else {
+    txList = (typeof MONTHLY_HISTORICAL_RZP_TRANSACTIONS !== 'undefined' && MONTHLY_HISTORICAL_RZP_TRANSACTIONS[monthKey]) ? MONTHLY_HISTORICAL_RZP_TRANSACTIONS[monthKey] : [];
+  }
+
+  if (txList.length === 0) {
+    showToast('No transactions found in this period to export.', 'ℹ️');
+    return;
+  }
+
+  const headers = ['Payment Reference (pay_...)', 'Order Reference', 'Date & Time', 'Customer Name', 'Destination / City', 'Amount (INR)', 'Payment Gateway Mode', 'Settlement Status'];
+  const rows = [];
+  rows.push(headers.map(h => `"${h}"`).join(','));
+
+  txList.forEach(t => {
+    const row = [
+      t.payId || t.paymentId || '',
+      t.orderId || '',
+      t.date || '',
+      (t.customerName || '').replace(/"/g, '""'),
+      (t.destination || '').replace(/"/g, '""'),
+      t.amount || 0,
+      (t.paymentMethod || 'Razorpay Gateway').replace(/"/g, '""'),
+      'Paid & Verified (T+1 Settled)'
+    ];
+    rows.push(row.map(c => `"${c}"`).join(','));
+  });
+
+  const csvContent = '\uFEFF' + rows.join('\r\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', `Karachi_Bakery_Razorpay_${monthKey.toUpperCase()}_Ledger.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+
+  showToast(`Exported ${txList.length} transactions for ${monthKey} to CSV!`, '📥');
+}
+
+
+// =============================================================================
+// Feature 4: Web Audio Kitchen Order Chime / Bell Engine
+// =============================================================================
+
+function playKitchenOrderChime(force) {
+  if (!force && localStorage.getItem('KB_KITCHEN_CHIME') === 'false') return;
+  
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const now = ctx.currentTime;
+
+    // Tone 1: E5 (659.25Hz)
+    const osc1 = ctx.createOscillator();
+    const gain1 = ctx.createGain();
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(659.25, now);
+    gain1.gain.setValueAtTime(0.25, now);
+    gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+    osc1.connect(gain1);
+    gain1.connect(ctx.destination);
+    osc1.start(now);
+    osc1.stop(now + 0.5);
+
+    // Tone 2: A5 (880Hz) - plays 180ms after tone 1
+    const osc2 = ctx.createOscillator();
+    const gain2 = ctx.createGain();
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(880, now + 0.18);
+    gain2.gain.setValueAtTime(0.3, now + 0.18);
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.85);
+    osc2.connect(gain2);
+    gain2.connect(ctx.destination);
+    osc2.start(now + 0.18);
+    osc2.stop(now + 0.85);
+
+    if (force) {
+      showToast('🔔 Kitchen Order Bell chimed successfully!', '🔔');
+    }
+  } catch (e) {
+    console.warn('AudioContext chime error:', e);
+  }
+}
+
+function toggleKitchenChime() {
+  const current = localStorage.getItem('KB_KITCHEN_CHIME');
+  const next = current === 'false' ? 'true' : 'false';
+  localStorage.setItem('KB_KITCHEN_CHIME', next);
+
+  const btn = document.getElementById('adminKitchenChimeToggle');
+  if (btn) {
+    btn.textContent = (next === 'true') ? '🔔 Sound: ON' : '🔕 Sound: OFF';
+    btn.style.color = (next === 'true') ? '#81C784' : '#94A3B8';
+  }
+
+  if (next === 'true') {
+    playKitchenOrderChime(true);
+    showToast('Kitchen order arrival chime enabled!', '🔔');
+  } else {
+    showToast('Kitchen sound alerts muted.', '🔕');
   }
 }

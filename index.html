@@ -3,12 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- OpenGraph Social Preview & PWA Meta (Option 1 & 6) -->
-  <meta property="og:title" content="Karachi Bakery Hyderabad (Est. 1953) — Modern E-Commerce Redesign">
-  <meta property="og:description" content="Authentic Fruit Biscuits, Osmania, Pure Desi Ghee Mithai, Artisan Custom Cakes & Corporate Gifting. Delivered across 19,000+ Indian Pincodes.">
+  <!-- OpenGraph Social Preview & Rich Sharing Meta -->
+  <meta property="og:site_name" content="Karachi Bakery Hyderabad (Est. 1953)">
+  <meta property="og:title" content="Karachi Bakery Hyderabad (Est. 1953) — Modern E-Commerce Portal">
+  <meta property="og:description" content="Authentic Fruit Biscuits, Royal Osmania, Pure Desi Ghee Mithai, Artisan Custom Cakes & Corporate Gifting. Fast Pan-India Delivery across 19,000+ pincodes.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://karachi-bakery-website-redesign.vercel.app">
+  <meta property="og:image" content="https://karachi-bakery-website-redesign.vercel.app/images/kb-og-banner.svg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Karachi Bakery Hyderabad Heritage Biscuits & Confectionery">
+
+  <!-- Twitter Card Social Meta -->
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Karachi Bakery Hyderabad (Est. 1953) — Online Store">
+  <meta name="twitter:description" content="Order authentic Hyderabad Fruit Biscuits, Osmania, Mithai & Custom Cakes with pan-India express delivery.">
+  <meta name="twitter:image" content="https://karachi-bakery-website-redesign.vercel.app/images/kb-og-banner.svg">
+
+  <link rel="icon" type="image/svg+xml" href="images/kb-logo.svg">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#720E1E">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -138,6 +150,10 @@
 
         <!-- Action Buttons -->
         <div class="header-actions">
+          <button class="action-btn action-btn-ghost" id="btnTrackOrder" title="Track Live Order Status" onclick="openOrderLookupModal()">
+            📦 <span class="action-text">Track Order</span>
+          </button>
+
           <button class="action-btn action-btn-ghost" id="btnCompareBadge" title="Compare Delicacies Side-by-Side (Day 5)" onclick="openCompareModal()">
             ⚖️ <span class="action-text">Compare</span>
             <span class="badge-count" id="compareCount">0</span>
@@ -3437,6 +3453,40 @@
   </div>
 
   <!-- ==========================================================================
+       Customer Order Lookup & Live Tracking Portal Modal (Feature 1)
+       ========================================================================== -->
+  <div class="tracking-modal-backdrop" id="orderLookupModal" style="display:none;" onclick="handleLookupBackdropClick(event)">
+    <div class="tracking-dialog" style="max-width:540px; padding:0; overflow:hidden; border-radius:16px; box-shadow:0 20px 40px rgba(0,0,0,0.3);" role="dialog" aria-modal="true" aria-labelledby="lookupModalHeading">
+      <!-- Header -->
+      <div style="background:linear-gradient(135deg, #720E1E 0%, #3F040C 100%); color:#ffffff; padding:1.4rem; text-align:center; position:relative;">
+        <button type="button" onclick="closeOrderLookupModal()" style="position:absolute; top:12px; right:15px; background:none; border:none; color:#FFE082; font-size:1.4rem; cursor:pointer;" aria-label="Close">✕</button>
+        <div style="font-size:2rem; margin-bottom:0.35rem;">📦</div>
+        <h3 id="lookupModalHeading" style="font-family:'Playfair Display', serif; font-size:1.35rem; color:#FFE082; margin:0 0 0.35rem 0;">Track Your Karachi Bakery Order</h3>
+        <p style="font-size:0.83rem; color:#FFCDD2; margin:0;">Enter your Order Reference ID or 10-digit mobile number</p>
+      </div>
+
+      <!-- Search Form -->
+      <div style="padding:1.4rem; background:#FFFDF9;">
+        <form onsubmit="handleOrderLookupSubmit(event)" style="display:flex; gap:0.5rem; margin-bottom:1.15rem;">
+          <input type="text" id="orderLookupInput" class="chk-input" placeholder="e.g. KB-ORD-2026-5491 or 9849012345" style="flex:1; font-size:0.9rem; padding:0.75rem 0.9rem; border:1.5px solid #cbd5e1; border-radius:8px;" required>
+          <button type="submit" class="action-btn-primary" style="padding:0.75rem 1.25rem; font-weight:700; white-space:nowrap; border-radius:8px;">🔍 Track</button>
+        </form>
+
+        <!-- Quick Recent Orders Picker -->
+        <div id="lookupRecentOrdersSection">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.55rem;">
+            <span style="font-size:0.75rem; font-weight:700; color:#5D4037; text-transform:uppercase; letter-spacing:0.5px;">Recent Orders (1-Click Quick Track):</span>
+            <span style="font-size:0.7rem; color:#8D6E63;">Live Sync</span>
+          </div>
+          <div id="lookupRecentOrdersList" style="display:flex; flex-direction:column; gap:0.5rem; max-height:220px; overflow-y:auto; padding-right:4px;">
+            <!-- Dynamically populated via JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
        Day 9 Deliverable: Animated Order Confirmation & Live Tracking Modal (Issue #12)
        ========================================================================== -->
   <div class="tracking-modal-backdrop" id="orderTrackingModal" style="display:none;" onclick="handleTrackingBackdropClick(event)">
@@ -3788,8 +3838,14 @@
             <span class="admin-subtitle">Mozamjahi Central Kitchen, Hyderabad • Live Operations System</span>
           </div>
         </div>
-        <div class="admin-header-controls">
+        <div class="admin-header-controls" style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
           <div class="admin-badge-live">● Live Storefront Synced</div>
+          <button type="button" id="adminKitchenChimeToggle" onclick="toggleKitchenChime()" style="font-size:0.75rem; background:#334155; color:#F1F5F9; border:1px solid #475569; padding:0.3rem 0.65rem; border-radius:6px; cursor:pointer;" title="Toggle kitchen chime sound on new orders">
+            🔔 Sound: ON
+          </button>
+          <button type="button" onclick="playKitchenOrderChime(true)" style="font-size:0.75rem; background:#1e293b; color:#FFE082; border:1px solid #D4AF37; padding:0.3rem 0.65rem; border-radius:6px; cursor:pointer;" title="Test kitchen arrival chime">
+            🔊 Test Chime
+          </button>
           <button type="button" class="btn-admin-close" onclick="closeAdminPortalModal()" title="Close and return to Public Storefront">✕ Close</button>
         </div>
       </div>
@@ -4248,7 +4304,10 @@
                       <strong style="color:#FFE082; font-size:0.95rem;">📅 Month-Wise Razorpay Online Transactions</strong>
                       <span id="rzpMonthActiveBadge" style="margin-left:0.5rem; font-size:0.75rem; color:#90CAF9; background:rgba(13,71,161,0.3); padding:0.2rem 0.6rem; border-radius:10px; border:1px solid rgba(13,71,161,0.5);">Viewing: Current Month (Oct 2026)</span>
                     </div>
-                    <button type="button" class="btn-order-filter active" onclick="renderAdminRazorpayTransactions()" style="padding:0.35rem 0.85rem; font-size:0.8rem;">🔄 Refresh Transactions</button>
+                    <div style="display:flex; gap:0.4rem; align-items:center;">
+                      <button type="button" class="btn-order-filter" onclick="adminExportRazorpayLedgerToCsv()" style="background:#0D47A1; color:#fff; border:none; padding:0.35rem 0.85rem; font-size:0.8rem; border-radius:6px; font-weight:700;" title="Download verified transactions for this month as CSV">📥 Export Ledger (CSV)</button>
+                      <button type="button" class="btn-order-filter active" onclick="renderAdminRazorpayTransactions()" style="padding:0.35rem 0.85rem; font-size:0.8rem;">🔄 Refresh</button>
+                    </div>
                   </div>
 
                   <!-- Month Pill Buttons -->
@@ -4316,11 +4375,12 @@
                   <h4>Customer Orders & Real-Time Kitchen Dispatch Manager</h4>
                   <p>When you update an order status here, the customer's live tracking timeline updates automatically.</p>
                 </div>
-                <div class="order-filter-pills">
+                <div class="order-filter-pills" style="display:flex; gap:0.4rem; align-items:center; flex-wrap:wrap;">
                   <button type="button" class="btn-order-filter active" onclick="filterAdminOrders('all', this)">All</button>
                   <button type="button" class="btn-order-filter" onclick="filterAdminOrders('baking', this)">Baking</button>
                   <button type="button" class="btn-order-filter" onclick="filterAdminOrders('cargo', this)">Air Cargo</button>
                   <button type="button" class="btn-order-filter" onclick="filterAdminOrders('out_for_delivery', this)">Out for Delivery</button>
+                  <button type="button" class="btn-order-filter" onclick="adminExportOrdersToCsv()" style="background:#1B5E20; color:#fff; border:none; padding:0.35rem 0.8rem; font-weight:700; border-radius:6px;" title="Export orders manifest to CSV file for Excel">📊 Export Orders (CSV)</button>
                 </div>
               </div>
 
