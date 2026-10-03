@@ -4831,6 +4831,11 @@ function selectPaymentMethod(methodKey) {
     }
   });
 
+  if (methodKey === 'upi') {
+    const upiAmt = CheckoutState.finalCalculatedTotal || 126;
+    renderOriginalUpiQrCode('checkoutPageUpiQr', upiAmt, 'KB-CART', { width: 125, height: 125 });
+  }
+
   const btnPay = document.getElementById('btnFinalPlaceOrder');
   const amount = CheckoutState.finalCalculatedTotal || 126;
   if (btnPay) {
@@ -5131,6 +5136,126 @@ function launchRazorpayGateway() {
   });
 }
 
+
+// =============================================================================
+// Real Scannable NPCI UPI QR Code Engine (GPay, PhonePe, Paytm, BHIM)
+// =============================================================================
+
+function renderOriginalUpiQrCode(containerId, amount, orderRef, options) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+
+  const opts = options || {};
+  const width = opts.width || 130;
+  const height = opts.height || 130;
+
+  // 1. Check if store manager uploaded a custom physical QR standee image
+  const customQr = localStorage.getItem('KB_CUSTOM_QR_IMAGE');
+  if (customQr && !opts.forceDynamic) {
+    const img = document.createElement('img');
+    img.src = customQr;
+    img.alt = 'Original Store UPI QR Code';
+    img.style.width = width + 'px';
+    img.style.height = height + 'px';
+    img.style.objectFit = 'contain';
+    img.style.borderRadius = '6px';
+    container.appendChild(img);
+    return;
+  }
+
+  // 2. Build official NPCI Standard UPI Intent URI
+  const storeUpi = localStorage.getItem('KB_STORE_UPI_ID') || 'karachibakery@okhdfcbank';
+  const cleanAmt = (Number(amount) || 0).toFixed(2);
+  const cleanRef = orderRef || ('KB-ORD-2026-' + Math.floor(1000 + Math.random() * 9000));
+  const upiUri = 'upi://pay?pa=' + encodeURIComponent(storeUpi) + '&pn=' + encodeURIComponent('Karachi Bakery') + '&am=' + cleanAmt + '&cu=INR&tn=' + encodeURIComponent('Order ' + cleanRef);
+
+  // Update deep-link for direct mobile payments
+  const directLink = document.getElementById('rzpDirectUpiLink');
+  if (directLink) {
+    directLink.href = upiUri;
+  }
+
+  // 3. Generate QR using local QRCode.js library
+  let success = false;
+  if (typeof QRCode !== 'undefined') {
+    try {
+      new QRCode(container, {
+        text: upiUri,
+        width: width,
+        height: height,
+        colorDark: '#000000',
+        colorLight: '#ffffff',
+        correctLevel: (typeof QRCode.CorrectLevel !== 'undefined' && QRCode.CorrectLevel.M) ? QRCode.CorrectLevel.M : 0
+      });
+      success = true;
+    } catch (e) {
+      console.warn('QRCode.js render error, falling back to image generator:', e);
+    }
+  }
+
+  // 4. Fallback to high-res QR API if QRCode.js isn't ready
+  if (!success) {
+    const img = document.createElement('img');
+    img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=' + width + 'x' + height + '&margin=2&data=' + encodeURIComponent(upiUri);
+    img.alt = 'Karachi Bakery Scannable UPI QR';
+    img.style.width = width + 'px';
+    img.style.height = height + 'px';
+    img.style.display = 'block';
+    img.style.borderRadius = '6px';
+    container.appendChild(img);
+  }
+}
+
+function copyStoreUpiId() {
+  const storeUpi = localStorage.getItem('KB_STORE_UPI_ID') || 'karachibakery@okhdfcbank';
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(storeUpi).then(function() {
+      showToast('Copied Karachi Bakery UPI ID: ' + storeUpi, '📋');
+    }).catch(function() {
+      showToast('Karachi Bakery UPI ID: ' + storeUpi, '📋');
+    });
+  } else {
+    showToast('Karachi Bakery UPI ID: ' + storeUpi, '📋');
+  }
+}
+
+function handleAdminQrImageUpload(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+
+  if (!file.type.startsWith('image/')) {
+    showToast('Please select a valid image file (PNG, JPG, WebP).', '⚠️');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const dataUrl = e.target.result;
+    localStorage.setItem('KB_CUSTOM_QR_IMAGE', dataUrl);
+    showToast('Original Store QR image saved successfully!', '📲');
+    renderOriginalUpiQrCode('adminLiveQrPreview', 1000, 'KB-MERCHANT-PREVIEW', { width: 140, height: 140 });
+  };
+  reader.readAsDataURL(file);
+}
+
+function adminClearCustomQrImage() {
+  localStorage.removeItem('KB_CUSTOM_QR_IMAGE');
+  const fileInput = document.getElementById('adminStoreQrFileInput');
+  if (fileInput) fileInput.value = '';
+  showToast('Reverted to Dynamic Auto-Generated NPCI QR!', '🔄');
+  renderOriginalUpiQrCode('adminLiveQrPreview', 1000, 'KB-MERCHANT-PREVIEW', { width: 140, height: 140 });
+}
+
+function adminTestScanQr() {
+  const storeUpi = localStorage.getItem('KB_STORE_UPI_ID') || 'karachibakery@okhdfcbank';
+  const hasCustom = !!localStorage.getItem('KB_CUSTOM_QR_IMAGE');
+  const info = hasCustom 
+    ? 'Custom uploaded standee QR image is active.'
+    : 'Dynamic NPCI QR active for: ' + storeUpi + '. Any UPI app (GPay/PhonePe/Paytm) scanning this will detect Karachi Bakery and the exact order total.';
+  showToast(info, '📱');
+}
+
 function openRazorpayCheckoutModal(data) {
   const modal = document.getElementById('razorpayCheckoutModal');
   if (!modal) return;
@@ -5149,6 +5274,16 @@ function openRazorpayCheckoutModal(data) {
   if (qrAmtEl) qrAmtEl.textContent = `₹${amt}`;
   if (subEl) subEl.textContent = `Order ${orderRef} • Hyderabad`;
   if (cardHolderEl && data.customerName) cardHolderEl.textContent = data.customerName.toUpperCase();
+
+  // Render Real Scannable NPCI UPI QR Code
+  renderOriginalUpiQrCode('rzpModalQrCode', amt, orderRef, { width: 130, height: 130 });
+  const storeUpi = localStorage.getItem('KB_STORE_UPI_ID') || 'karachibakery@okhdfcbank';
+  const upiBadgeEl = document.getElementById('rzpStoreUpiDisplay');
+  if (upiBadgeEl) upiBadgeEl.textContent = storeUpi;
+  const brandBadge = document.getElementById('rzpQrBrandBadge');
+  if (brandBadge) {
+    brandBadge.style.display = localStorage.getItem('KB_CUSTOM_QR_IMAGE') ? 'none' : 'flex';
+  }
 
   switchRazorpayModalMethod('upi');
 
@@ -8288,6 +8423,9 @@ function renderAdminRazorpayTab() {
     modePill.textContent = isLive ? '🔴 Live Mode Active' : '🟢 Test Mode Active';
     modePill.style.background = isLive ? '#C62828' : '#2E7D32';
   }
+
+  // Render live preview QR code in Admin portal
+  renderOriginalUpiQrCode('adminLiveQrPreview', 1000, 'KB-MERCHANT-PREVIEW', { width: 140, height: 140 });
 
   renderAdminRazorpayTransactions();
 }

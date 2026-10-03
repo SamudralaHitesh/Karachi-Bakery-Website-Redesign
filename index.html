@@ -3307,11 +3307,11 @@
               <div class="pay-panel active" id="payPanelUPI">
                 <div class="upi-method-grid">
                   <div class="upi-qr-box">
-                    <div class="qr-mockup">
-                      <div class="qr-code-pattern"></div>
-                      <span class="qr-scan-label">Scan with Any UPI App</span>
+                    <div class="qr-mockup" style="width:142px; min-height:142px; padding:6px; background:#fff; border:1.5px solid #cbd5e1; border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+                      <div id="checkoutPageUpiQr" style="display:flex; align-items:center; justify-content:center; width:125px; height:125px; overflow:hidden;"></div>
+                      <span class="qr-scan-label" id="checkoutPageUpiLabel" style="font-size:0.68rem; font-weight:700; color:#720E1E; margin-top:0.25rem;">Scan with Any UPI App</span>
                     </div>
-                    <div class="upi-logos-row">
+                    <div class="upi-logos-row" style="margin-top:0.35rem;">
                       <span class="upi-logo-chip">GPay</span>
                       <span class="upi-logo-chip">PhonePe</span>
                       <span class="upi-logo-chip">Paytm</span>
@@ -3606,22 +3606,32 @@
           <div class="rzp-pane-content active" id="rzpPaneUPI">
             <div class="rzp-qr-wrapper">
               <div class="rzp-qr-card">
-                <div class="rzp-qr-visual">
-                  <div class="rzp-qr-inner">
-                    <div class="qr-code-pattern" style="width:100px; height:100px;"></div>
-                  </div>
-                  <div class="rzp-qr-brand-logo">KB</div>
+                <div class="rzp-qr-visual" id="rzpQrVisualBox" style="width:142px; height:142px; min-width:142px; min-height:142px; padding:6px; background:#ffffff; border:2px solid #0284c7; border-radius:12px; display:flex; align-items:center; justify-content:center; position:relative; box-shadow:0 4px 12px rgba(2,132,199,0.12);">
+                  <div id="rzpModalQrCode" style="display:flex; align-items:center; justify-content:center; width:130px; height:130px; overflow:hidden;"></div>
+                  <div class="rzp-qr-brand-logo" id="rzpQrBrandBadge" style="position:absolute; width:26px; height:26px; border-radius:50%; background:#720E1E; color:#D4AF37; font-size:0.65rem; font-weight:900; display:flex; align-items:center; justify-content:center; border:2px solid #ffffff; box-shadow:0 2px 6px rgba(0,0,0,0.35); pointer-events:none;" title="Karachi Bakery Official Merchant">KB</div>
                 </div>
                 <div class="rzp-qr-info">
                   <div class="rzp-qr-timer">
                     <span class="rzp-clock-icon">⏱️</span> QR expires in <span id="rzpQrCountdown" class="rzp-timer-strong">09:59</span>
                   </div>
-                  <p class="rzp-qr-prompt">Scan with any UPI app to pay <strong id="rzpQrAmountLabel">₹462</strong></p>
+                  <p class="rzp-qr-prompt" style="margin:0 0 0.4rem 0;">Scan with any UPI app to pay <strong id="rzpQrAmountLabel" style="color:#0284c7; font-size:1.05rem;">₹462</strong></p>
+                  
+                  <!-- Store UPI ID with 1-click copy -->
+                  <div class="rzp-store-upi-badge" onclick="copyStoreUpiId()" title="Click to copy Store UPI ID" style="margin:0 0 0.5rem 0; font-size:0.75rem; background:#f0f9ff; color:#0369a1; border:1px solid #bae6fd; padding:0.25rem 0.6rem; border-radius:6px; display:inline-flex; align-items:center; gap:0.4rem; cursor:pointer;">
+                    <span>Pay to: <strong id="rzpStoreUpiDisplay" style="font-family:monospace;">karachibakery@okhdfcbank</strong></span>
+                    <span style="font-size:0.7rem; font-weight:700; color:#0284c7; background:#e0f2fe; padding:1px 5px; border-radius:3px;">📋 Copy</span>
+                  </div>
+
                   <div class="rzp-upi-apps-icons">
                     <span class="rzp-app-chip gpay">GPay</span>
                     <span class="rzp-app-chip phonepe">PhonePe</span>
                     <span class="rzp-app-chip paytm">Paytm</span>
                     <span class="rzp-app-chip bhim">BHIM</span>
+                  </div>
+
+                  <!-- Direct mobile deep link (If user is browsing on phone) -->
+                  <div style="margin-top:0.45rem;">
+                    <a id="rzpDirectUpiLink" href="#" class="rzp-btn-mobile-upi" style="display:inline-block; font-size:0.72rem; color:#15803d; background:#f0fdf4; border:1px solid #bbf7d0; padding:0.22rem 0.55rem; border-radius:5px; text-decoration:none; font-weight:600;">📱 Tap to Pay on Phone via UPI App</a>
                   </div>
                 </div>
               </div>
@@ -4183,6 +4193,46 @@
                       <a href="https://dashboard.razorpay.com/app/keys" target="_blank" rel="noopener" class="action-btn-primary" style="display:inline-flex; align-items:center; justify-content:center; text-decoration:none; padding:0.65rem 1.25rem; height:42px; background:#1B5E20; color:#fff; font-size:0.82rem; font-weight:700;">
                         🔗 Razorpay Dashboard
                       </a>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Store UPI QR Code Configuration & Live Preview -->
+                <div class="admin-rzp-qr-preview-card" style="margin-top:1.25rem; padding:1.25rem; background:#1e293b; border:1px solid #334155; border-radius:14px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+                    <div style="display:flex; align-items:center; gap:0.5rem;">
+                      <span style="font-size:1.3rem;">📲</span>
+                      <strong style="color:#FFE082; font-size:0.95rem;">Store UPI QR Code Configuration & Live Preview</strong>
+                    </div>
+                    <span class="tag" style="background:#0284c7; color:#fff; font-size:0.75rem;">100% Scannable (NPCI Compliant)</span>
+                  </div>
+
+                  <div style="display:flex; gap:1.5rem; align-items:flex-start; flex-wrap:wrap;">
+                    <!-- QR Visual Preview -->
+                    <div style="background:#ffffff; padding:10px; border-radius:12px; border:2px solid #0284c7; display:flex; flex-direction:column; align-items:center; box-shadow:0 4px 14px rgba(0,0,0,0.25);">
+                      <div id="adminLiveQrPreview" style="width:140px; height:140px; display:flex; align-items:center; justify-content:center; overflow:hidden;"></div>
+                      <span style="font-size:0.7rem; font-weight:700; color:#720E1E; margin-top:6px;">LIVE SCANNABLE QR</span>
+                    </div>
+
+                    <!-- QR Settings & Upload Option -->
+                    <div style="flex:1; min-width:260px;">
+                      <p style="font-size:0.83rem; color:#94a3b8; line-height:1.5; margin-bottom:0.75rem;">
+                        This dynamic QR code is automatically generated for every checkout order with the store's receiving UPI ID and the exact order total. You can also upload your own physical store QR standee image if preferred.
+                      </p>
+
+                      <div style="margin-bottom:0.85rem;">
+                        <label style="font-size:0.8rem; color:#cbd5e1; display:block; margin-bottom:0.35rem; font-weight:600;">Custom Store QR Image (Optional - PhonePe / Paytm / GPay Standee):</label>
+                        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                          <input type="file" id="adminStoreQrFileInput" accept="image/*" style="font-size:0.78rem; color:#94a3b8; background:#0f172a; border:1px solid #334155; padding:0.4rem; border-radius:6px; flex:1;" onchange="handleAdminQrImageUpload(event)">
+                          <button type="button" class="btn-order-filter" onclick="adminClearCustomQrImage()" style="font-size:0.78rem; padding:0.4rem 0.75rem; background:#334155; color:#cbd5e1; border:none; border-radius:6px;">Reset to Dynamic QR</button>
+                        </div>
+                        <small style="color:#64748b; font-size:0.72rem; display:block; margin-top:0.3rem;">If no image is uploaded, the website automatically creates a high-res scannable UPI QR code for every customer order.</small>
+                      </div>
+
+                      <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+                        <button type="button" class="btn-save-price" style="background:#0D47A1; color:#fff; border:none; padding:0.45rem 1rem; font-size:0.82rem; border-radius:6px;" onclick="adminSaveRazorpayKeys()">💾 Save UPI ID & Update QR</button>
+                        <button type="button" class="btn-order-filter" style="font-size:0.82rem; padding:0.45rem 0.85rem;" onclick="adminTestScanQr()">📱 Test Scan Info</button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -4788,6 +4838,9 @@
     <span id="toastIcon">✨</span>
     <span id="toastMessage">Action completed successfully</span>
   </div>
+
+  <!-- QRCode Generator Engine for NPCI / UPI Real QR Codes -->
+  <script src="js/qrcode.min.js"></script>
 
   <!-- Main JavaScript Logic -->
   <script src="js/app.js?v=15.0.0"></script>
