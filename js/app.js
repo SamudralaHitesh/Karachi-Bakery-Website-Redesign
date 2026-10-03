@@ -5478,12 +5478,17 @@ function processOrderCompletion(paymentInfo) {
     amount,
     paymentId: paymentId,
     transit: CheckoutState.transitModeTitle || 'Hyderabad Local Express Dispatch',
-    deliveryDate: CheckoutState.deliveryDateStr || 'Tomorrow, by 1:00 PM'
+    deliveryDate: CheckoutState.deliveryDateStr || 'Tomorrow, by 1:00 PM',
+    items: orderItems,
+    method: paymentInfo.method || 'Razorpay Verified'
   };
 
   // Open Animated Tracking Modal & Play Kitchen Chime
   openTrackingModal(CheckoutState.lastPlacedOrder);
   playKitchenOrderChime();
+
+  // Send WhatsApp order confirmation message to customer's mobile number
+  triggerCustomerWhatsAppConfirmation(CheckoutState.lastPlacedOrder);
 
   // Empty shopping cart & update badges
   AppState.cartItems = [];
@@ -5507,6 +5512,17 @@ function openTrackingModal(order) {
   if (modeEl) modeEl.textContent = order.transit;
   if (nameEl) nameEl.textContent = order.name;
   if (addrEl) addrEl.textContent = `${order.address} (${CheckoutState.pincode})`;
+
+  const customerPhone = (order.phone || document.getElementById('chkPhone')?.value || '').replace(/[^0-9]/g, '').slice(-10);
+  const waBtn = document.getElementById('btnWhatsappOptin');
+  const waHeading = document.getElementById('trackWhatsappHeading');
+  const waSubtext = document.getElementById('trackWhatsappSubtext');
+
+  if (customerPhone) {
+    if (waHeading) waHeading.textContent = `WhatsApp Order Receipt Sent to +91 ${customerPhone}!`;
+    if (waSubtext) waSubtext.textContent = `Order confirmation with payment reference and live dispatch tracking sent to your WhatsApp (+91 ${customerPhone}). Click below if chat didn't open.`;
+    if (waBtn) waBtn.innerHTML = `<span>💬 Open WhatsApp (+91 ${customerPhone})</span>`;
+  }
 
   const rzpBadge = document.getElementById('trackingRzpBadge');
   const payIdText = document.getElementById('trackingPaymentIdText');
@@ -9412,11 +9428,81 @@ function triggerNativeShare() {
   }
 }
 
-function shareOrderOnWhatsApp() {
-  const orderId = document.getElementById('trackingOrderIdDisplay')?.textContent?.replace('Order Ref: ', '').trim() || 'KB-ORD-2026-5491';
-  const name = document.getElementById('trackRecipientName')?.textContent?.trim() || 'Valued Customer';
+function formatKarachiOrderWhatsAppMessage(order) {
+  const o = order || CheckoutState.lastPlacedOrder || {};
+  const name = o.name || document.getElementById('trackRecipientName')?.textContent?.trim() || 'Valued Customer';
+  const orderId = o.orderId || document.getElementById('trackingOrderIdDisplay')?.textContent?.replace('Order Ref: ', '').trim() || 'KB-ORD-2026-5491';
+  const amount = o.amount ? Number(o.amount).toLocaleString('en-IN') : (CheckoutState.finalCalculatedTotal ? Number(CheckoutState.finalCalculatedTotal).toLocaleString('en-IN') : '1,259');
+  const payRef = o.paymentId || document.getElementById('trackingPaymentIdText')?.textContent?.trim() || 'pay_rzp_verified';
+  const method = o.method || 'Razorpay Verified';
+  const address = o.address || document.getElementById('trackRecipientAddress')?.textContent?.trim() || 'Hyderabad';
+  const deliveryDate = o.deliveryDate || document.getElementById('trackEstDate')?.textContent?.trim() || 'Tomorrow, by 1:00 PM';
   const siteUrl = window.location.origin || 'https://karachi-bakery-website-redesign.vercel.app';
-  const msg = `Hi! My Karachi Bakery celebration order (${orderId}) for ${name} is confirmed! Track live order delivery status here: ${siteUrl}`;
-  const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
+  
+  const itemsText = (o.items && Array.isArray(o.items) && o.items.length > 0)
+    ? o.items.join(', ')
+    : 'Original Hyderabad Fruit Biscuit (400g Collectible Tin)';
+
+  return `🎉 *Karachi Bakery (Est. 1953) — Order Confirmation* 🎉
+
+Dear *${name}*,
+Thank you for your order! Your freshly baked delicacies are confirmed and being handcrafted in our central kitchen.
+
+📦 *Order Reference:* ${orderId}
+💳 *Payment Reference:* ${payRef} (${method})
+💰 *Amount Paid:* ₹${amount}
+📍 *Delivery Destination:* ${address}
+🚚 *Estimated Delivery:* ${deliveryDate}
+🍰 *Items Ordered:* ${itemsText}
+
+🔍 *Track Live Baking & Dispatch Status:*
+${siteUrl}
+
+Need support? Contact Karachi Bakery Care: care@karachibakery.com | 040-6666-1953`;
+}
+
+function generateOrderWhatsAppUrl(orderData) {
+  const o = orderData || CheckoutState.lastPlacedOrder || {};
+  const rawPhone = (o.phone || document.getElementById('chkPhone')?.value || '').trim();
+  const cleanPhone = rawPhone.replace(/[^0-9]/g, '').slice(-10);
+  const msg = formatKarachiOrderWhatsAppMessage(o);
+
+  if (cleanPhone && cleanPhone.length === 10) {
+    return `https://api.whatsapp.com/send?phone=91${cleanPhone}&text=${encodeURIComponent(msg)}`;
+  }
+  return `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
+}
+
+function triggerCustomerWhatsAppConfirmation(order) {
+  const o = order || CheckoutState.lastPlacedOrder || {};
+  const rawPhone = (o.phone || document.getElementById('chkPhone')?.value || '').trim();
+  const cleanPhone = rawPhone.replace(/[^0-9]/g, '').slice(-10);
+
+  if (!cleanPhone) {
+    console.warn('No mobile number entered for WhatsApp order confirmation');
+    return;
+  }
+
+  const waUrl = generateOrderWhatsAppUrl(o);
+
+  // Auto-launch WhatsApp directly to customer's mobile number after 600ms
+  setTimeout(() => {
+    try {
+      window.open(waUrl, '_blank');
+      showToast(`Launching WhatsApp order receipt for +91 ${cleanPhone}...`, '📲');
+    } catch (e) {
+      console.warn('Browser prevented automated popup, WhatsApp button is active on screen:', e);
+      showToast(`WhatsApp receipt ready! Click "Open in WhatsApp" to send.`, '📲');
+    }
+  }, 600);
+}
+
+function sendOrderReceiptToCustomerWhatsApp() {
+  const order = CheckoutState.lastPlacedOrder || {};
+  const waUrl = generateOrderWhatsAppUrl(order);
   window.open(waUrl, '_blank');
+}
+
+function shareOrderOnWhatsApp() {
+  sendOrderReceiptToCustomerWhatsApp();
 }
