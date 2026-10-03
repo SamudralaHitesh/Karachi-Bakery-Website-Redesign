@@ -35,7 +35,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
   
   <!-- Main Design System CSS -->
-  <link rel="stylesheet" href="styles/main.css?v=15.0.0">
+  <link rel="stylesheet" href="styles/main.css?v=16.0.0">
 
   <!-- Official Razorpay Checkout SDK (v1) -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -47,9 +47,10 @@
        ========================================================================== -->
   <aside class="top-announcement" id="topAnnouncementAside" aria-label="Announcement bar">
     <div class="container">
-      <div class="announcement-text">
+      <div class="announcement-text" style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
         <span class="announcement-badge" id="topAnnouncementBadge">Pan-India</span>
         <span id="topAnnouncementMessage">🚚 Shipping across 19,000+ pincodes • Same-day local delivery in Hyderabad</span>
+        <button type="button" onclick="openOrderLookupModal()" style="background:rgba(255,255,255,0.18); border:1px solid rgba(255,255,255,0.4); color:#FFE082; font-size:0.75rem; font-weight:700; padding:0.18rem 0.65rem; border-radius:99px; cursor:pointer;" title="Track your order status live">📦 Track Order Live</button>
       </div>
               <div class="lang-switcher-wrap" aria-label="Select Language">
           <span class="lang-globe">🌐</span>
@@ -146,11 +147,12 @@
           <li class="nav-link-secondary"><a href="#b2bHighlight" class="nav-link" onclick="switchJourney('b2b')">Corporate B2B</a></li>
           <li class="nav-link-secondary"><a href="#customCakeSection" class="nav-link" onclick="switchJourney('custom')">Cake Studio</a></li>
           <li class="nav-link-secondary"><a href="#storesSection" class="nav-link" onclick="switchJourney('stores')">Store Locator</a></li>
+          <li class="nav-link-secondary"><a href="javascript:void(0)" class="nav-link" onclick="openOrderLookupModal()" style="color:#720E1E; font-weight:700;">📦 Track Order</a></li>
         </ul>
 
         <!-- Action Buttons -->
         <div class="header-actions">
-          <button class="action-btn action-btn-ghost" id="btnTrackOrder" title="Track Live Order Status" onclick="openOrderLookupModal()">
+          <button class="action-btn action-btn-ghost" id="btnTrackOrder" title="Track Live Order Status" onclick="openOrderLookupModal()" style="background:#FFF9E6; border:1.5px solid #D4AF37; color:#720E1E; font-weight:700;">
             📦 <span class="action-text">Track Order</span>
           </button>
 
@@ -4903,7 +4905,7 @@
   <script src="js/qrcode.min.js"></script>
 
   <!-- Main JavaScript Logic -->
-  <script src="js/app.js?v=15.0.0"></script>
+  <script src="js/app.js?v=16.0.0"></script>
 
   <!-- PWA Mobile App 1-Tap Install Prompt (Option 6) -->
   <div class="pwa-install-banner" id="pwaInstallBanner" style="display:none;">
