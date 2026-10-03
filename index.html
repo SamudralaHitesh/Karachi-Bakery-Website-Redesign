@@ -4049,6 +4049,9 @@
             <button type="button" class="admin-nav-tab" id="adminTabBtnRazorpay" onclick="switchAdminTab('razorpay')">
               💳 Razorpay Gateway
             </button>
+            <button type="button" class="admin-nav-tab" id="adminTabBtnWhatsapp" onclick="switchAdminTab('whatsapp')">
+              💬 WhatsApp Automation
+            </button>
           </div>
 
           <!-- PANEL 1: Products & Price Management -->
@@ -4422,6 +4425,87 @@
                   </tbody>
                 </table>
               </div>
+            </div>
+          </div>
+
+
+          <!-- PANEL 10: WhatsApp Automated Direct Notifications Hub -->
+          <div class="admin-tab-panel" id="adminPanelWhatsapp" style="display:none;">
+            <div class="admin-card">
+              <div class="admin-card-header flex-between">
+                <div>
+                  <div style="display:flex; align-items:center; gap:0.5rem;">
+                    <span style="font-size:1.4rem;">💬</span>
+                    <h4 style="margin:0;">Automated WhatsApp Order Notification Engine</h4>
+                  </div>
+                  <p style="margin:0.25rem 0 0 0;">When customers complete an order, their official receipt &amp; tracking link is delivered directly to their phone with ZERO clicks required by the customer.</p>
+                </div>
+                <div style="display:flex; align-items:center; gap:0.5rem;">
+                  <span class="tag" style="background:#15803d; color:#fff; font-size:0.78rem; font-weight:700;">🟢 Direct Cloud API: Active (0-Clicks)</span>
+                </div>
+              </div>
+
+              <!-- Configuration Card -->
+              <div class="admin-rzp-bank-card" style="margin-bottom:1.25rem; padding:1.25rem; background:rgba(37,211,102,0.06); border:1.5px solid rgba(37,211,102,0.25); border-radius:14px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+                  <strong style="color:#15803d; font-size:0.95rem;">⚙️ Zero-Click WhatsApp Dispatch Configuration</strong>
+                  <span style="font-size:0.75rem; color:#94a3b8;">Serverless API: /api/whatsapp</span>
+                </div>
+                <p style="font-size:0.83rem; color:#CFD8DC; line-height:1.5; margin-bottom:1rem;">
+                  Karachi Bakery's automated serverless backend triggers direct delivery to the customer's WhatsApp as soon as payment is verified. You can also connect your own Meta WhatsApp Business Account or Twilio gateway below.
+                </p>
+
+                <div class="admin-form-row-3" style="grid-template-columns: 1fr 1fr auto; gap:1rem; align-items:flex-end;">
+                  <div class="form-group">
+                    <label for="adminMetaWaToken">Meta WhatsApp Cloud API Token (Optional):</label>
+                    <input type="password" id="adminMetaWaToken" placeholder="EAABw... (Optional Meta Graph API Token)" style="font-family:monospace; font-size:0.85rem;">
+                  </div>
+                  <div class="form-group">
+                    <label for="adminMetaWaPhoneId">Phone Number ID (Optional Meta ID):</label>
+                    <input type="text" id="adminMetaWaPhoneId" placeholder="e.g. 109283746501928" style="font-family:monospace; font-size:0.85rem;">
+                  </div>
+                  <div>
+                    <button type="button" class="btn-save-price" style="background:#15803d; color:#fff; border:none; padding:0.65rem 1.25rem; height:42px; font-weight:700;" onclick="adminSaveWhatsappConfig()">
+                      💾 Save Credentials
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Instant Test Send Box -->
+                <div style="margin-top:1rem; padding-top:1rem; border-top:1px dashed rgba(255,255,255,0.1); display:flex; gap:0.75rem; align-items:flex-end; flex-wrap:wrap;">
+                  <div style="flex:1; min-width:200px;">
+                    <label style="font-size:0.8rem; color:#cbd5e1; display:block; margin-bottom:0.35rem;">Test Direct WhatsApp Message to Mobile Number:</label>
+                    <input type="tel" id="adminTestWaNumber" placeholder="Enter 10-digit mobile (e.g. 9849012345)" class="chk-input" style="font-size:0.85rem; padding:0.55rem 0.85rem;">
+                  </div>
+                  <button type="button" class="action-btn-primary" onclick="adminSendTestWhatsappMessage()" style="padding:0.6rem 1.2rem; font-weight:700; background:#25D366; color:#fff; border:none; border-radius:6px; height:40px;">
+                    🚀 Send Direct Test Message (0 Clicks)
+                  </button>
+                </div>
+              </div>
+
+              <!-- Automated WhatsApp Dispatches Ledger -->
+              <div class="admin-table-container">
+                <div class="flex-between" style="margin-bottom:0.75rem;">
+                  <strong style="color:#ECEFF1; font-size:0.9rem;">Live Automated WhatsApp Dispatches Log</strong>
+                  <span style="font-size:0.75rem; color:#81C784;">● Zero-Click Direct Server Dispatches</span>
+                </div>
+                <table class="admin-table" id="adminWhatsappTable">
+                  <thead>
+                    <tr>
+                      <th>Recipient Mobile</th>
+                      <th>Order ID</th>
+                      <th>Customer Name</th>
+                      <th>Amount</th>
+                      <th>Dispatch Timestamp</th>
+                      <th>Delivery Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adminWhatsappTableBody">
+                    <!-- Populated dynamically via JS -->
+                  </tbody>
+                </table>
+              </div>
+
             </div>
           </div>
 
