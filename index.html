@@ -156,6 +156,10 @@
             📦 <span class="action-text">Track Order</span>
           </button>
 
+          <button class="action-btn action-btn-ghost" id="btnShareSite" title="Share Karachi Bakery on WhatsApp & Social Media" onclick="openShareModal()" style="background:#F0FDF4; border:1.5px solid #86EFAC; color:#15803D; font-weight:700;">
+            📤 <span class="action-text">Share</span>
+          </button>
+
           <button class="action-btn action-btn-ghost" id="btnCompareBadge" title="Compare Delicacies Side-by-Side (Day 5)" onclick="openCompareModal()">
             ⚖️ <span class="action-text">Compare</span>
             <span class="badge-count" id="compareCount">0</span>
@@ -3489,6 +3493,57 @@
   </div>
 
   <!-- ==========================================================================
+       Social Sharing & WhatsApp Recommendation Modal
+       ========================================================================== -->
+  <div class="tracking-modal-backdrop" id="siteShareModal" style="display:none;" onclick="handleShareBackdropClick(event)">
+    <div class="tracking-dialog" style="max-width:520px; padding:0; overflow:hidden; border-radius:16px; box-shadow:0 20px 40px rgba(0,0,0,0.35);" role="dialog" aria-modal="true" aria-labelledby="shareModalHeading">
+      <!-- Header -->
+      <div style="background:linear-gradient(135deg, #720E1E 0%, #3F040C 100%); color:#ffffff; padding:1.35rem; text-align:center; position:relative;">
+        <button type="button" onclick="closeShareModal()" style="position:absolute; top:12px; right:15px; background:none; border:none; color:#FFE082; font-size:1.4rem; cursor:pointer;" aria-label="Close">✕</button>
+        <div style="font-size:2rem; margin-bottom:0.35rem;">🎁</div>
+        <h3 id="shareModalHeading" style="font-family:'Playfair Display', serif; font-size:1.35rem; color:#FFE082; margin:0 0 0.35rem 0;">Share Karachi Bakery</h3>
+        <p style="font-size:0.82rem; color:#FFCDD2; margin:0;">Share the iconic taste of Hyderabad with friends, family, and colleagues</p>
+      </div>
+
+      <!-- Body -->
+      <div style="padding:1.4rem; background:#FFFDF9;">
+        <!-- Rich Preview Card Preview -->
+        <div style="border:1.5px solid #cbd5e1; border-radius:10px; overflow:hidden; background:#ffffff; box-shadow:0 3px 10px rgba(0,0,0,0.06); margin-bottom:1.25rem;">
+          <img src="images/kb-og-banner.svg" alt="Karachi Bakery Banner Preview" style="width:100%; height:auto; display:block; aspect-ratio:1200/630; object-fit:cover;">
+          <div style="padding:0.75rem 1rem;">
+            <strong style="color:#720E1E; font-size:0.95rem; display:block;">Karachi Bakery Hyderabad (Est. 1953)</strong>
+            <p style="font-size:0.78rem; color:#64748b; margin:0.25rem 0 0 0; line-height:1.4;">Authentic Fruit Biscuits, Royal Osmania, Mithai &amp; Custom Cakes with Pan-India Express Delivery.</p>
+          </div>
+        </div>
+
+        <!-- 1-Click Share Channels Grid -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.65rem; margin-bottom:1.25rem;">
+          <a id="shareWhatsappLink" href="https://api.whatsapp.com/send?text=Order%20authentic%20Karachi%20Bakery%20Fruit%20Biscuits%20%26%20Artisan%20Cakes%20with%20Pan-India%20Express%20Delivery!%20Check%20it%20out:%20https%3A%2F%2Fkarachi-bakery-website-redesign.vercel.app" target="_blank" rel="noopener" style="text-decoration:none; display:flex; align-items:center; justify-content:center; gap:0.5rem; background:#25D366; color:#ffffff; padding:0.75rem; border-radius:8px; font-weight:700; font-size:0.88rem; box-shadow:0 2px 6px rgba(37,211,102,0.3);">
+            <span style="font-size:1.15rem;">💬</span> WhatsApp
+          </a>
+
+          <button type="button" onclick="copySiteShareLink()" style="display:flex; align-items:center; justify-content:center; gap:0.5rem; background:#0284c7; color:#ffffff; padding:0.75rem; border:none; border-radius:8px; font-weight:700; font-size:0.88rem; cursor:pointer; box-shadow:0 2px 6px rgba(2,132,199,0.3);">
+            <span style="font-size:1.15rem;">📋</span> Copy Link
+          </button>
+
+          <a href="https://twitter.com/intent/tweet?text=The%20iconic%20taste%20of%20Hyderabad%20since%201953!%20Order%20Karachi%20Bakery%20online:&url=https%3A%2F%2Fkarachi-bakery-website-redesign.vercel.app" target="_blank" rel="noopener" style="text-decoration:none; display:flex; align-items:center; justify-content:center; gap:0.5rem; background:#0f172a; color:#ffffff; padding:0.75rem; border-radius:8px; font-weight:700; font-size:0.88rem;">
+            <span style="font-size:1.15rem;">𝕏</span> Twitter / X
+          </a>
+
+          <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fkarachi-bakery-website-redesign.vercel.app" target="_blank" rel="noopener" style="text-decoration:none; display:flex; align-items:center; justify-content:center; gap:0.5rem; background:#0A66C2; color:#ffffff; padding:0.75rem; border-radius:8px; font-weight:700; font-size:0.88rem;">
+            <span style="font-size:1.15rem;">💼</span> LinkedIn
+          </a>
+        </div>
+
+        <!-- Direct Native Share on Mobile -->
+        <button type="button" id="btnNativeWebShare" onclick="triggerNativeShare()" style="width:100%; display:none; align-items:center; justify-content:center; gap:0.5rem; background:#FFF8E7; color:#720E1E; border:1.5px solid #D4AF37; padding:0.75rem; border-radius:8px; font-weight:700; font-size:0.88rem; cursor:pointer;">
+          📱 Open Mobile Share Sheet (Instagram / Telegram / Messages)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
        Day 9 Deliverable: Animated Order Confirmation & Live Tracking Modal (Issue #12)
        ========================================================================== -->
   <div class="tracking-modal-backdrop" id="orderTrackingModal" style="display:none;" onclick="handleTrackingBackdropClick(event)">
@@ -3566,8 +3621,9 @@
         </div>
 
         <!-- Final Actions -->
-        <div class="tracking-actions-row">
+        <div class="tracking-actions-row" style="display:flex; gap:0.6rem; align-items:center; flex-wrap:wrap;">
           <button type="button" class="btn-download-receipt" onclick="printOrderInvoice()">🖨️ Print Tax Invoice</button>
+          <button type="button" class="btn-order-filter" onclick="shareOrderOnWhatsApp()" style="background:#25D366; color:#ffffff; border:none; padding:0.65rem 1.15rem; font-weight:700; border-radius:8px; display:inline-flex; align-items:center; gap:0.4rem; font-size:0.85rem; cursor:pointer;" title="Share this order confirmation on WhatsApp">📲 Share on WhatsApp</button>
           <button type="button" class="action-btn-primary" onclick="closeTrackingModal()" style="padding:0.75rem 1.5rem;">Continue Exploring Karachi Bakery</button>
         </div>
       </div>

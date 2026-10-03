@@ -9359,3 +9359,64 @@ function toggleKitchenChime() {
     showToast('Kitchen sound alerts muted.', '🔕');
   }
 }
+
+// =============================================================================
+// Social Sharing & WhatsApp Recommendation Engine
+// =============================================================================
+
+function openShareModal() {
+  const modal = document.getElementById('siteShareModal');
+  if (!modal) return;
+
+  const nativeBtn = document.getElementById('btnNativeWebShare');
+  if (nativeBtn && typeof navigator !== 'undefined' && navigator.share) {
+    nativeBtn.style.display = 'flex';
+  }
+
+  modal.style.display = 'flex';
+}
+
+function closeShareModal() {
+  const modal = document.getElementById('siteShareModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function handleShareBackdropClick(event) {
+  if (event.target && event.target.id === 'siteShareModal') {
+    closeShareModal();
+  }
+}
+
+function copySiteShareLink() {
+  const shareUrl = window.location.origin || 'https://karachi-bakery-website-redesign.vercel.app';
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      showToast('Website link copied! Ready to paste and share.', '📋');
+    }).catch(() => {
+      showToast(`Link: ${shareUrl}`, '📋');
+    });
+  } else {
+    showToast(`Link: ${shareUrl}`, '📋');
+  }
+}
+
+function triggerNativeShare() {
+  const shareData = {
+    title: 'Karachi Bakery Hyderabad (Est. 1953)',
+    text: 'Order authentic Hyderabad Fruit Biscuits, Royal Osmania, Mithai & Custom Cakes with pan-India delivery!',
+    url: window.location.origin || 'https://karachi-bakery-website-redesign.vercel.app'
+  };
+
+  if (navigator.share) {
+    navigator.share(shareData).catch(() => {});
+  }
+}
+
+function shareOrderOnWhatsApp() {
+  const orderId = document.getElementById('trackingOrderIdDisplay')?.textContent?.replace('Order Ref: ', '').trim() || 'KB-ORD-2026-5491';
+  const name = document.getElementById('trackRecipientName')?.textContent?.trim() || 'Valued Customer';
+  const siteUrl = window.location.origin || 'https://karachi-bakery-website-redesign.vercel.app';
+  const msg = `Hi! My Karachi Bakery celebration order (${orderId}) for ${name} is confirmed! Track live order delivery status here: ${siteUrl}`;
+  const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
+  window.open(waUrl, '_blank');
+}
