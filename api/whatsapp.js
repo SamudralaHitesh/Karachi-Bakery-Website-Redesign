@@ -81,7 +81,16 @@ Need support? Contact Karachi Bakery Care: care@karachibakery.com | 040-6666-195
       const metaToken = req.headers['x-whatsapp-token'] || process.env.WHATSAPP_CLOUD_TOKEN;
       const metaPhoneId = req.headers['x-whatsapp-phone-id'] || process.env.WHATSAPP_PHONE_NUMBER_ID;
 
-      // 1. Meta WhatsApp Business Cloud API
+      const twilioSid = req.headers['x-twilio-sid'] || process.env.TWILIO_ACCOUNT_SID;
+      const twilioToken = req.headers['x-twilio-token'] || process.env.TWILIO_AUTH_TOKEN;
+      const twilioFrom = req.headers['x-twilio-from'] || process.env.TWILIO_WHATSAPP_FROM || 'whatsapp:+14155238886';
+
+      const ultramsgInstance = req.headers['x-ultramsg-instance'] || process.env.ULTRAMSG_INSTANCE_ID;
+      const ultramsgToken = req.headers['x-ultramsg-token'] || process.env.ULTRAMSG_TOKEN;
+
+      const directWhatsAppUrl = `https://api.whatsapp.com/send?phone=91${cleanPhone}&text=${encodeURIComponent(messageBody)}`;
+
+      // 1. Meta WhatsApp Business Cloud API (Official Meta Graph API)
       if (metaToken && metaPhoneId) {
         try {
           const metaResp = await fetch(`https://graph.facebook.com/v18.0/${metaPhoneId}/messages`, {
@@ -103,33 +112,103 @@ Need support? Contact Karachi Bakery Care: care@karachibakery.com | 040-6666-195
             return res.status(200).json({
               success: true,
               provider: 'meta_cloud_api',
+              isLiveDelivered: true,
               zeroClicksDelivered: true,
               messageId: metaData.messages?.[0]?.id || `wamid.meta_${Date.now()}`,
               recipient: `+91 ${cleanPhone}`,
-              status: 'sent_directly_to_phone'
+              status: 'sent_directly_to_phone',
+              directWhatsAppUrl: directWhatsAppUrl
             });
+          } else {
+            console.warn('Meta API returned non-OK status:', metaData);
           }
         } catch (metaErr) {
-          console.warn('Meta API error, falling back to direct cloud dispatch:', metaErr);
+          console.warn('Meta API fetch error:', metaErr);
         }
       }
 
-      // 2. Automated Direct Cloud Engine (Simulated 0-click delivery)
+      // 2. Twilio WhatsApp API
+      if (twilioSid && twilioToken) {
+        try {
+          const twilioAuth = Buffer.from(`${twilioSid}:${twilioToken}`).toString('base64');
+          const twilioParams = new URLSearchParams();
+          twilioParams.append('From', twilioFrom.startsWith('whatsapp:') ? twilioFrom : `whatsapp:${twilioFrom}`);
+          twilioParams.append('To', `whatsapp:+91${cleanPhone}`);
+          twilioParams.append('Body', messageBody);
+
+          const twilioResp = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Messages.json`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Basic ${twilioAuth}`,
+              'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: twilioParams.toString()
+          });
+          const twilioData = await twilioResp.json();
+          if (twilioResp.ok) {
+            return res.status(200).json({
+              success: true,
+              provider: 'twilio_whatsapp',
+              isLiveDelivered: true,
+              zeroClicksDelivered: true,
+              messageId: twilioData.sid,
+              recipient: `+91 ${cleanPhone}`,
+              status: 'sent_directly_to_phone',
+              directWhatsAppUrl: directWhatsAppUrl
+            });
+          }
+        } catch (twilioErr) {
+          console.warn('Twilio WhatsApp error:', twilioErr);
+        }
+      }
+
+      // 3. UltraMsg Gateway API
+      if (ultramsgInstance && ultramsgToken) {
+        try {
+          const ultraResp = await fetch(`https://api.ultramsg.com/${ultramsgInstance}/messages/chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+              token: ultramsgToken,
+              to: `+91${cleanPhone}`,
+              body: messageBody
+            }).toString()
+          });
+          const ultraData = await ultraResp.json();
+          if (ultraData.sent === 'true' || ultraData.sent === true) {
+            return res.status(200).json({
+              success: true,
+              provider: 'ultramsg',
+              isLiveDelivered: true,
+              zeroClicksDelivered: true,
+              messageId: ultraData.id,
+              recipient: `+91 ${cleanPhone}`,
+              status: 'sent_directly_to_phone',
+              directWhatsAppUrl: directWhatsAppUrl
+            });
+          }
+        } catch (ultraErr) {
+          console.warn('UltraMsg error:', ultraErr);
+        }
+      }
+
+      // 4. Staging Gateway (When no third-party WhatsApp gateway keys are configured yet)
       const simulatedMessageId = `wamid.KB_AUTO_${Date.now()}_${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
 
       return res.status(200).json({
         success: true,
-        provider: 'Karachi Bakery Automated Direct Gateway',
-        zeroClicksDelivered: true,
-        deliveredDirectlyToPhone: true,
+        provider: 'Karachi Bakery Staging Gateway (Gateway Keys Required for Automated Background Delivery)',
+        isLiveDelivered: false,
+        zeroClicksDelivered: false,
+        requiresGatewayCredentials: true,
         recipient: `+91 ${cleanPhone}`,
         customerName: customerName,
         orderId: orderId,
         messageId: simulatedMessageId,
         timestamp: new Date().toISOString(),
-        status: 'delivered',
-        messagePreview: `Karachi Bakery order ${orderId} receipt sent directly to +91 ${cleanPhone}`,
-        clientFallbackUrl: `https://api.whatsapp.com/send?phone=91${cleanPhone}&text=${encodeURIComponent(messageBody)}`
+        status: 'staged_ready_to_send',
+        messagePreview: `Karachi Bakery order ${orderId} receipt generated for +91 ${cleanPhone}`,
+        directWhatsAppUrl: directWhatsAppUrl
       });
 
     } catch (err) {

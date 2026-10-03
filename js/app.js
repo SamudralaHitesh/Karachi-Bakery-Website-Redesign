@@ -9567,35 +9567,43 @@ function triggerCustomerWhatsAppConfirmation(order) {
   })
   .then(res => res.json())
   .then(data => {
+    const isLive = (data.isLiveDelivered === true);
     recordWhatsAppDispatch({
       phone: cleanPhone,
       orderId: orderId,
       customerName: customerName,
       amount: amount,
       timestamp: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) + ', Today',
-      status: '✅ Delivered (0 Clicks)',
-      provider: data.provider || 'Direct Cloud Gateway'
+      status: isLive ? '✅ Delivered (Live Gateway)' : '📲 Ready (Staging)',
+      provider: data.provider || 'WhatsApp Gateway'
     });
 
     const waHeading = document.getElementById('trackWhatsappHeading');
     const waSubtext = document.getElementById('trackWhatsappSubtext');
-    if (waHeading) waHeading.textContent = `✅ WhatsApp Order Receipt Sent Directly to +91 ${cleanPhone}!`;
-    if (waSubtext) waSubtext.textContent = `Zero-click confirmation: Official receipt and live tracking link have been dispatched directly to your WhatsApp.`;
+    const waBtn = document.getElementById('btnWhatsappOptin');
 
-    showToast(`WhatsApp receipt sent directly to +91 ${cleanPhone} (0 clicks required)!`, '📲');
+    if (isLive) {
+      if (waHeading) waHeading.textContent = `✅ WhatsApp Order Receipt Sent Directly to +91 ${cleanPhone}!`;
+      if (waSubtext) waSubtext.textContent = `Dispatched to your phone (+91 ${cleanPhone}) via official WhatsApp Business Gateway with zero clicks required.`;
+      if (waBtn) waBtn.innerHTML = `<span>🟢 Sent to +91 ${cleanPhone}</span>`;
+      showToast(`WhatsApp receipt sent directly to +91 ${cleanPhone}!`, '📲');
+    } else {
+      const waUrl = data.directWhatsAppUrl || `https://api.whatsapp.com/send?phone=91${cleanPhone}&text=${encodeURIComponent(formatKarachiOrderWhatsAppMessage(o))}`;
+      if (waHeading) waHeading.textContent = `📲 WhatsApp Receipt Ready for +91 ${cleanPhone}`;
+      if (waSubtext) waSubtext.textContent = `Order receipt generated for your phone! Tap below to open it in WhatsApp (+91 ${cleanPhone}), or connect Meta Cloud API in Admin for background delivery.`;
+      if (waBtn) {
+        waBtn.innerHTML = `<a href="${waUrl}" target="_blank" style="background:#25D366; color:#ffffff; text-decoration:none; padding:0.45rem 0.9rem; border-radius:8px; font-weight:700; font-size:0.82rem; display:inline-flex; align-items:center; gap:0.4rem; box-shadow:0 3px 8px rgba(37,211,102,0.35);"><span>📲 Open in WhatsApp (+91 ${cleanPhone})</span></a>`;
+      }
+      showToast(`Receipt ready! Tap "Open in WhatsApp" to deliver to +91 ${cleanPhone}`, '📲');
+    }
   })
   .catch(err => {
     console.warn('WhatsApp API delivery dispatch:', err);
-    recordWhatsAppDispatch({
-      phone: cleanPhone,
-      orderId: orderId,
-      customerName: customerName,
-      amount: amount,
-      timestamp: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) + ', Today',
-      status: '✅ Delivered (0 Clicks)',
-      provider: 'Direct Cloud Gateway'
-    });
-    showToast(`WhatsApp receipt dispatched directly to +91 ${cleanPhone}!`, '📲');
+    const waUrl = `https://api.whatsapp.com/send?phone=91${cleanPhone}&text=${encodeURIComponent(formatKarachiOrderWhatsAppMessage(o))}`;
+    const waBtn = document.getElementById('btnWhatsappOptin');
+    if (waBtn) {
+      waBtn.innerHTML = `<a href="${waUrl}" target="_blank" style="background:#25D366; color:#ffffff; text-decoration:none; padding:0.45rem 0.9rem; border-radius:8px; font-weight:700; font-size:0.82rem; display:inline-flex; align-items:center; gap:0.4rem;"><span>📲 Open in WhatsApp (+91 ${cleanPhone})</span></a>`;
+    }
   });
 }
 
