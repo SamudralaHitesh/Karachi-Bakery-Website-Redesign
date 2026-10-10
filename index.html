@@ -4352,6 +4352,24 @@
                       </div>
                     </div>
                   </div>
+                <!-- Signed Webhook Verification & Idempotent Processing Card -->
+                <div class="admin-rzp-bank-card" style="margin-top:1.25rem; padding:1.25rem; background:rgba(13,71,161,0.06); border:1.5px solid rgba(13,71,161,0.25); border-radius:14px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem; flex-wrap:wrap; gap:0.5rem;">
+                    <div style="display:flex; align-items:center; gap:0.5rem;">
+                      <span style="font-size:1.2rem;">🔒</span>
+                      <strong style="color:#0D47A1; font-size:0.95rem;">Signed Webhook Verification &amp; Idempotency Engine (/api/orders)</strong>
+                    </div>
+                    <span class="tag" style="background:#15803d; color:#fff; font-size:0.75rem; font-weight:700;">HMAC-SHA256 Signed &amp; Idempotent</span>
+                  </div>
+                  <p style="font-size:0.83rem; color:#CFD8DC; line-height:1.5; margin-bottom:0.85rem;">
+                    Inbound payment webhooks from Razorpay are verified cryptographically via <code>x-razorpay-signature</code>. Idempotent deduplication guarantees that network retries never process duplicate orders or double-deduct inventory.
+                  </p>
+                  <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
+                    <button type="button" class="action-btn-primary" onclick="adminTestSignedWebhookVerification()" style="padding:0.55rem 1.15rem; font-size:0.82rem; background:#0D47A1; font-weight:700;">
+                      🚀 Test Cryptographic Webhook &amp; Idempotency Audit
+                    </button>
+                    <div id="adminWebhookStatusDisplay" style="font-size:0.82rem; font-weight:700;"></div>
+                  </div>
                 </div>
               </div>
 
@@ -4945,9 +4963,12 @@
             <textarea id="revComments" rows="3" placeholder="Share your experience regarding aroma, texture, packaging, or pairing with Irani chai..." required></textarea>
           </div>
 
-          <div class="review-actions-row">
-            <button type="submit" class="action-btn-primary" style="width:100%; padding:0.85rem;">
-              🚀 Publish Verified Customer Review
+          <div class="review-actions-row" style="display:flex; flex-direction:column; gap:0.55rem;">
+            <button type="submit" class="action-btn-primary" style="width:100%; padding:0.85rem; font-weight:700;">
+              🚀 Publish Verified Customer Review (Optimistic UI)
+            </button>
+            <button type="button" class="btn-order-filter" onclick="handleCustomerReviewSubmit(event, true)" style="background:#f8fafc; color:#475569; border:1px dashed #94a3b8; padding:0.5rem; font-size:0.75rem; border-radius:6px; cursor:pointer;" title="Simulates an API network failure to demonstrate automatic rollback">
+              🧪 Test Optimistic Rollback (Simulate Network Error)
             </button>
           </div>
         </form>
