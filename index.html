@@ -4401,6 +4401,17 @@
                     <button type="button" class="btn-period-pill" id="rzpPill_all_time" onclick="selectRazorpayFilterMonth('all_time')">📊 All Months (FY YTD)</button>
                   </div>
 
+                  <!-- Day Filter Pills for Razorpay -->
+                  <div style="margin-top:0.75rem; border-top:1px solid rgba(255,255,255,0.1); padding-top:0.65rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+                      <small style="color:#94a3b8; font-size:0.72rem; font-weight:700; text-transform:uppercase;">Filter Verified Transactions by Day:</small>
+                      <span id="rzpDayActiveLabel" style="font-size:0.72rem; color:#FFE082;">All Days</span>
+                    </div>
+                    <div class="admin-rzp-day-pills" id="adminRzpDayPillsContainer" style="display:flex; gap:0.35rem; overflow-x:auto; padding-bottom:4px; flex-wrap:wrap;">
+                      <!-- Populated dynamically by JS -->
+                    </div>
+                  </div>
+
                   <!-- Month Summary Mini KPIs -->
                   <div class="admin-rzp-kpi-row" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:0.75rem; margin-top:0.85rem;">
                     <div style="background:#0f172a; padding:0.65rem 0.85rem; border-radius:8px; border:1px solid #334155;">
@@ -4529,6 +4540,66 @@
 
           <!-- PANEL 2: Live Orders & Kitchen Dispatch Manager -->
           <div class="admin-tab-panel" id="adminPanelOrders" style="display:none;">
+
+            <!-- Day-Wise Order Sales Breakdown & Daily Analytics Hub -->
+            <div class="admin-card" style="margin-bottom:1.5rem; border:1px solid #334155; background:linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
+              <div class="admin-card-header flex-between" style="border-bottom:1px solid #334155; padding-bottom:1rem; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+                <div>
+                  <h4 style="color:#FFE082; display:flex; align-items:center; gap:0.5rem; margin:0 0 0.35rem 0;">
+                    <span>📊</span> Day-Wise Order Sales Ledger & Daily Breakdown
+                  </h4>
+                  <p style="color:#94a3b8; margin:0; font-size:0.83rem;">
+                    Daily store revenue, order volume, payment mode split (Razorpay/Online vs COD), and Average Order Value (AOV).
+                  </p>
+                </div>
+                <div style="display:flex; align-items:center; gap:0.5rem;">
+                  <span class="tag" style="background:#0D47A1; color:#fff; font-weight:700;">📅 Daily Audit</span>
+                  <button type="button" class="btn-order-filter active" onclick="renderAdminOrdersTable()" style="padding:0.35rem 0.85rem; font-size:0.8rem;">🔄 Refresh</button>
+                </div>
+              </div>
+
+              <!-- Day-Wise Sales KPI Summary Cards -->
+              <div id="adminDayWiseKpisRow" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:0.75rem; margin-bottom:1.25rem;">
+                <!-- Populated dynamically by JS -->
+              </div>
+
+              <!-- Day Filter Pills -->
+              <div style="margin-bottom:1rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem; flex-wrap:wrap; gap:0.4rem;">
+                  <strong style="font-size:0.82rem; color:#CFD8DC;">🗓️ Filter Orders & Sales by Specific Day:</strong>
+                  <span style="font-size:0.75rem; color:#90CAF9;" id="adminDayFilterStatusLabel">Showing: All Recorded Days</span>
+                </div>
+                <div id="adminOrderDayPillsContainer" style="display:flex; gap:0.45rem; overflow-x:auto; padding-bottom:6px; flex-wrap:wrap;">
+                  <!-- Populated dynamically by JS -->
+                </div>
+              </div>
+
+              <!-- Day-Wise Sales Table -->
+              <div class="admin-table-container">
+                <table class="admin-table" id="adminDayWiseSalesTable">
+                  <thead>
+                    <tr>
+                      <th>Calendar Date & Day</th>
+                      <th>Orders Count</th>
+                      <th>Gross Sales (₹)</th>
+                      <th>Online (UPI / Cards)</th>
+                      <th>Cash on Delivery (COD)</th>
+                      <th>Average Order Value</th>
+                      <th>Dispatch Pipeline</th>
+                      <th>Filter Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adminDayWiseSalesTableBody">
+                    <!-- Populated dynamically by JS -->
+                  </tbody>
+                  <tfoot id="adminDayWiseSalesTableFoot" style="font-weight:700; background:rgba(255,255,255,0.04);">
+                    <!-- Populated dynamically by JS -->
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+
+            <!-- Customer Orders & Real-Time Kitchen Dispatch Manager -->
             <div class="admin-card">
               <div class="admin-card-header flex-between">
                 <div>
@@ -4536,13 +4607,16 @@
                   <p>When you update an order status here, the customer's live tracking timeline updates automatically.</p>
                 </div>
                 <div class="order-filter-pills" style="display:flex; gap:0.4rem; align-items:center; flex-wrap:wrap;">
-                  <button type="button" class="btn-order-filter active" onclick="filterAdminOrders('all', this)">All</button>
-                  <button type="button" class="btn-order-filter" onclick="filterAdminOrders('baking', this)">Baking</button>
-                  <button type="button" class="btn-order-filter" onclick="filterAdminOrders('cargo', this)">Air Cargo</button>
-                  <button type="button" class="btn-order-filter" onclick="filterAdminOrders('out_for_delivery', this)">Out for Delivery</button>
-                  <button type="button" class="btn-order-filter" onclick="adminExportOrdersToCsv()" style="background:#1B5E20; color:#fff; border:none; padding:0.35rem 0.8rem; font-weight:700; border-radius:6px;" title="Export orders manifest to CSV file for Excel">📊 Export Orders (CSV)</button>
+                  <button type="button" class="btn-order-filter active" data-filter="all" onclick="filterAdminOrders('all', this)">All</button>
+                  <button type="button" class="btn-order-filter" data-filter="baking" onclick="filterAdminOrders('baking', this)">Baking</button>
+                  <button type="button" class="btn-order-filter" data-filter="cargo" onclick="filterAdminOrders('cargo', this)">Air Cargo</button>
+                  <button type="button" class="btn-order-filter" data-filter="out_for_delivery" onclick="filterAdminOrders('out_for_delivery', this)">Out for Delivery</button>
+                  <button type="button" class="btn-order-filter" onclick="adminExportOrdersToCsv()" style="background:#1B5E20; color:#fff; border:none; padding:0.35rem 0.8rem; font-weight:700; border-radius:6px; cursor:pointer;" title="Export orders manifest to CSV file for Excel">📊 Export Orders (CSV)</button>
                 </div>
               </div>
+
+              <!-- Active Day/Status Filter Banner -->
+              <div id="adminOrdersActiveFilterBanner" style="display:none;"></div>
 
               <div class="admin-table-container">
                 <table class="admin-table" id="adminOrdersTable">

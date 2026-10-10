@@ -5407,10 +5407,18 @@ function processOrderCompletion(paymentInfo) {
 
   const paymentId = paymentInfo.paymentId || `pay_${Date.now().toString().slice(-8)}`;
 
+  const now = new Date();
+  const orderDateYmd = now.toISOString().split('T')[0];
+  const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+  const formattedDateStr = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) + ', ' + timeStr;
+
   // Store in Admin System
   const newAdminOrder = {
     orderId,
-    date: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) + ' Today',
+    createdAt: now.toISOString(),
+    orderDate: orderDateYmd,
+    time: timeStr,
+    date: formattedDateStr,
     customerName: name,
     phone,
     destination: `${address} (${CheckoutState.pincode || '500001'})`,
@@ -5773,41 +5781,53 @@ const AdminStore = {
   customProducts: []
 };
 
-// Seed realistic recent orders
+// Seed realistic recent orders with verified calendar timestamps
 const INITIAL_DEMO_ORDERS = [
   {
     orderId: 'KB-ORD-2026-4412',
-    date: 'Today, 09:15 AM',
+    createdAt: '2026-10-02T09:15:00.000Z',
+    orderDate: '2026-10-02',
+    time: '09:15 AM',
+    date: '02 Oct 2026, 09:15 AM',
     customerName: 'Rahul Verma',
     phone: '+91 98490 12345',
     destination: 'Indiranagar, Bengaluru - 560038',
     items: ['Original Hyderabad Fruit Biscuit (400g) x2'],
     amount: 440,
     paymentMethod: 'UPI Instant Pay (GPay)',
+    paymentId: 'pay_OCT441299A',
     status: 'baking', // 'placed' | 'baking' | 'cargo' | 'out_for_delivery' | 'delivered'
     statusLabel: 'Baking in Mozamjahi Central Kitchen'
   },
   {
     orderId: 'KB-ORD-2026-7821',
-    date: 'Today, 08:30 AM',
+    createdAt: '2026-10-01T08:30:00.000Z',
+    orderDate: '2026-10-01',
+    time: '08:30 AM',
+    date: '01 Oct 2026, 08:30 AM',
     customerName: 'Ananya Reddy',
     phone: '+91 94401 67890',
     destination: 'Jubilee Hills, Hyderabad - 500033',
     items: ['Belgian Dark Chocolate Truffle Cake (1kg)'],
     amount: 650,
     paymentMethod: 'Credit Card (HDFC)',
+    paymentId: 'pay_OCT782199B',
     status: 'out_for_delivery',
     statusLabel: 'Out for Delivery (Express Van #04)'
   },
   {
     orderId: 'KB-ORD-2026-3109',
-    date: 'Yesterday, 04:45 PM',
+    createdAt: '2026-09-30T16:45:00.000Z',
+    orderDate: '2026-09-30',
+    time: '04:45 PM',
+    date: '30 Sep 2026, 04:45 PM',
     customerName: 'Vikram Malhotra',
     phone: '+91 98200 45678',
     destination: 'Bandra West, Mumbai - 400050',
     items: ["Nizam's Royal Heritage 3-in-1 Tin x1"],
     amount: 950,
     paymentMethod: 'Cash on Delivery (COD)',
+    paymentId: 'pay_SEP310988C',
     status: 'cargo',
     statusLabel: 'Air Cargo Handover (BlueDart AWB #98124)'
   }
@@ -5820,6 +5840,104 @@ const INITIAL_COUPONS = [
   { code: 'SWEET50', discount: 50, minOrder: 300, status: 'Active' }
 ];
 
+/**
+ * Accurately formats an order's date relative to the current live clock.
+ * Only orders placed on the actual current calendar day will show "Today".
+ * Orders placed yesterday show "Yesterday".
+ * All earlier orders show their true calendar date (e.g. "03 Oct 2026, 12:46 PM").
+ */
+function formatDisplayDate(order) {
+  if (!order) return 'Just Now';
+  const now = new Date();
+  const todayYmd = now.toISOString().split('T')[0];
+  const yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayYmd = yesterday.toISOString().split('T')[0];
+
+  const orderYmd = order.orderDate || (order.createdAt ? order.createdAt.split('T')[0] : null);
+  let timeStr = order.time || '';
+  if (!timeStr && typeof order.date === 'string') {
+    timeStr = order.date.replace(/Today|Yesterday/gi, '').trim().replace(/^,\s*/, '').replace(/,\s*$/, '');
+  }
+  if (!timeStr) timeStr = '12:00 PM';
+
+  if (orderYmd === todayYmd) {
+    return `Today, ${timeStr}`;
+  }
+  if (orderYmd === yesterdayYmd) {
+    return `Yesterday, ${timeStr}`;
+  }
+  if (orderYmd) {
+    const parts = orderYmd.split('-').map(Number);
+    if (parts.length === 3 && !isNaN(parts[0])) {
+      const dObj = new Date(parts[0], parts[1] - 1, parts[2]);
+      if (!isNaN(dObj.getTime())) {
+        const dateFormatted = dObj.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+        return `${dateFormatted}, ${timeStr}`;
+      }
+    }
+  }
+
+  // If order.date is a clean string without "Today" or "Yesterday"
+  if (typeof order.date === 'string' && !order.date.includes('Today') && !order.date.includes('Yesterday')) {
+    return order.date;
+  }
+  return `03 Oct 2026, ${timeStr}`;
+}
+
+/**
+ * Migrates existing stored orders in localStorage from legacy relative strings
+ * (e.g. "12:46 pm Today" saved during past testing) to true historical timestamps.
+ */
+function sanitizeAndMigrateOrderDates() {
+  if (typeof AdminStore === 'undefined' || !AdminStore.orders) return;
+  let modified = false;
+
+  AdminStore.orders = AdminStore.orders.map(order => {
+    const o = { ...order };
+    const dateStr = typeof o.date === 'string' ? o.date : '';
+    const hasStaleRelative = dateStr.includes('Today') || dateStr.includes('Yesterday');
+
+    if (hasStaleRelative || !o.orderDate) {
+      if (o.createdAt) {
+        const cDate = new Date(o.createdAt);
+        if (!isNaN(cDate.getTime())) {
+          o.orderDate = cDate.toISOString().split('T')[0];
+          o.time = cDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+        }
+      }
+
+      if (!o.orderDate) {
+        if (o.orderId === 'KB-ORD-2026-4412') {
+          o.orderDate = '2026-10-02';
+          o.time = '09:15 AM';
+        } else if (o.orderId === 'KB-ORD-2026-7821') {
+          o.orderDate = '2026-10-01';
+          o.time = '08:30 AM';
+        } else if (o.orderId === 'KB-ORD-2026-3109') {
+          o.orderDate = '2026-09-30';
+          o.time = '04:45 PM';
+        } else {
+          // Orders created during user's testing a week ago (around 03 Oct 2026)
+          o.orderDate = '2026-10-03';
+          const cleanTime = dateStr.replace(/Today|Yesterday/gi, '').trim().replace(/^,\s*/, '').replace(/,\s*$/, '');
+          o.time = cleanTime || '12:46 PM';
+        }
+      }
+
+      o.date = formatDisplayDate(o);
+      modified = true;
+    }
+    return o;
+  });
+
+  if (modified) {
+    try {
+      localStorage.setItem('KB_ADMIN_ORDERS', JSON.stringify(AdminStore.orders));
+    } catch (e) {}
+  }
+}
+
 function initAdminSystem() {
   try {
     // Load persisted session
@@ -5831,6 +5949,7 @@ function initAdminSystem() {
     // Load orders
     const savedOrders = localStorage.getItem('KB_ADMIN_ORDERS');
     AdminStore.orders = savedOrders ? JSON.parse(savedOrders) : [...INITIAL_DEMO_ORDERS];
+    sanitizeAndMigrateOrderDates();
 
     // Load coupons
     const savedCoupons = localStorage.getItem('KB_ADMIN_COUPONS');
@@ -5896,6 +6015,7 @@ function showAdminDashboardView() {
       AdminStore.orders = JSON.parse(savedOrders);
     } catch (e) {}
   }
+  sanitizeAndMigrateOrderDates();
 
   renderAdminKpis();
   renderAdminProductsTable();
@@ -5957,6 +6077,7 @@ function switchAdminTab(tabName) {
         AdminStore.orders = JSON.parse(savedOrders);
       } catch (e) {}
     }
+    sanitizeAndMigrateOrderDates();
     renderAdminOrdersTable();
     renderAdminKpis();
   }
@@ -6313,21 +6434,316 @@ function adminDeleteProduct(productId) {
   showToast('Custom delicacy removed from catalog.', '🗑️');
 }
 
-function renderAdminOrdersTable(statusFilter = 'all') {
+let currentAdminOrderStatusFilter = 'all';
+let currentAdminOrderDayFilter = 'all';
+
+function formatDayKeyToLabel(dayKey) {
+  if (!dayKey) return 'Unknown Date';
+  const now = new Date();
+  const todayYmd = now.toISOString().split('T')[0];
+  const yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayYmd = yesterday.toISOString().split('T')[0];
+
+  const parts = dayKey.split('-').map(Number);
+  if (parts.length < 3 || isNaN(parts[0])) return dayKey;
+  const dObj = new Date(parts[0], parts[1] - 1, parts[2]);
+  if (isNaN(dObj.getTime())) return dayKey;
+  const formatted = dObj.toLocaleDateString('en-IN', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' });
+
+  if (dayKey === todayYmd) return `${formatted} (Today)`;
+  if (dayKey === yesterdayYmd) return `${formatted} (Yesterday)`;
+  return formatted;
+}
+
+function computeDayWiseSales(ordersList) {
+  const orders = ordersList || (AdminStore && AdminStore.orders) || [];
+  const dayMap = {};
+
+  orders.forEach(o => {
+    const dayKey = o.orderDate || (o.createdAt ? o.createdAt.split('T')[0] : '2026-10-03');
+    if (!dayMap[dayKey]) {
+      dayMap[dayKey] = {
+        dayKey,
+        orderCount: 0,
+        totalRevenue: 0,
+        onlineRevenue: 0,
+        onlineCount: 0,
+        codRevenue: 0,
+        codCount: 0,
+        statuses: { placed: 0, baking: 0, cargo: 0, out_for_delivery: 0, delivered: 0 }
+      };
+    }
+
+    const amt = Number(o.amount) || 0;
+    dayMap[dayKey].orderCount += 1;
+    dayMap[dayKey].totalRevenue += amt;
+
+    const isCod = String(o.paymentMethod || '').toLowerCase().includes('cash on delivery') || String(o.paymentMethod || '').toLowerCase().includes('cod');
+    if (isCod) {
+      dayMap[dayKey].codRevenue += amt;
+      dayMap[dayKey].codCount += 1;
+    } else {
+      dayMap[dayKey].onlineRevenue += amt;
+      dayMap[dayKey].onlineCount += 1;
+    }
+
+    const st = o.status || 'placed';
+    if (dayMap[dayKey].statuses[st] !== undefined) {
+      dayMap[dayKey].statuses[st] += 1;
+    } else {
+      dayMap[dayKey].statuses[st] = 1;
+    }
+  });
+
+  return Object.values(dayMap).sort((a, b) => b.dayKey.localeCompare(a.dayKey));
+}
+
+function renderAdminDayWiseSalesTable() {
+  const tableBody = document.getElementById('adminDayWiseSalesTableBody');
+  const tableFoot = document.getElementById('adminDayWiseSalesTableFoot');
+  const pillsContainer = document.getElementById('adminOrderDayPillsContainer');
+  const kpisContainer = document.getElementById('adminDayWiseKpisRow');
+  const statusLabel = document.getElementById('adminDayFilterStatusLabel');
+
+  const orders = AdminStore.orders || [];
+  const dayBreakdown = computeDayWiseSales(orders);
+
+  // Render Day Filter Pills
+  if (pillsContainer) {
+    let pillsHtml = `
+      <button type="button" class="day-filter-pill ${currentAdminOrderDayFilter === 'all' ? 'active' : ''}" id="dayPill_all" onclick="selectAdminOrderDay('all', this)">
+        🗓️ All Recorded Days (${orders.length} Orders)
+      </button>
+    `;
+    dayBreakdown.forEach(d => {
+      const label = formatDayKeyToLabel(d.dayKey);
+      const isAct = currentAdminOrderDayFilter === d.dayKey ? 'active' : '';
+      pillsHtml += `
+        <button type="button" class="day-filter-pill ${isAct}" id="dayPill_${d.dayKey}" onclick="selectAdminOrderDay('${d.dayKey}', this)">
+          ${label} (${d.orderCount})
+        </button>
+      `;
+    });
+    pillsContainer.innerHTML = pillsHtml;
+  }
+
+  // Calculate High-Level Day KPIs
+  const now = new Date();
+  const todayYmd = now.toISOString().split('T')[0];
+  const todayData = dayBreakdown.find(d => d.dayKey === todayYmd);
+  const totalRev = dayBreakdown.reduce((acc, d) => acc + d.totalRevenue, 0);
+  const totalOrders = dayBreakdown.reduce((acc, d) => acc + d.orderCount, 0);
+  const bestDay = dayBreakdown.length > 0 
+    ? [...dayBreakdown].sort((a, b) => b.totalRevenue - a.totalRevenue)[0] 
+    : null;
+
+  if (kpisContainer) {
+    kpisContainer.innerHTML = `
+      <div style="background:#0f172a; padding:0.75rem 1rem; border-radius:10px; border:1px solid #334155;">
+        <small style="color:#94a3b8; display:block; font-size:0.68rem; font-weight:700; text-transform:uppercase;">TODAY'S SALES (${now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })})</small>
+        <strong style="color:#FFE082; font-size:1.25rem;">₹${(todayData ? todayData.totalRevenue : 0).toLocaleString('en-IN')}</strong>
+        <div style="font-size:0.72rem; color:#81C784; margin-top:2px;">${todayData ? todayData.orderCount : 0} Orders placed today</div>
+      </div>
+      <div style="background:#0f172a; padding:0.75rem 1rem; border-radius:10px; border:1px solid #334155;">
+        <small style="color:#94a3b8; display:block; font-size:0.68rem; font-weight:700; text-transform:uppercase;">HIGHEST SALES DAY</small>
+        <strong style="color:#90CAF9; font-size:1.25rem;">₹${(bestDay ? bestDay.totalRevenue : 0).toLocaleString('en-IN')}</strong>
+        <div style="font-size:0.72rem; color:#CFD8DC; margin-top:2px;">${bestDay ? formatDayKeyToLabel(bestDay.dayKey) : 'N/A'}</div>
+      </div>
+      <div style="background:#0f172a; padding:0.75rem 1rem; border-radius:10px; border:1px solid #334155;">
+        <small style="color:#94a3b8; display:block; font-size:0.68rem; font-weight:700; text-transform:uppercase;">TRACKED STORE DAYS</small>
+        <strong style="color:#E0E0E0; font-size:1.25rem;">${dayBreakdown.length} Active Days</strong>
+        <div style="font-size:0.72rem; color:#90CAF9; margin-top:2px;">${totalOrders} Total Orders logged</div>
+      </div>
+      <div style="background:#0f172a; padding:0.75rem 1rem; border-radius:10px; border:1px solid #334155;">
+        <small style="color:#94a3b8; display:block; font-size:0.68rem; font-weight:700; text-transform:uppercase;">OVERALL AVERAGE ORDER VALUE</small>
+        <strong style="color:#A5D6A7; font-size:1.25rem;">₹${totalOrders > 0 ? Math.round(totalRev / totalOrders).toLocaleString('en-IN') : 0}</strong>
+        <div style="font-size:0.72rem; color:#CFD8DC; margin-top:2px;">₹${totalRev.toLocaleString('en-IN')} Gross Volume</div>
+      </div>
+    `;
+  }
+
+  if (statusLabel) {
+    if (currentAdminOrderDayFilter === 'all') {
+      statusLabel.textContent = `Showing: All Recorded Days (${dayBreakdown.length} Days)`;
+    } else {
+      statusLabel.textContent = `Filtered to: ${formatDayKeyToLabel(currentAdminOrderDayFilter)}`;
+    }
+  }
+
+  // Render Day-Wise Breakdown Rows
+  if (tableBody) {
+    if (dayBreakdown.length === 0) {
+      tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:2rem; color:#90A4AE;">No orders recorded yet.</td></tr>';
+    } else {
+      let bHtml = '';
+      dayBreakdown.forEach(d => {
+        const isHighlight = currentAdminOrderDayFilter === d.dayKey ? 'day-sales-highlight-row' : '';
+        const dayLabel = formatDayKeyToLabel(d.dayKey);
+        const aov = d.orderCount > 0 ? Math.round(d.totalRevenue / d.orderCount) : 0;
+        const onlineShare = d.totalRevenue > 0 ? Math.round((d.onlineRevenue / d.totalRevenue) * 100) : 0;
+        
+        // Status chips summary
+        const statusChips = [];
+        if (d.statuses.delivered) statusChips.push(`✅ ${d.statuses.delivered} Delivered`);
+        if (d.statuses.out_for_delivery) statusChips.push(`📦 ${d.statuses.out_for_delivery} Out`);
+        if (d.statuses.cargo) statusChips.push(`🚚 ${d.statuses.cargo} Cargo`);
+        if (d.statuses.baking) statusChips.push(`🔥 ${d.statuses.baking} Baking`);
+        if (d.statuses.placed) statusChips.push(`📋 ${d.statuses.placed} Placed`);
+
+        bHtml += `
+          <tr class="${isHighlight}" style="transition:background 0.2s ease;">
+            <td>
+              <strong style="color:#ECEFF1; font-size:0.88rem;">${dayLabel}</strong>
+              <div style="font-size:0.72rem; color:#90CAF9; font-family:monospace;">${d.dayKey}</div>
+            </td>
+            <td>
+              <span class="tag" style="background:#1e293b; border:1px solid #334155; color:#90CAF9; font-weight:700; font-size:0.8rem;">
+                ${d.orderCount} ${d.orderCount === 1 ? 'Order' : 'Orders'}
+              </span>
+            </td>
+            <td>
+              <strong style="color:#FFE082; font-size:0.95rem;">₹${d.totalRevenue.toLocaleString('en-IN')}</strong>
+            </td>
+            <td>
+              <strong style="color:#81C784; font-size:0.85rem;">₹${d.onlineRevenue.toLocaleString('en-IN')}</strong>
+              <div style="font-size:0.72rem; color:#94a3b8;">${d.onlineCount} online (${onlineShare}%)</div>
+            </td>
+            <td>
+              <strong style="color:#CFD8DC; font-size:0.85rem;">₹${d.codRevenue.toLocaleString('en-IN')}</strong>
+              <div style="font-size:0.72rem; color:#94a3b8;">${d.codCount} COD (${100 - onlineShare}%)</div>
+            </td>
+            <td>
+              <strong style="color:#A5D6A7; font-size:0.85rem;">₹${aov.toLocaleString('en-IN')}</strong>
+              <div style="font-size:0.72rem; color:#94a3b8;">per order</div>
+            </td>
+            <td style="font-size:0.75rem; color:#B0BEC5;">
+              ${statusChips.join(' • ') || 'Order Placed'}
+            </td>
+            <td>
+              <button type="button" class="btn-save-price" onclick="selectAdminOrderDay('${d.dayKey}', document.getElementById('dayPill_${d.dayKey}'))" style="background:${currentAdminOrderDayFilter === d.dayKey ? '#0284c7' : '#0D47A1'}; color:#fff; border:none; padding:0.3rem 0.65rem; font-size:0.75rem; border-radius:6px; cursor:pointer;">
+                ${currentAdminOrderDayFilter === d.dayKey ? '✓ Viewing' : '🔍 Filter Orders'}
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+      tableBody.innerHTML = bHtml;
+    }
+  }
+
+  // Render Table Foot Totals
+  if (tableFoot && dayBreakdown.length > 0) {
+    const totalOnline = dayBreakdown.reduce((acc, d) => acc + d.onlineRevenue, 0);
+    const totalCod = dayBreakdown.reduce((acc, d) => acc + d.codRevenue, 0);
+    const totalAov = totalOrders > 0 ? Math.round(totalRev / totalOrders) : 0;
+    tableFoot.innerHTML = `
+      <tr>
+        <td style="color:#FFE082;">Total Aggregate (${dayBreakdown.length} Days)</td>
+        <td style="color:#90CAF9;">${totalOrders} Orders</td>
+        <td style="color:#FFE082;">₹${totalRev.toLocaleString('en-IN')}</td>
+        <td style="color:#81C784;">₹${totalOnline.toLocaleString('en-IN')}</td>
+        <td style="color:#CFD8DC;">₹${totalCod.toLocaleString('en-IN')}</td>
+        <td style="color:#A5D6A7;">₹${totalAov.toLocaleString('en-IN')} avg</td>
+        <td colspan="2">
+          <button type="button" class="btn-save-price" onclick="selectAdminOrderDay('all', document.getElementById('dayPill_all'))" style="background:#37474F; color:#fff; border:none; padding:0.25rem 0.6rem; font-size:0.72rem; border-radius:4px; cursor:pointer;">
+            Reset Day Filter
+          </button>
+        </td>
+      </tr>
+    `;
+  }
+}
+
+function selectAdminOrderDay(dayKey, btn) {
+  currentAdminOrderDayFilter = dayKey;
+  document.querySelectorAll('.day-filter-pill').forEach(b => b.classList.remove('active'));
+  if (btn) {
+    btn.classList.add('active');
+  } else {
+    const target = document.getElementById(`dayPill_${dayKey}`);
+    if (target) target.classList.add('active');
+  }
+  renderAdminOrdersTable();
+}
+
+function resetAdminOrderFilters() {
+  currentAdminOrderStatusFilter = 'all';
+  currentAdminOrderDayFilter = 'all';
+  document.querySelectorAll('.btn-order-filter').forEach(b => {
+    if (b.getAttribute('data-filter') === 'all') b.classList.add('active');
+    else b.classList.remove('active');
+  });
+  document.querySelectorAll('.day-filter-pill').forEach(b => {
+    if (b.id === 'dayPill_all') b.classList.add('active');
+    else b.classList.remove('active');
+  });
+  renderAdminOrdersTable();
+}
+
+function filterAdminOrders(statusFilter, btn) {
+  currentAdminOrderStatusFilter = statusFilter;
+  document.querySelectorAll('.btn-order-filter').forEach(b => {
+    if (b.hasAttribute('data-filter')) b.classList.remove('active');
+  });
+  if (btn) btn.classList.add('active');
+  renderAdminOrdersTable();
+}
+
+function renderAdminOrdersTable(statusFilter, dayFilter) {
+  if (statusFilter !== undefined) currentAdminOrderStatusFilter = statusFilter;
+  if (dayFilter !== undefined) currentAdminOrderDayFilter = dayFilter;
+
+  // Render Day-Wise Sales breakdown
+  renderAdminDayWiseSalesTable();
+
   const tbody = document.getElementById('adminOrdersTableBody');
   if (!tbody) return;
 
-  let rowsHtml = '';
   const orders = AdminStore.orders || [];
+  const filteredOrders = orders.filter(o => {
+    // Status filter
+    if (currentAdminOrderStatusFilter !== 'all' && o.status !== currentAdminOrderStatusFilter) return false;
+    // Day filter
+    if (currentAdminOrderDayFilter !== 'all') {
+      const orderDay = o.orderDate || (o.createdAt ? o.createdAt.split('T')[0] : '2026-10-03');
+      if (orderDay !== currentAdminOrderDayFilter) return false;
+    }
+    return true;
+  });
 
-  orders.forEach(o => {
-    if (statusFilter !== 'all' && o.status !== statusFilter) return;
+  // Active filter banner
+  const bannerEl = document.getElementById('adminOrdersActiveFilterBanner');
+  if (bannerEl) {
+    if (currentAdminOrderDayFilter !== 'all' || currentAdminOrderStatusFilter !== 'all') {
+      const dayText = currentAdminOrderDayFilter === 'all' ? '' : `Day: ${formatDayKeyToLabel(currentAdminOrderDayFilter)}`;
+      const statusText = currentAdminOrderStatusFilter === 'all' ? '' : `Status: ${currentAdminOrderStatusFilter.toUpperCase()}`;
+      const filterDesc = [dayText, statusText].filter(Boolean).join(' • ');
+      bannerEl.innerHTML = `
+        <div style="background:rgba(2,132,199,0.12); border:1px solid rgba(56,189,248,0.4); padding:0.6rem 0.9rem; border-radius:8px; display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+          <span style="font-size:0.83rem; color:#90CAF9;">
+            🔍 Showing <strong>${filteredOrders.length}</strong> order(s) filtered by: <strong>${filterDesc}</strong>
+          </span>
+          <button type="button" class="btn-order-filter" onclick="resetAdminOrderFilters()" style="padding:0.25rem 0.65rem; font-size:0.75rem; background:#334155; color:#ECEFF1; border:none; border-radius:4px; cursor:pointer;">
+            Clear Filter ✕
+          </button>
+        </div>
+      `;
+      bannerEl.style.display = 'block';
+    } else {
+      bannerEl.style.display = 'none';
+      bannerEl.innerHTML = '';
+    }
+  }
 
+  let rowsHtml = '';
+  filteredOrders.forEach(o => {
+    const displayDate = formatDisplayDate(o);
     rowsHtml += `
       <tr>
         <td>
           <strong>${o.orderId}</strong>
-          <div style="font-size:0.75rem; color:#90A4AE;">${o.date || 'Just Now'}</div>
+          <div style="font-size:0.75rem; color:#90CAF9; margin-top:2px;">📅 ${displayDate}</div>
         </td>
         <td>
           <strong>${o.customerName}</strong>
@@ -6340,7 +6756,7 @@ function renderAdminOrdersTable(statusFilter = 'all') {
           </ul>
         </td>
         <td>
-          <strong style="color:#FFE082;">₹${o.amount}</strong>
+          <strong style="color:#FFE082;">₹${Number(o.amount).toLocaleString('en-IN')}</strong>
           <div style="font-size:0.75rem; color:#90A4AE;">${o.paymentMethod || 'Paid Online'}</div>
         </td>
         <td>
@@ -6359,17 +6775,11 @@ function renderAdminOrdersTable(statusFilter = 'all') {
     `;
   });
 
-  if (orders.length === 0) {
-    rowsHtml = '<tr><td colspan="6" style="text-align:center; padding:2rem; color:#90A4AE;">No orders currently recorded.</td></tr>';
+  if (filteredOrders.length === 0) {
+    rowsHtml = '<tr><td colspan="6" style="text-align:center; padding:2rem; color:#90A4AE;">No orders match the selected filter. Click "Reset Day Filter" or choose another filter.</td></tr>';
   }
 
   tbody.innerHTML = rowsHtml;
-}
-
-function filterAdminOrders(statusFilter, btn) {
-  document.querySelectorAll('.btn-order-filter').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  renderAdminOrdersTable(statusFilter);
 }
 
 function adminUpdateOrderStatus(orderId, newStatus) {
@@ -8626,6 +9036,7 @@ const MONTHLY_HISTORICAL_RZP_TRANSACTIONS = {
       payId: 'pay_OCT914028A',
       orderId: 'KB-ORD-2026-9140',
       date: '02 Oct 2026, 05:40 PM',
+      orderDate: '2026-10-02',
       customerName: 'Deepak Reddy',
       destination: 'Madhapur, Hyderabad (500081)',
       amount: 1280,
@@ -8636,6 +9047,7 @@ const MONTHLY_HISTORICAL_RZP_TRANSACTIONS = {
       payId: 'pay_OCT882194B',
       orderId: 'KB-ORD-2026-8822',
       date: '01 Oct 2026, 02:15 PM',
+      orderDate: '2026-10-01',
       customerName: 'Pooja Hegde',
       destination: 'Jubilee Hills, Hyderabad (500033)',
       amount: 2450,
@@ -8646,6 +9058,7 @@ const MONTHLY_HISTORICAL_RZP_TRANSACTIONS = {
       payId: 'pay_OCT831024C',
       orderId: 'KB-ORD-2026-8310',
       date: '01 Oct 2026, 11:20 AM',
+      orderDate: '2026-10-01',
       customerName: 'Karthik Varma',
       destination: 'Gachibowli, Hyderabad (500032)',
       amount: 840,
@@ -8967,9 +9380,12 @@ const MONTHLY_HISTORICAL_RZP_TRANSACTIONS = {
   ]
 };
 
+let currentRazorpayFilterDay = 'all';
+
 function selectRazorpayFilterMonth(monthKey, syncTop) {
   if (syncTop === undefined) syncTop = true;
   currentRazorpayFilterMonth = monthKey;
+  currentRazorpayFilterDay = 'all'; // Reset day filter on month change
 
   // Update pills active class
   document.querySelectorAll('.admin-rzp-month-pills .btn-period-pill').forEach(b => {
@@ -8998,6 +9414,13 @@ function selectRazorpayFilterMonth(monthKey, syncTop) {
   renderAdminRazorpayTransactions();
 }
 
+function selectRazorpayFilterDay(dayKey, btn) {
+  currentRazorpayFilterDay = dayKey;
+  document.querySelectorAll('.rzp-day-pill').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderAdminRazorpayTransactions();
+}
+
 function renderAdminRazorpayTransactions() {
   const tbody = document.getElementById('adminRazorpayTableBody');
   if (!tbody) return;
@@ -9012,20 +9435,24 @@ function renderAdminRazorpayTransactions() {
     const formattedLive = liveOrders.map(o => ({
       payId: o.paymentId || (o.paymentMethod && o.paymentMethod.includes('pay_') ? o.paymentMethod : `pay_${(o.orderId || '').replace(/[^0-9]/g, '')}`),
       orderId: o.orderId,
-      date: o.date || 'Today',
+      date: formatDisplayDate(o),
+      orderDate: o.orderDate || (o.createdAt ? o.createdAt.split('T')[0] : '2026-10-03'),
       customerName: o.customerName || 'Customer',
       destination: o.destination || 'Hyderabad',
       amount: Number(o.amount) || 0,
       paymentMethod: o.paymentMethod || '⚡ Razorpay Instant Pay',
       isLive: true
     }));
-    const seeded = MONTHLY_HISTORICAL_RZP_TRANSACTIONS.oct_2026 || [];
+    const seeded = (typeof MONTHLY_HISTORICAL_RZP_TRANSACTIONS !== 'undefined' && MONTHLY_HISTORICAL_RZP_TRANSACTIONS.oct_2026) 
+      ? MONTHLY_HISTORICAL_RZP_TRANSACTIONS.oct_2026 
+      : [];
     txList = [...formattedLive, ...seeded];
   } else if (monthKey === 'all_time') {
     const formattedLive = liveOrders.map(o => ({
       payId: o.paymentId || (o.paymentMethod && o.paymentMethod.includes('pay_') ? o.paymentMethod : `pay_${(o.orderId || '').replace(/[^0-9]/g, '')}`),
       orderId: o.orderId,
-      date: o.date || 'Today',
+      date: formatDisplayDate(o),
+      orderDate: o.orderDate || (o.createdAt ? o.createdAt.split('T')[0] : '2026-10-03'),
       customerName: o.customerName || 'Customer',
       destination: o.destination || 'Hyderabad',
       amount: Number(o.amount) || 0,
@@ -9033,21 +9460,69 @@ function renderAdminRazorpayTransactions() {
       isLive: true
     }));
     let allHistorical = [];
-    Object.keys(MONTHLY_HISTORICAL_RZP_TRANSACTIONS).forEach(k => {
-      allHistorical = allHistorical.concat(MONTHLY_HISTORICAL_RZP_TRANSACTIONS[k]);
-    });
+    if (typeof MONTHLY_HISTORICAL_RZP_TRANSACTIONS !== 'undefined') {
+      Object.keys(MONTHLY_HISTORICAL_RZP_TRANSACTIONS).forEach(k => {
+        allHistorical = allHistorical.concat(MONTHLY_HISTORICAL_RZP_TRANSACTIONS[k]);
+      });
+    }
     txList = [...formattedLive, ...allHistorical];
   } else {
-    txList = MONTHLY_HISTORICAL_RZP_TRANSACTIONS[monthKey] || [];
+    txList = (typeof MONTHLY_HISTORICAL_RZP_TRANSACTIONS !== 'undefined' && MONTHLY_HISTORICAL_RZP_TRANSACTIONS[monthKey])
+      ? MONTHLY_HISTORICAL_RZP_TRANSACTIONS[monthKey]
+      : [];
   }
 
-  // Calculate summary metrics
+  // Populate dynamic Day Filter Pills in the Razorpay tab
+  const dayPillsContainer = document.getElementById('adminRzpDayPillsContainer');
+  const dayActiveLabel = document.getElementById('rzpDayActiveLabel');
+  
+  const distinctDaysMap = {};
+  txList.forEach(t => {
+    const dKey = t.orderDate || (t.date && t.date.length >= 11 ? t.date.slice(0, 11) : '2026-10-03');
+    if (!distinctDaysMap[dKey]) {
+      distinctDaysMap[dKey] = { dayKey: dKey, count: 0 };
+    }
+    distinctDaysMap[dKey].count++;
+  });
+  const distinctDays = Object.values(distinctDaysMap).sort((a, b) => b.dayKey.localeCompare(a.dayKey));
+
+  if (dayPillsContainer) {
+    let pillsHtml = `
+      <button type="button" class="rzp-day-pill ${currentRazorpayFilterDay === 'all' ? 'active' : ''}" onclick="selectRazorpayFilterDay('all', this)">
+        🗓️ All Days (${txList.length})
+      </button>
+    `;
+    distinctDays.forEach(d => {
+      const label = formatDayKeyToLabel(d.dayKey);
+      const isAct = currentRazorpayFilterDay === d.dayKey ? 'active' : '';
+      pillsHtml += `
+        <button type="button" class="rzp-day-pill ${isAct}" onclick="selectRazorpayFilterDay('${d.dayKey}', this)">
+          ${label} (${d.count})
+        </button>
+      `;
+    });
+    dayPillsContainer.innerHTML = pillsHtml;
+  }
+
+  if (dayActiveLabel) {
+    dayActiveLabel.textContent = currentRazorpayFilterDay === 'all' 
+      ? 'All Days in Period' 
+      : `Filtered by: ${formatDayKeyToLabel(currentRazorpayFilterDay)}`;
+  }
+
+  // Filter txList if a specific day is selected
+  let displayedTxList = txList;
+  if (currentRazorpayFilterDay !== 'all') {
+    displayedTxList = txList.filter(t => (t.orderDate === currentRazorpayFilterDay) || (t.date && t.date.includes(currentRazorpayFilterDay)));
+  }
+
+  // Calculate summary metrics on displayed subset
   let totalAmount = 0;
   let upiCount = 0;
   let cardCount = 0;
   let netCount = 0;
 
-  txList.forEach(t => {
+  displayedTxList.forEach(t => {
     totalAmount += Number(t.amount || 0);
     const m = (t.paymentMethod || '').toLowerCase();
     if (m.includes('upi') || m.includes('gpay') || m.includes('phonepe') || m.includes('paytm') || m.includes('qr')) upiCount++;
@@ -9055,7 +9530,7 @@ function renderAdminRazorpayTransactions() {
     else netCount++;
   });
 
-  const totTx = txList.length || 1;
+  const totTx = displayedTxList.length || 1;
   const upiPct = Math.round((upiCount / totTx) * 100);
 
   // Update summary mini KPIs
@@ -9064,15 +9539,16 @@ function renderAdminRazorpayTransactions() {
   const topModeEl = document.getElementById('rzpMonthTopMode');
 
   if (amtEl) amtEl.textContent = `₹${totalAmount.toLocaleString('en-IN')}`;
-  if (cntEl) cntEl.textContent = `${txList.length} Orders`;
+  if (cntEl) cntEl.textContent = `${displayedTxList.length} Orders`;
   if (topModeEl) topModeEl.textContent = upiCount >= cardCount ? `UPI / QR (${upiPct}%)` : `Cards (${Math.round((cardCount / totTx) * 100)}%)`;
 
   let rows = '';
-  txList.forEach(o => {
+  displayedTxList.forEach(o => {
     const payId = o.payId || o.paymentId || `pay_rzp_${(o.orderId || '').replace(/[^0-9]/g, '')}`;
     const isCod = String(o.paymentMethod || '').toLowerCase().includes('cash on delivery') || String(o.paymentMethod || '').toLowerCase().includes('cod');
     const badgeColor = isCod ? '#37474F' : '#0D47A1';
     const badgeText = isCod ? '💵 Cash on Delivery' : (o.paymentMethod || '🔷 Razorpay Instant Pay');
+    const dateFormatted = typeof o.date === 'string' ? o.date : formatDisplayDate(o);
 
     rows += `
       <tr>
@@ -9082,7 +9558,7 @@ function renderAdminRazorpayTransactions() {
         </td>
         <td>
           <strong>${o.orderId}</strong>
-          <div style="font-size:0.75rem; color:#90A4AE;">${o.date || 'Today'}</div>
+          <div style="font-size:0.75rem; color:#90CAF9; margin-top:2px;">📅 ${dateFormatted}</div>
         </td>
         <td>
           <strong>${o.customerName || 'Customer'}</strong>
@@ -9105,8 +9581,8 @@ function renderAdminRazorpayTransactions() {
     `;
   });
 
-  if (txList.length === 0) {
-    rows = '<tr><td colspan="6" style="text-align:center; padding:2rem; color:#90A4AE;">No Razorpay transactions found for this period.</td></tr>';
+  if (displayedTxList.length === 0) {
+    rows = '<tr><td colspan="6" style="text-align:center; padding:2rem; color:#90A4AE;">No Razorpay transactions found for this selected day/period.</td></tr>';
   }
 
   tbody.innerHTML = rows;
@@ -9355,21 +9831,26 @@ function adminExportOrdersToCsv() {
     return;
   }
 
+  // Filter if active day filter is selected
+  const exportList = (currentAdminOrderDayFilter && currentAdminOrderDayFilter !== 'all')
+    ? orders.filter(o => (o.orderDate || (o.createdAt ? o.createdAt.split('T')[0] : '2026-10-03')) === currentAdminOrderDayFilter)
+    : orders;
+
   const headers = ['Order ID', 'Date', 'Customer Name', 'Mobile', 'Destination', 'Total Amount (INR)', 'Payment Method', 'Dispatch Status', 'Items'];
   const rows = [];
   rows.push(headers.map(h => `"${h}"`).join(','));
 
-  orders.forEach(o => {
+  exportList.forEach(o => {
     const row = [
       o.orderId || '',
-      o.date || '',
+      formatDisplayDate(o),
       (o.customerName || '').replace(/"/g, '""'),
-      o.customerPhone || '',
+      o.customerPhone || o.phone || '',
       (o.destination || o.customerAddress || '').replace(/"/g, '""'),
       o.amount || 0,
       (o.paymentMethod || 'Razorpay Online').replace(/"/g, '""'),
       (o.statusLabel || o.status || 'Confirmed').replace(/"/g, '""'),
-      (o.itemsSummary || 'Hyderabad Biscuits & Confectionery').replace(/"/g, '""')
+      (o.itemsSummary || (o.items ? o.items.join('; ') : 'Delicacies')).replace(/"/g, '""')
     ];
     rows.push(row.map(c => `"${c}"`).join(','));
   });
@@ -9386,7 +9867,7 @@ function adminExportOrdersToCsv() {
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 
-  showToast(`Exported ${orders.length} orders to CSV for Excel!`, '📊');
+  showToast(`Exported ${exportList.length} orders to CSV for Excel!`, '📊');
 }
 
 function adminExportRazorpayLedgerToCsv() {
@@ -9400,7 +9881,8 @@ function adminExportRazorpayLedgerToCsv() {
     const formattedLive = liveOrders.map(o => ({
       payId: o.paymentId || ('pay_' + (o.orderId || '').replace(/[^0-9]/g, '')),
       orderId: o.orderId,
-      date: o.date || 'Today',
+      date: formatDisplayDate(o),
+      orderDate: o.orderDate || (o.createdAt ? o.createdAt.split('T')[0] : '2026-10-03'),
       customerName: o.customerName || 'Customer',
       destination: o.destination || 'Hyderabad',
       amount: Number(o.amount) || 0,
@@ -9412,7 +9894,8 @@ function adminExportRazorpayLedgerToCsv() {
     const formattedLive = liveOrders.map(o => ({
       payId: o.paymentId || ('pay_' + (o.orderId || '').replace(/[^0-9]/g, '')),
       orderId: o.orderId,
-      date: o.date || 'Today',
+      date: formatDisplayDate(o),
+      orderDate: o.orderDate || (o.createdAt ? o.createdAt.split('T')[0] : '2026-10-03'),
       customerName: o.customerName || 'Customer',
       destination: o.destination || 'Hyderabad',
       amount: Number(o.amount) || 0,
@@ -9427,6 +9910,11 @@ function adminExportRazorpayLedgerToCsv() {
     txList = [...formattedLive, ...allHistorical];
   } else {
     txList = (typeof MONTHLY_HISTORICAL_RZP_TRANSACTIONS !== 'undefined' && MONTHLY_HISTORICAL_RZP_TRANSACTIONS[monthKey]) ? MONTHLY_HISTORICAL_RZP_TRANSACTIONS[monthKey] : [];
+  }
+
+  // Filter if active day filter is selected
+  if (currentRazorpayFilterDay && currentRazorpayFilterDay !== 'all') {
+    txList = txList.filter(t => (t.orderDate === currentRazorpayFilterDay) || (t.date && t.date.includes(currentRazorpayFilterDay)));
   }
 
   if (txList.length === 0) {
