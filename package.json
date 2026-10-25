@@ -1,7 +1,7 @@
 {
   "name": "karachi-bakery-website-redesign",
   "version": "1.0.0",
-  "description": "Karachi Bakery Website Redesign",
+  "description": "Crumbelle — Handcrafted Luxury Bakes & Cakes",
   "scripts": {
     "dev": "serve . -l 3000",
     "start": "serve . -l 3000"

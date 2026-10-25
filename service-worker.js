@@ -1,5 +1,5 @@
-// Karachi Bakery PWA Service Worker (v2.0.0)
-const CACHE_NAME = 'karachi-bakery-cache-v2';
+// Crumbelle PWA Service Worker (v3.0.0)
+const CACHE_NAME = 'crumbelle-cache-v3';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

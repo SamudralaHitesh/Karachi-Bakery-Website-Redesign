@@ -12,7 +12,7 @@ const SEED_PRODUCTS = [
     reviewsCount: 1420,
     shelfLife: '6 Months',
     dietary: ['veg', 'eggless'],
-    description: 'The world-famous signature Karachi Bakery delicacy since 1953, loaded with colorful candied fruits.'
+    description: 'The world-famous signature Crumbelle delicacy, loaded with colorful candied fruits.'
   },
   {
     id: 'p2',

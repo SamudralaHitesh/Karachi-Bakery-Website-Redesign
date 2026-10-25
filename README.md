@@ -1,8 +1,8 @@
-# Karachi Bakery Website — 10-Day Sprint Redesign
+# Crumbelle — Handcrafted Luxury Bakes & Cakes
 
-A comprehensive, modern redesign of the iconic **Karachi Bakery** web platform (Est. 1953, Hyderabad), resolving the **Top 15 UX and E-Commerce Architecture Problems**.
+A comprehensive, modern flagship web platform for **Crumbelle — Handcrafted Luxury Bakes & Cakes**, resolving the **Top 15 UX and E-Commerce Architecture Problems**.
 
-![Karachi Bakery Brand](https://img.shields.io/badge/Karachi%20Bakery-Est.%201953-8B0000?style=for-the-badge)
+![Crumbelle Brand](https://img.shields.io/badge/Crumbelle-Luxury%20Bakes-720E1E?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Sprint%20Progress-Day%2010%20of%2010%20--%20100%25%20Completed-brightgreen?style=for-the-badge)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-karachi--bakery--website--redesign.vercel.app-000000?style=for-the-badge&logo=vercel)](https://karachi-bakery-website-redesign.vercel.app)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
@@ -44,7 +44,7 @@ To provide a complete enterprise e-commerce architecture beyond the customer sto
 - **How to Access (Authorized Staff & Evaluators):**
   1. **Direct URL Hash:** Add `/#admin` to the website URL (e.g. [`https://karachi-bakery-website-redesign.vercel.app/#admin`](https://karachi-bakery-website-redesign.vercel.app/#admin)).
   2. **Secret Keyboard Shortcut:** Press `Ctrl + Shift + A` anywhere on the page.
-  3. **Secret Logo Double-Click:** Double-click the golden **`KB`** brand emblem in the header.
+  3. **Secret Logo Double-Click:** Double-click the golden **`CB`** brand emblem in the header.
   4. **Discreet Footer Link:** Click the subtle `Staff Access` link in the bottom copyright line.
 - **Demo Access Passcode:** `admin123` (or click *"⚡ 1-Click Instant Manager Login"*).
 - **Core Admin Modules:**

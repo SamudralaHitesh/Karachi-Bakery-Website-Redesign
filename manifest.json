@@ -1,7 +1,7 @@
 {
-  "name": "Karachi Bakery Hyderabad",
-  "short_name": "Karachi Bakery",
-  "description": "Authentic Hyderabadi Biscuits, Artisan Celebration Cakes, Pure Desi Ghee Mithai & Keepsake Gift Hampers since 1953.",
+  "name": "Crumbelle — Handcrafted Luxury Bakes & Cakes",
+  "short_name": "Crumbelle",
+  "description": "Handcrafted Luxury Bakes, Artisan Celebration Cakes, Pure Desi Ghee Mithai & Keepsake Gift Hampers.",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#FFFDF9",

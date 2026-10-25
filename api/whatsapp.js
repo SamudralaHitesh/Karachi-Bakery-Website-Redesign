@@ -1,5 +1,5 @@
 /**
- * Karachi Bakery - Serverless Automated WhatsApp Order Dispatch API
+ * Crumbelle — Serverless Automated WhatsApp Order Dispatch API
  * Sends direct WhatsApp order receipts to customer phone numbers with ZERO clicks required by the customer.
  * 
  * Supports:
@@ -24,7 +24,7 @@ module.exports = async function handler(req, res) {
     const provider = req.headers['x-whatsapp-provider'] || process.env.WHATSAPP_PROVIDER || 'direct_cloud';
     return res.status(200).json({
       success: true,
-      service: 'Karachi Bakery Automated WhatsApp Gateway',
+      service: 'Crumbelle Automated WhatsApp Gateway',
       status: 'active',
       zeroClicksMode: true,
       provider: provider,
@@ -58,12 +58,12 @@ module.exports = async function handler(req, res) {
       const deliveryDate = body.deliveryDate || 'Tomorrow, by 1:00 PM';
       const items = Array.isArray(body.items) ? body.items.join(', ') : (body.items || 'Original Hyderabad Fruit Biscuits (400g Tin)');
 
-      // Royal Karachi Bakery Official Order Confirmation Message
+      // Crumbelle Official Order Confirmation Message
       const messageBody = 
-`🎉 *Karachi Bakery (Est. 1953) — Order Confirmation* 🎉
+`🎉 *Crumbelle — Order Confirmation* 🎉
 
 Dear *${customerName}*,
-Thank you for choosing Karachi Bakery! Your order is confirmed and is being freshly prepared in our central kitchen.
+Thank you for choosing Crumbelle! Your order is confirmed and is being freshly prepared in our central kitchen.
 
 📦 *Order Reference:* ${orderId}
 💳 *Payment Reference:* ${paymentId} (${paymentMethod})
@@ -75,7 +75,7 @@ Thank you for choosing Karachi Bakery! Your order is confirmed and is being fres
 🔍 *Track Live Baking & Dispatch Status:*
 https://karachi-bakery-website-redesign.vercel.app
 
-Need support? Contact Karachi Bakery Care: care@karachibakery.com | 040-6666-1953`;
+Need support? Contact Crumbelle Care: care@crumbelle.com | 040-6666-1953`;
 
       // Check external provider credentials if configured
       const metaToken = req.headers['x-whatsapp-token'] || process.env.WHATSAPP_CLOUD_TOKEN;
@@ -197,7 +197,7 @@ Need support? Contact Karachi Bakery Care: care@karachibakery.com | 040-6666-195
 
       return res.status(200).json({
         success: true,
-        provider: 'Karachi Bakery Staging Gateway (Gateway Keys Required for Automated Background Delivery)',
+        provider: 'Crumbelle Staging Gateway (Gateway Keys Required for Automated Background Delivery)',
         isLiveDelivered: false,
         zeroClicksDelivered: false,
         requiresGatewayCredentials: true,
@@ -207,7 +207,7 @@ Need support? Contact Karachi Bakery Care: care@karachibakery.com | 040-6666-195
         messageId: simulatedMessageId,
         timestamp: new Date().toISOString(),
         status: 'staged_ready_to_send',
-        messagePreview: `Karachi Bakery order ${orderId} receipt generated for +91 ${cleanPhone}`,
+        messagePreview: `Crumbelle order ${orderId} receipt generated for +91 ${cleanPhone}`,
         directWhatsAppUrl: directWhatsAppUrl
       });
 

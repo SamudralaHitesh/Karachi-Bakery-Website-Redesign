@@ -39,7 +39,7 @@ module.exports = async function handler(req, res) {
       const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
       const storeDoc = {
         id: body.id || `store_${Date.now()}`,
-        name: body.name || 'Karachi Bakery Outlet',
+        name: body.name || 'Crumbelle Boutique',
         city: body.city || 'hyderabad',
         cityLabel: body.cityLabel || 'Hyderabad, Telangana',
         type: body.type || 'express',
@@ -51,7 +51,7 @@ module.exports = async function handler(req, res) {
         is24Hours: Boolean(body.is24Hours),
         phone: body.phone || '+91 40 2461 4872',
         amenities: body.amenities || ['🍪 Fresh Biscuits', '⚡ Fast Service'],
-        mapsUrl: body.mapsUrl || 'https://maps.google.com/?q=Karachi+Bakery',
+        mapsUrl: body.mapsUrl || 'https://maps.google.com/?q=Crumbelle+Bakery',
         createdAt: new Date().toISOString()
       };
 

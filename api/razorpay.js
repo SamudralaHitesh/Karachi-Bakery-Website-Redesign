@@ -4,7 +4,7 @@ const { getDatabase } = require('../lib/mongodb');
 
 // Standard test keys fallback if user hasn't set env vars yet
 const DEFAULT_KEY_ID = process.env.RAZORPAY_KEY_ID || 'rzp_test_1DP5mmOlF5G5ag';
-const DEFAULT_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || 'test_secret_karachi2026';
+const DEFAULT_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || 'test_secret_crumbelle2026';
 
 module.exports = async function handler(req, res) {
   // CORS Headers
@@ -56,7 +56,7 @@ module.exports = async function handler(req, res) {
             currency: 'INR',
             receipt: receipt,
             notes: body.notes || {
-              store: 'Karachi Bakery Hyderabad',
+              store: 'Crumbelle Luxury Bakes Hyderabad',
               customer: body.customer?.name || 'Valued Customer'
             }
           });

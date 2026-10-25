@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const { getDatabase } = require('../lib/mongodb');
 
 /**
- * Karachi Bakery - Orders API with Signed Webhook Verification & Idempotent Processing
+ * Crumbelle — Orders API with Signed Webhook Verification & Idempotent Processing
  * 
  * Features:
  * 1. Standard Order CRUD (GET / POST / PATCH)
@@ -96,7 +96,7 @@ module.exports = async function handler(req, res) {
       // =========================================================================
       if (isWebhook) {
         const signature = req.headers['x-razorpay-signature'] || req.headers['x-webhook-signature'] || body.signature;
-        const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET || process.env.RAZORPAY_KEY_SECRET || 'test_secret_karachi2026';
+        const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET || process.env.RAZORPAY_KEY_SECRET || 'test_secret_crumbelle2026';
 
         // Cryptographic HMAC-SHA256 Verification
         if (signature) {

@@ -1,11 +1,6 @@
 /**
- * Karachi Bakery Redesign — Core Application Logic
- * Sprint Status: Days 1 to 5 Fully Completed
- * - Day 1: Brand Architecture, Design System & Customer Journey Hub (Issues #4, #15)
- * - Day 2: Category Architecture & Visual Mega Menu (Issues #1, #15)
- * - Day 3: Multi-Faceted Search, Dietary Facets, Price Slider, Sorting & Zero-Results Fallback (Issue #2)
- * - Day 4: Standardized Product Detail (PDP) Modal & Smart Cross-Sell Recommendations (Issues #7, #14)
- * - Day 5: Side-by-Side Product Comparison Bottom Dock & Matrix Modal (Issue #13)
+ * Crumbelle — Core Application Logic
+ * Handcrafted Luxury Bakes & Cakes
  */
 
 // Application State
@@ -62,7 +57,7 @@ const PRODUCT_CATALOG_DATA = {
     packaging: 'Hermetically Sealed Gold Heritage Tin',
     fssai: 'FSSAI Lic. 13615015000254',
     origin: 'Hyderabad, Telangana (Est. 1953)',
-    description: 'The world-famous crown jewel of Karachi Bakery. Golden, buttery shortcrust biscuits generously studded with candied fruit morsels (tutti-frutti) and hand-picked crunchy cashews.',
+    description: 'The world-famous crown jewel of Crumbelle. Golden, buttery shortcrust biscuits generously studded with candied fruit morsels (tutti-frutti) and hand-picked crunchy cashews.',
     ingredients: 'Refined Wheat Flour (Maida), Pure Dairy Butter, Candied Papaya Fruit Bits, Sugar, Cashew Nuts, Milk Solids, Invert Sugar Syrup, Leavening Agents (E500ii, E503ii), Natural Vanilla & Cardamom Extracts.',
     allergens: 'Contains Wheat (Gluten), Tree Nuts (Cashew), Dairy (Milk Solids). Manufactured in a facility handling pistachios and almonds.',
     storage: 'Store in a cool, clean, dry environment away from direct heat and sunlight. Once opened, retain in the airtight tin to preserve crisp freshness.',
@@ -492,8 +487,8 @@ const PRODUCT_CATALOG_DATA = {
     packaging: 'Embossed Hyderabad Heritage Triple-Compartment Metal Keepsake Tin',
     fssai: 'FSSAI Lic. 13615015000254',
     origin: 'Hyderabad, Telangana',
-    description: 'The definitive Karachi Bakery heirloom. A magnificent collectible tin containing 400g Original Fruit Biscuits, 400g Osmania Biscuits, and 400g Cashew Butter Biscuits.',
-    ingredients: 'Assortment of Karachi Bakery signature recipes: Refined Flour, Butter, Tutti-Frutti, Cashews, Saffron, Salt, Sugar, Cardamom.',
+    description: 'The definitive Crumbelle heirloom. A magnificent collectible tin containing 400g Original Fruit Biscuits, 400g Osmania Biscuits, and 400g Cashew Butter Biscuits.',
+    ingredients: 'Assortment of Crumbelle signature recipes: Refined Flour, Butter, Tutti-Frutti, Cashews, Saffron, Salt, Sugar, Cardamom.',
     allergens: 'Contains Wheat, Cashews, Milk Solids.',
     storage: 'Tins are reusable and hermetically sealed. Store in a cool room.',
     nutrition: {
@@ -2438,15 +2433,15 @@ function generateCorporateQuotation() {
     <div class="b2b-invoice-paper">
       <!-- Invoice Header -->
       <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.5rem; padding-bottom:1.25rem; border-bottom:2px solid var(--kb-burgundy);">
-        <div>
-          <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.35rem;">
-            <span style="background:var(--kb-burgundy); color:#fff; font-weight:800; padding:0.25rem 0.5rem; border-radius:4px; font-size:0.9rem;">KB</span>
-            <h2 style="font-family:var(--font-serif); color:var(--kb-burgundy); margin-bottom:0; font-size:1.5rem;">Karachi Bakery Pvt. Ltd.</h2>
+          <div style="flex:1;">
+            <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.35rem;">
+              <span style="background:var(--kb-burgundy); color:#fff; font-weight:800; padding:0.25rem 0.5rem; border-radius:4px; font-size:0.9rem;">CB</span>
+              <h2 style="font-family:var(--font-serif); color:var(--kb-burgundy); margin-bottom:0; font-size:1.5rem;">Crumbelle Luxury Bakes Pvt. Ltd.</h2>
+            </div>
+            <p style="font-size:0.8rem; color:var(--kb-text-secondary); margin-bottom:0.2rem;">Head Office: Mozamjahi Market, Abids, Hyderabad - 500001, Telangana</p>
+            <p style="font-size:0.8rem; color:var(--kb-text-secondary); margin-bottom:0.2rem;">GSTIN: 36AAACK1953B1Z9 • FSSAI Lic: 13615015000254</p>
+            <p style="font-size:0.8rem; color:var(--kb-text-secondary); margin-bottom:0;">Corporate Desk: b2b@crumbelle.com | +91 40 6666 2222</p>
           </div>
-          <p style="font-size:0.8rem; color:var(--kb-text-secondary); margin-bottom:0.2rem;">Head Office: Mozamjahi Market, Abids, Hyderabad - 500001, Telangana</p>
-          <p style="font-size:0.8rem; color:var(--kb-text-secondary); margin-bottom:0.2rem;">GSTIN: 36AAACK1953B1Z9 • FSSAI Lic: 13615015000254</p>
-          <p style="font-size:0.8rem; color:var(--kb-text-secondary); margin-bottom:0;">Corporate Desk: b2b@karachibakery.com | +91 40 6666 2222</p>
-        </div>
         <div style="text-align:right;">
           <span style="display:inline-block; background:var(--kb-gold-subtle); color:var(--kb-burgundy); font-weight:800; padding:0.35rem 0.75rem; border-radius:6px; font-size:0.85rem; border:1px solid var(--kb-border-gold); margin-bottom:0.4rem;">
             FORMAL PRO-FORMA INVOICE
@@ -2548,7 +2543,7 @@ function generateCorporateQuotation() {
 
       <!-- Action Footer -->
       <div style="display:flex; justify-content:space-between; align-items:center; padding-top:1rem; border-top:1px dashed var(--kb-border);">
-        <span style="font-size:0.8rem; color:var(--kb-text-muted);">Authorized Signatory: Karachi Bakery Corporate Institutional Sales</span>
+        <span style="font-size:0.8rem; color:var(--kb-text-muted);">Authorized Signatory: Crumbelle Corporate Institutional Sales</span>
         <button type="button" class="action-btn-primary" style="padding:0.6rem 1.25rem; font-size:0.85rem;" onclick="confirmB2BQuoteBooking('${quoteNumber}')">
           Accept Quote & Proceed to PO
         </button>
@@ -2607,7 +2602,7 @@ function printB2BQuotation() {
 }
 
 function orderB2BSampleKit() {
-  addToCart('Karachi Bakery Executive 4-Sample Tasting Kit (Fruit Biscuits, Osmania, Kaju Katli, Truffle)', 499);
+  addToCart('Crumbelle Executive 4-Sample Tasting Kit (Fruit Biscuits, Osmania, Kaju Katli, Truffle)', 499);
   showToast('Executive Tasting Sample Kit added! (₹499 - 100% refundable upon bulk order)', '📦');
 }
 
@@ -2992,7 +2987,7 @@ const STORE_LOCATIONS_DATA = [
       "🚗 Valet Parking",
       "📶 Free Wi-Fi"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Mozamjahi+Market+Hyderabad"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Mozamjahi+Market+Hyderabad"
   },
   {
     "id": "hyd-2",
@@ -3013,7 +3008,7 @@ const STORE_LOCATIONS_DATA = [
       "🎂 Cake Studio",
       "🚗 Valet Parking"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Banjara+Hills+Hyderabad"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Banjara+Hills+Hyderabad"
   },
   {
     "id": "hyd-3",
@@ -3034,7 +3029,7 @@ const STORE_LOCATIONS_DATA = [
       "🚗 Valet Parking",
       "📶 High-Speed Wi-Fi"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Jubilee+Hills+Road+36+Hyderabad"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Jubilee+Hills+Road+36+Hyderabad"
   },
   {
     "id": "hyd-4",
@@ -3054,7 +3049,7 @@ const STORE_LOCATIONS_DATA = [
       "🎂 Cake Counter",
       "⚡ Quick Takeaway"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Gachibowli+Hyderabad"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Gachibowli+Hyderabad"
   },
   {
     "id": "hyd-5",
@@ -3074,7 +3069,7 @@ const STORE_LOCATIONS_DATA = [
       "🎁 Gift Packing",
       "⚡ 24/7 Open Counter"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Rajiv+Gandhi+Airport+Hyderabad"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Rajiv+Gandhi+Airport+Hyderabad"
   },
   {
     "id": "hyd-6",
@@ -3094,7 +3089,7 @@ const STORE_LOCATIONS_DATA = [
       "🎁 Keepsake Wooden Boxes",
       "⚡ 24/7 Service"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+International+Departures+RGIA+Hyderabad"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+International+Departures+RGIA+Hyderabad"
   },
   {
     "id": "hyd-7",
@@ -3114,7 +3109,7 @@ const STORE_LOCATIONS_DATA = [
       "🍪 Fresh Bakes",
       "☕ Irani Chai Bar"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Secunderabad"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Secunderabad"
   },
   {
     "id": "hyd-8",
@@ -3134,7 +3129,7 @@ const STORE_LOCATIONS_DATA = [
       "🍪 Fresh Osmania Biscuits",
       "🏛️ Heritage Architecture"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Charminar+Hyderabad"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Charminar+Hyderabad"
   },
   {
     "id": "hyd-9",
@@ -3154,7 +3149,7 @@ const STORE_LOCATIONS_DATA = [
       "🎂 Cake Specialist",
       "🚗 Easy Parking"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Begumpet+Hyderabad"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Begumpet+Hyderabad"
   },
   {
     "id": "hyd-10",
@@ -3174,7 +3169,7 @@ const STORE_LOCATIONS_DATA = [
       "🎂 Birthday Cakes",
       "⚡ Fast Billing"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Kondapur+Hyderabad"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Kondapur+Hyderabad"
   },
   {
     "id": "hyd-11",
@@ -3194,7 +3189,7 @@ const STORE_LOCATIONS_DATA = [
       "🍰 French Desserts",
       "🏢 Corporate Orders"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Madhapur+Hyderabad"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Madhapur+Hyderabad"
   },
   {
     "id": "hyd-12",
@@ -3214,7 +3209,7 @@ const STORE_LOCATIONS_DATA = [
       "🍪 Bulk Mithai Packs",
       "🚗 Street Parking"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+KPHB+Kukatpally+Hyderabad"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+KPHB+Kukatpally+Hyderabad"
   },
   {
     "id": "hyd-13",
@@ -3234,7 +3229,7 @@ const STORE_LOCATIONS_DATA = [
       "🎂 Pastry Counter",
       "⚡ Metro Transit Access"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Dilsukhnagar+Hyderabad"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Dilsukhnagar+Hyderabad"
   },
   {
     "id": "hyd-14",
@@ -3254,7 +3249,7 @@ const STORE_LOCATIONS_DATA = [
       "🍪 Gift Hamper Packs",
       "⚡ Fast Checkout"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+AS+Rao+Nagar+Hyderabad"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+AS+Rao+Nagar+Hyderabad"
   },
   {
     "id": "hyd-15",
@@ -3274,7 +3269,7 @@ const STORE_LOCATIONS_DATA = [
       "🍪 Diet Biscuits",
       "⚡ Express Counter"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Somajiguda+Hyderabad"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Somajiguda+Hyderabad"
   },
   {
     "id": "hyd-16",
@@ -3294,7 +3289,7 @@ const STORE_LOCATIONS_DATA = [
       "🎂 Custom Cakes",
       "🚗 Highway Drive-By"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Attapur+Hyderabad"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Attapur+Hyderabad"
   },
   {
     "id": "hyd-17",
@@ -3314,7 +3309,7 @@ const STORE_LOCATIONS_DATA = [
       "🍪 Fresh Osmania Packs",
       "⚡ Takeaway"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Tolichowki+Hyderabad"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Tolichowki+Hyderabad"
   },
   {
     "id": "hyd-18",
@@ -3334,7 +3329,7 @@ const STORE_LOCATIONS_DATA = [
       "🍪 Assorted Biscuits",
       "⚡ Fast Checkout"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Manikonda+Hyderabad"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Manikonda+Hyderabad"
   },
   {
     "id": "hyd-19",
@@ -3354,7 +3349,7 @@ const STORE_LOCATIONS_DATA = [
       "🎂 Anniversary Pastries",
       "🚗 Parking Available"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Karkhana+Secunderabad"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Karkhana+Secunderabad"
   },
   {
     "id": "hyd-20",
@@ -3374,7 +3369,7 @@ const STORE_LOCATIONS_DATA = [
       "🎂 Daily Pastries",
       "⚡ Metro Hub Access"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Miyapur+Hyderabad"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Miyapur+Hyderabad"
   },
   {
     "id": "hyd-21",
@@ -3394,7 +3389,7 @@ const STORE_LOCATIONS_DATA = [
       "🎂 Fresh Cream Cakes",
       "🚗 Highway Stop"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Chandanagar+Hyderabad"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Chandanagar+Hyderabad"
   },
   {
     "id": "hyd-22",
@@ -3414,7 +3409,7 @@ const STORE_LOCATIONS_DATA = [
       "🎂 Celebration Cakes",
       "⚡ Metro Transit Access"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Nagole+Hyderabad"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Nagole+Hyderabad"
   },
   {
     "id": "blr-1",
@@ -3434,7 +3429,7 @@ const STORE_LOCATIONS_DATA = [
       "🎂 Bespoke Pastries",
       "📶 High Speed Wi-Fi"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Indiranagar+Bengaluru"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Indiranagar+Bengaluru"
   },
   {
     "id": "blr-2",
@@ -3454,7 +3449,7 @@ const STORE_LOCATIONS_DATA = [
       "🎁 Travel Tin Curations",
       "⚡ 24/7 Service"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+BLR+Airport+Terminal+2"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+BLR+Airport+Terminal+2"
   },
   {
     "id": "blr-3",
@@ -3474,7 +3469,7 @@ const STORE_LOCATIONS_DATA = [
       "🎁 Express Gifting",
       "⚡ 24/7 Service"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+BLR+Airport+Terminal+1"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+BLR+Airport+Terminal+1"
   },
   {
     "id": "blr-4",
@@ -3494,7 +3489,7 @@ const STORE_LOCATIONS_DATA = [
       "🍪 Signature Biscuits",
       "🎂 Quick Cake Delivery"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Koramangala+Bengaluru"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Koramangala+Bengaluru"
   },
   {
     "id": "blr-5",
@@ -3514,7 +3509,7 @@ const STORE_LOCATIONS_DATA = [
       "🎂 Designer Cakes",
       "🚗 Mall Parking"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Whitefield+Bengaluru"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Whitefield+Bengaluru"
   },
   {
     "id": "blr-6",
@@ -3534,7 +3529,7 @@ const STORE_LOCATIONS_DATA = [
       "🍬 Pure Ghee Sweets",
       "⚡ Quick Takeaway"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Jayanagar+Bengaluru"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Jayanagar+Bengaluru"
   },
   {
     "id": "blr-7",
@@ -3554,7 +3549,7 @@ const STORE_LOCATIONS_DATA = [
       "🎂 Cake Counter",
       "📶 Wi-Fi Lounge"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+HSR+Layout+Bengaluru"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+HSR+Layout+Bengaluru"
   },
   {
     "id": "blr-8",
@@ -3574,7 +3569,7 @@ const STORE_LOCATIONS_DATA = [
       "🎂 Fresh Pastries",
       "⚡ Prime High Street"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+MG+Road+Bengaluru"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+MG+Road+Bengaluru"
   },
   {
     "id": "mum-1",
@@ -3594,7 +3589,7 @@ const STORE_LOCATIONS_DATA = [
       "🍪 Fresh Fruit Biscuit Cans",
       "🎂 Custom Celebration Bakes"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Bandra+Mumbai"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Bandra+Mumbai"
   },
   {
     "id": "mum-2",
@@ -3614,7 +3609,7 @@ const STORE_LOCATIONS_DATA = [
       "🎁 Keepsake Gift Tins",
       "⚡ 24/7 Open"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Mumbai+Airport+T2"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Mumbai+Airport+T2"
   },
   {
     "id": "mum-3",
@@ -3634,7 +3629,7 @@ const STORE_LOCATIONS_DATA = [
       "🎁 Travel Tins",
       "⚡ 24/7 Open"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Mumbai+Airport+T1"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Mumbai+Airport+T1"
   },
   {
     "id": "mum-4",
@@ -3654,7 +3649,7 @@ const STORE_LOCATIONS_DATA = [
       "🍰 Signature Cheesecakes",
       "🚗 Valet Mall Parking"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Phoenix+Palladium+Mumbai"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Phoenix+Palladium+Mumbai"
   },
   {
     "id": "mum-5",
@@ -3674,7 +3669,7 @@ const STORE_LOCATIONS_DATA = [
       "🍬 Vintage Mithai",
       "⚡ South Mumbai Heritage"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Colaba+Mumbai"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Colaba+Mumbai"
   },
   {
     "id": "mum-6",
@@ -3694,7 +3689,7 @@ const STORE_LOCATIONS_DATA = [
       "🎂 Designer Cakes",
       "🚗 Valet Parking"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Juhu+Mumbai"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Juhu+Mumbai"
   },
   {
     "id": "del-1",
@@ -3714,7 +3709,7 @@ const STORE_LOCATIONS_DATA = [
       "🍬 Royal Mithai",
       "☕ High Tea Counter"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Connaught+Place+Delhi"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Connaught+Place+Delhi"
   },
   {
     "id": "del-2",
@@ -3734,7 +3729,7 @@ const STORE_LOCATIONS_DATA = [
       "🎁 Export Quality Tins",
       "⚡ 24/7 Service"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+IGI+Airport+Terminal+3"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+IGI+Airport+Terminal+3"
   },
   {
     "id": "del-3",
@@ -3754,7 +3749,7 @@ const STORE_LOCATIONS_DATA = [
       "🍪 Quick Biscuit Packs",
       "⚡ 24/7 Counter"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+IGI+Airport+Terminal+1"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+IGI+Airport+Terminal+1"
   },
   {
     "id": "del-4",
@@ -3774,7 +3769,7 @@ const STORE_LOCATIONS_DATA = [
       "🏢 Corporate Bulk Desk",
       "🎂 Cake Delivery"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Cyber+Hub+Gurgaon"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Cyber+Hub+Gurgaon"
   },
   {
     "id": "del-5",
@@ -3794,7 +3789,7 @@ const STORE_LOCATIONS_DATA = [
       "🎂 Fresh Pastry Bar",
       "🚗 Commercial Hub"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Sector+18+Noida"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Sector+18+Noida"
   },
   {
     "id": "del-6",
@@ -3814,7 +3809,7 @@ const STORE_LOCATIONS_DATA = [
       "🍪 Traditional Biscuits",
       "⚡ Fast Service"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+South+Extension+Delhi"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+South+Extension+Delhi"
   },
   {
     "id": "chn-1",
@@ -3834,7 +3829,7 @@ const STORE_LOCATIONS_DATA = [
       "🍪 Fresh Fruit Biscuits",
       "☕ Filter Coffee & Chai"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+T+Nagar+Chennai"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+T+Nagar+Chennai"
   },
   {
     "id": "chn-2",
@@ -3854,7 +3849,7 @@ const STORE_LOCATIONS_DATA = [
       "🎁 Gift Curations",
       "⚡ 24/7 Service"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Chennai+Airport"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Chennai+Airport"
   },
   {
     "id": "chn-3",
@@ -3874,7 +3869,7 @@ const STORE_LOCATIONS_DATA = [
       "🍪 Signature Cans",
       "🚗 Mall Parking"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Phoenix+Marketcity+Chennai"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Phoenix+Marketcity+Chennai"
   },
   {
     "id": "pun-1",
@@ -3894,7 +3889,7 @@ const STORE_LOCATIONS_DATA = [
       "🎂 Custom Cakes",
       "📶 High Speed Wi-Fi"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Koregaon+Park+Pune"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Koregaon+Park+Pune"
   },
   {
     "id": "pun-2",
@@ -3914,7 +3909,7 @@ const STORE_LOCATIONS_DATA = [
       "🎂 Pastry Counter",
       "🚗 Mall Parking"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Phoenix+Marketcity+Pune"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Phoenix+Marketcity+Pune"
   },
   {
     "id": "pun-3",
@@ -3934,7 +3929,7 @@ const STORE_LOCATIONS_DATA = [
       "🎁 Express Gifting",
       "⚡ 24/7 Open"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Pune+Airport"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Pune+Airport"
   },
   {
     "id": "ccu-1",
@@ -3954,7 +3949,7 @@ const STORE_LOCATIONS_DATA = [
       "🎁 Heritage Gift Boxes",
       "⚡ 24/7 Service"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Kolkata+Airport"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Kolkata+Airport"
   },
   {
     "id": "ccu-2",
@@ -3974,7 +3969,7 @@ const STORE_LOCATIONS_DATA = [
       "🍪 Fresh Osmania & Fruit Tins",
       "☕ Darjeeling & Chai"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Park+Street+Kolkata"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Park+Street+Kolkata"
   },
   {
     "id": "goa-1",
@@ -3994,7 +3989,7 @@ const STORE_LOCATIONS_DATA = [
       "🎁 Souvenir Packs",
       "⚡ 24/7 Open"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Dabolim+Airport+Goa"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Dabolim+Airport+Goa"
   },
   {
     "id": "goa-2",
@@ -4014,7 +4009,7 @@ const STORE_LOCATIONS_DATA = [
       "🎁 Resort Gift Hampers",
       "⚡ 24/7 Service"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Mopa+Airport+Goa"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Mopa+Airport+Goa"
   },
   {
     "id": "ap-1",
@@ -4034,7 +4029,7 @@ const STORE_LOCATIONS_DATA = [
       "🍬 Pure Desi Ghee Sweets",
       "🍪 Fresh Biscuits"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+Benz+Circle+Vijayawada"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+Benz+Circle+Vijayawada"
   },
   {
     "id": "ap-2",
@@ -4054,7 +4049,7 @@ const STORE_LOCATIONS_DATA = [
       "🎂 Custom Cakes",
       "🍪 Coastal Travel Tins"
     ],
-    "mapsUrl": "https://maps.google.com/?q=Karachi+Bakery+VIP+Road+Vizag"
+    "mapsUrl": "https://maps.google.com/?q=Crumbelle+Bakery+VIP+Road+Vizag"
   }
 ];
 
@@ -4321,7 +4316,7 @@ function findNearestStore() {
 function shareStoreWhatsApp(storeId) {
   const store = STORE_LOCATIONS_DATA.find(s => s.id === storeId);
   if (!store) return;
-  const msg = encodeURIComponent(`Karachi Bakery Outlet: ${store.name}\nAddress: ${store.address}\nHours: ${store.hours}\nPhone: ${store.phone}\nDirections: ${store.mapsUrl}`);
+  const msg = encodeURIComponent(`Crumbelle Boutique: ${store.name}\nAddress: ${store.address}\nHours: ${store.hours}\nPhone: ${store.phone}\nDirections: ${store.mapsUrl}`);
   window.open(`https://api.whatsapp.com/send?text=${msg}`, '_blank');
 }
 
@@ -5055,13 +5050,13 @@ function launchRazorpayGateway() {
         key: keyId,
         amount: Math.round(amount * 100),
         currency: 'INR',
-        name: 'Karachi Bakery (Est. 1953)',
-        description: `Order ${orderRef} • Authentic Confectionery & Biscuits`,
+        name: 'Crumbelle Luxury Bakes',
+        description: `Order ${orderRef} • Handcrafted Luxury Bakes & Cakes`,
         image: 'https://karachi-bakery-website-redesign.vercel.app/images/kb-logo.png',
         order_id: isLive ? rzpOrder.id : undefined,
         prefill: {
           name: customerName,
-          email: CheckoutState.email || 'customer@karachibakery.com',
+          email: CheckoutState.email || 'customer@crumbelle.com',
           contact: customerPhone
         },
         notes: {
@@ -5150,10 +5145,10 @@ function renderOriginalUpiQrCode(containerId, amount, orderRef, options) {
   }
 
   // 2. Build official NPCI Standard UPI Intent URI
-  const storeUpi = localStorage.getItem('KB_STORE_UPI_ID') || 'karachibakery@okhdfcbank';
+  const storeUpi = localStorage.getItem('KB_STORE_UPI_ID') || 'crumbelle@okhdfcbank';
   const cleanAmt = (Number(amount) || 0).toFixed(2);
   const cleanRef = orderRef || ('KB-ORD-2026-' + Math.floor(1000 + Math.random() * 9000));
-  const upiUri = 'upi://pay?pa=' + encodeURIComponent(storeUpi) + '&pn=' + encodeURIComponent('Karachi Bakery') + '&am=' + cleanAmt + '&cu=INR&tn=' + encodeURIComponent('Order ' + cleanRef);
+  const upiUri = 'upi://pay?pa=' + encodeURIComponent(storeUpi) + '&pn=' + encodeURIComponent('Crumbelle') + '&am=' + cleanAmt + '&cu=INR&tn=' + encodeURIComponent('Order ' + cleanRef);
 
   // Update deep-link for direct mobile payments
   const directLink = document.getElementById('rzpDirectUpiLink');
@@ -5183,7 +5178,7 @@ function renderOriginalUpiQrCode(containerId, amount, orderRef, options) {
   if (!success) {
     const img = document.createElement('img');
     img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=' + width + 'x' + height + '&margin=2&data=' + encodeURIComponent(upiUri);
-    img.alt = 'Karachi Bakery Scannable UPI QR';
+    img.alt = 'Crumbelle Scannable UPI QR';
     img.style.width = width + 'px';
     img.style.height = height + 'px';
     img.style.display = 'block';
@@ -5193,15 +5188,15 @@ function renderOriginalUpiQrCode(containerId, amount, orderRef, options) {
 }
 
 function copyStoreUpiId() {
-  const storeUpi = localStorage.getItem('KB_STORE_UPI_ID') || 'karachibakery@okhdfcbank';
+  const storeUpi = localStorage.getItem('KB_STORE_UPI_ID') || 'crumbelle@okhdfcbank';
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(storeUpi).then(function() {
-      showToast('Copied Karachi Bakery UPI ID: ' + storeUpi, '📋');
+      showToast('Copied Crumbelle UPI ID: ' + storeUpi, '📋');
     }).catch(function() {
-      showToast('Karachi Bakery UPI ID: ' + storeUpi, '📋');
+      showToast('Crumbelle UPI ID: ' + storeUpi, '📋');
     });
   } else {
-    showToast('Karachi Bakery UPI ID: ' + storeUpi, '📋');
+    showToast('Crumbelle UPI ID: ' + storeUpi, '📋');
   }
 }
 
@@ -5233,11 +5228,11 @@ function adminClearCustomQrImage() {
 }
 
 function adminTestScanQr() {
-  const storeUpi = localStorage.getItem('KB_STORE_UPI_ID') || 'karachibakery@okhdfcbank';
+  const storeUpi = localStorage.getItem('KB_STORE_UPI_ID') || 'crumbelle@okhdfcbank';
   const hasCustom = !!localStorage.getItem('KB_CUSTOM_QR_IMAGE');
   const info = hasCustom 
     ? 'Custom uploaded standee QR image is active.'
-    : 'Dynamic NPCI QR active for: ' + storeUpi + '. Any UPI app (GPay/PhonePe/Paytm) scanning this will detect Karachi Bakery and the exact order total.';
+    : 'Dynamic NPCI QR active for: ' + storeUpi + '. Any UPI app (GPay/PhonePe/Paytm) scanning this will detect Crumbelle and the exact order total.';
   showToast(info, '📱');
 }
 
@@ -5262,7 +5257,7 @@ function openRazorpayCheckoutModal(data) {
 
   // Render Real Scannable NPCI UPI QR Code
   renderOriginalUpiQrCode('rzpModalQrCode', amt, orderRef, { width: 130, height: 130 });
-  const storeUpi = localStorage.getItem('KB_STORE_UPI_ID') || 'karachibakery@okhdfcbank';
+  const storeUpi = localStorage.getItem('KB_STORE_UPI_ID') || 'crumbelle@okhdfcbank';
   const upiBadgeEl = document.getElementById('rzpStoreUpiDisplay');
   if (upiBadgeEl) upiBadgeEl.textContent = storeUpi;
   const brandBadge = document.getElementById('rzpQrBrandBadge');
@@ -5587,7 +5582,7 @@ function printOrderInvoice() {
 '<html lang="en">' +
 '<head>' +
 '  <meta charset="UTF-8">' +
-'  <title>Karachi Bakery — GST Tax Invoice ' + invoiceNo + '</title>' +
+'  <title>Crumbelle — GST Tax Invoice ' + invoiceNo + '</title>' +
 '  <style>' +
 '    * { box-sizing: border-box; margin: 0; padding: 0; }' +
 '    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; color: #1e293b; background: #ffffff; padding: 16px 20px; font-size: 11.5px; line-height: 1.35; }' +
@@ -5621,13 +5616,13 @@ function printOrderInvoice() {
 '  <div class="invoice-card">' +
 '    <div class="inv-header">' +
 '      <div>' +
-'        <div class="brand-emblem">KB</div>' +
-'        <h1 class="brand-name">KARACHI BAKERY</h1>' +
+'        <div class="brand-emblem">CB</div>' +
+'        <h1 class="brand-name">CRUMBELLE</h1>' +
 '        <div class="brand-meta">' +
-'          <strong>Karachi Bakery (Est. 1953) Private Limited</strong><br>' +
+'          <strong>Crumbelle Luxury Bakes Private Limited</strong><br>' +
 '          Mozamjahi Market, Hyderabad, Telangana - 500001, India<br>' +
 '          GSTIN: <strong>36AAACK1953B1Z5</strong> • FSSAI Lic. No: <strong>13618011000123</strong><br>' +
-'          Ph: +91 40 2460 0123 • Email: orders@karachibakery.com' +
+'          Ph: +91 40 2460 0123 • Email: orders@crumbelle.com' +
 '        </div>' +
 '      </div>' +
 '      <div class="inv-title-col">' +
@@ -5709,12 +5704,12 @@ function printOrderInvoice() {
 '    </div>' +
 '    <div class="footer-seal-row">' +
 '      <div>' +
-'        <div>Thank you for ordering with Karachi Bakery!</div>' +
+'        <div>Thank you for ordering with Crumbelle!</div>' +
 '        <div style="font-size:9px; color:#94a3b8; margin-top:2px;">This is a computer-generated tax invoice and requires no physical signature.</div>' +
 '      </div>' +
 '      <div style="text-align:right;">' +
 '        <div class="seal-badge">✓ Authenticated & Signed</div>' +
-'        <div style="font-weight:700; color:#0f172a;">For Karachi Bakery (Est. 1953)</div>' +
+'        <div style="font-weight:700; color:#0f172a;">For Crumbelle Luxury Bakes Pvt. Ltd.</div>' +
 '        <div style="font-size:9px; color:#64748b;">Authorized Signatory</div>' +
 '      </div>' +
 '    </div>' +
@@ -5760,7 +5755,7 @@ function printOrderInvoice() {
 
 
 // =============================================================================
-// Karachi Bakery Store Operations & Admin Management System
+// Crumbelle Store Operations & Admin Management System
 // Controls Product Catalog, Dynamic Pricing/Costs, Stock Status, Kitchen Dispatch & Order Auditing
 // =============================================================================
 
@@ -6360,7 +6355,7 @@ function handleAddNewProductSubmit(e) {
   renderAdminProductsTable();
   renderAdminKpis();
 
-  showToast(`🎉 "${name}" published live to Karachi Bakery store!`, '🚀');
+  showToast(`🎉 "${name}" published live to Crumbelle store!`, '🚀');
 }
 
 function insertCustomProductToStorefront(p) {
@@ -6410,7 +6405,7 @@ function insertCustomProductToStorefront(p) {
           <span class="price-original">₹${p.originalPrice}</span>
         </div>
         <div class="product-card-buttons">
-          <button type="button" class="btn-card-details" onclick="showToast('${p.name}: Fresh batch handcrafted with authentic Karachi Bakery recipe.', 'ℹ️')">👁️ Info</button>
+          <button type="button" class="btn-card-details" onclick="showToast('${p.name}: Fresh batch handcrafted with authentic Crumbelle recipe.', 'ℹ️')">👁️ Info</button>
           <button type="button" class="btn-add-cart" onclick="addToCart('${p.name} (${p.unit})', ${p.price})">Add to Cart</button>
         </div>
       </div>
@@ -6867,7 +6862,7 @@ function exportOrdersToCsv() {
   const url = window.URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.setAttribute('href', url);
-  a.setAttribute('download', `Karachi_Bakery_Orders_${Date.now()}.csv`);
+  a.setAttribute('download', `Crumbelle_Orders_${Date.now()}.csv`);
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -7287,7 +7282,7 @@ function resetDefaultAnnouncement() {
   if (tSel) tSel.value = 'heritage';
 
   previewThemePreset('heritage');
-  showToast('Reset to classic Karachi Bakery heritage theme.', '🏛️');
+  showToast('Reset to classic Crumbelle heritage theme.', '🏛️');
 }
 
 
@@ -7681,7 +7676,7 @@ const CHAI_PAIRINGS = {
     badge: 'Nizam’s Anglo-Indian Heritage',
     timing: '⏱️ Crisp Crunchy Companion',
     title: 'Original Hyderabad Fruit Biscuit (Tin Edition)',
-    desc: 'The citrus bergamot notes of Earl Grey match the sweet burst of candied tutti-frutti and crunchy cashew nuts in Karachi Bakery’s 1953 masterpiece.',
+    desc: 'The citrus bergamot notes of Earl Grey match the sweet burst of candied tutti-frutti and crunchy cashew nuts in Crumbelle’s signature masterpiece.',
     technique: 'Nibble crisp dry morsels alongside hot black tea with lemon or cream.',
     bundleItems: ['Original Hyderabad Fruit Biscuit (400g Tin)', 'Belgian Chocolate Truffle (500g)'],
     bundlePrice: 570
@@ -8114,7 +8109,7 @@ function renderProductReviewsHtml(productId) {
         <span style="color:#FFB300; font-size:0.9rem;">★★★★★</span>
       </div>
       <strong style="display:block; font-size:0.85rem; color:var(--kb-burgundy); margin-bottom:0.25rem;">"Perfect pairing with evening tea"</strong>
-      <p style="font-size:0.82rem; color:var(--kb-text-secondary); margin:0;">Delivered fresh via 48h air cargo without a single broken biscuit. Karachi Bakery never disappoints.</p>
+      <p style="font-size:0.82rem; color:var(--kb-text-secondary); margin:0;">Delivered fresh via 48h air cargo without a single broken biscuit. Crumbelle never disappoints.</p>
       <span style="font-size:0.72rem; color:#94a3b8; display:block; margin-top:0.35rem;">📅 Heritage Customer (Verified Purchase)</span>
     </div>
   `;
@@ -8158,7 +8153,7 @@ function handleCustomerReviewSubmit(e, forceFailureSim = false) {
     productId: currentReviewProductId || 'p1',
     productName: (typeof PRODUCT_CATALOG_DATA !== 'undefined' && PRODUCT_CATALOG_DATA[currentReviewProductId]) 
       ? PRODUCT_CATALOG_DATA[currentReviewProductId].name 
-      : 'Karachi Bakery Delicacy',
+      : 'Crumbelle Delicacy',
     author,
     city,
     stars: selectedReviewStars,
@@ -8270,7 +8265,7 @@ function initPwaEngine() {
   // Register Service Worker
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./service-worker.js')
-      .then(reg => console.log('Karachi Bakery PWA Service Worker Registered!'))
+      .then(reg => console.log('Crumbelle PWA Service Worker Registered!'))
       .catch(err => console.warn('PWA SW registration skipped:', err));
   }
 
@@ -8290,7 +8285,7 @@ function triggerPwaInstall() {
     deferredPwaPrompt.prompt();
     deferredPwaPrompt.userChoice.then((choiceResult) => {
       if (choiceResult.outcome === 'accepted') {
-        showToast('Karachi Bakery App installed to your device!', '📱');
+        showToast('Crumbelle App installed to your device!', '📱');
       }
       deferredPwaPrompt = null;
       dismissPwaBanner();
@@ -8661,7 +8656,7 @@ function renderLocationModalBranches(filterCity = 'all', searchQuery = '') {
       <div class="loc-branch-card ${isSelected ? 'active' : ''}" onclick="selectUserLocation('${store.id}')">
         <div class="loc-branch-card-header">
           <div class="loc-branch-name">${store.name}</div>
-          <span class="loc-branch-type-pill">${store.typeLabel || 'Karachi Bakery'}</span>
+          <span class="loc-branch-type-pill">${store.typeLabel || 'Crumbelle'}</span>
         </div>
         <div class="loc-branch-addr">📍 ${store.address}</div>
         <div class="loc-branch-meta">
@@ -8768,7 +8763,7 @@ function detectUserLocationGPS() {
       const userLat = position.coords.latitude;
       const userLng = position.coords.longitude;
 
-      if (subtext) subtext.textContent = 'Finding closest Karachi Bakery branch...';
+      if (subtext) subtext.textContent = 'Finding closest Crumbelle boutique...';
 
       // Haversine formula
       let nearestCity = 'hyderabad';
@@ -8791,9 +8786,9 @@ function detectUserLocationGPS() {
       });
 
       if (btn) btn.style.opacity = '1';
-      if (subtext) subtext.textContent = 'Uses browser location to connect to your nearest Karachi Bakery branch';
+      if (subtext) subtext.textContent = 'Uses browser location to connect to your nearest Crumbelle boutique';
 
-      // If within 150km of any Karachi Bakery city hub:
+      // If within 150km of any Crumbelle boutique hub:
       if (shortestDist <= 150) {
         const cityInfo = CITY_GEO_LOOKUP[nearestCity];
         selectUserLocation(cityInfo.defaultId);
@@ -8806,7 +8801,7 @@ function detectUserLocationGPS() {
     },
     (err) => {
       if (btn) btn.style.opacity = '1';
-      if (subtext) subtext.textContent = 'Uses browser location to connect to your nearest Karachi Bakery branch';
+      if (subtext) subtext.textContent = 'Uses browser location to connect to your nearest Crumbelle boutique';
 
       // On permission denied or timeout, fallback gracefully to Hyderabad Flagship
       selectUserLocation('hyd-1');
@@ -8984,7 +8979,7 @@ document.addEventListener('keydown', (e) => {
 function renderAdminRazorpayTab() {
   const keyId = getActiveRazorpayKeyId();
   const savedConfig = localStorage.getItem('KB_RAZORPAY_CONFIG');
-  let keySecret = 'test_secret_karachi2026';
+  let keySecret = 'test_secret_crumbelle2026';
   if (savedConfig) {
     try {
       const parsed = JSON.parse(savedConfig);
@@ -8999,7 +8994,7 @@ function renderAdminRazorpayTab() {
 
   if (keyIdInput) keyIdInput.value = keyId;
   if (keySecretInput) keySecretInput.value = keySecret;
-  if (storeUpiInput) storeUpiInput.value = localStorage.getItem('KB_STORE_UPI_ID') || 'karachibakery@okhdfcbank';
+  if (storeUpiInput) storeUpiInput.value = localStorage.getItem('KB_STORE_UPI_ID') || 'crumbelle@okhdfcbank';
   if (modePill) {
     const isLive = keyId.startsWith('rzp_live');
     modePill.textContent = isLive ? '🔴 Live Mode Active' : '🟢 Test Mode Active';
@@ -9014,8 +9009,8 @@ function renderAdminRazorpayTab() {
 
 function adminSaveRazorpayKeys() {
   const keyId = document.getElementById('adminRzpKeyIdInput')?.value.trim() || 'rzp_test_1DP5mmOlF5G5ag';
-  const keySecret = document.getElementById('adminRzpKeySecretInput')?.value.trim() || 'test_secret_karachi2026';
-  const storeUpi = document.getElementById('adminStoreUpiInput')?.value.trim() || 'karachibakery@okhdfcbank';
+  const keySecret = document.getElementById('adminRzpKeySecretInput')?.value.trim() || 'test_secret_crumbelle2026';
+  const storeUpi = document.getElementById('adminStoreUpiInput')?.value.trim() || 'crumbelle@okhdfcbank';
 
   localStorage.setItem('KB_RAZORPAY_CONFIG', JSON.stringify({
     keyId,
@@ -9607,12 +9602,12 @@ function adminTestLaunchRazorpay() {
     key: keyId,
     amount: 10000, // ₹100 in paise
     currency: 'INR',
-    name: 'Karachi Bakery (Demo Test)',
+    name: 'Crumbelle (Demo Test)',
     description: 'Razorpay Gateway Connectivity Test (₹100)',
     image: 'https://karachi-bakery-website-redesign.vercel.app/images/kb-logo.png',
     prefill: {
       name: 'Rajesh Gupta (Store Manager)',
-      email: 'manager@karachibakery.com',
+      email: 'manager@crumbelle.com',
       contact: '9849012345'
     },
     theme: {
@@ -9747,7 +9742,7 @@ function handleOrderLookupSubmit(event) {
       closeOrderLookupModal();
       displayOrderTracking({
         orderId: query.toUpperCase(),
-        customerName: 'Karachi Bakery Valued Guest',
+        customerName: 'Crumbelle Valued Guest',
         destination: 'Hyderabad Flagship Delivery Zone',
         amount: 1259,
         status: 'baking',
@@ -9861,7 +9856,7 @@ function adminExportOrdersToCsv() {
   const link = document.createElement('a');
   const dateStr = new Date().toISOString().slice(0, 10);
   link.setAttribute('href', url);
-  link.setAttribute('download', `Karachi_Bakery_Orders_Manifest_${dateStr}.csv`);
+  link.setAttribute('download', `Crumbelle_Orders_Manifest_${dateStr}.csv`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -9945,7 +9940,7 @@ function adminExportRazorpayLedgerToCsv() {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.setAttribute('href', url);
-  link.setAttribute('download', `Karachi_Bakery_Razorpay_${monthKey.toUpperCase()}_Ledger.csv`);
+  link.setAttribute('download', `Crumbelle_Razorpay_${monthKey.toUpperCase()}_Ledger.csv`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -10061,8 +10056,8 @@ function copySiteShareLink() {
 
 function triggerNativeShare() {
   const shareData = {
-    title: 'Karachi Bakery Hyderabad (Est. 1953)',
-    text: 'Order authentic Hyderabad Fruit Biscuits, Royal Osmania, Mithai & Custom Cakes with pan-India delivery!',
+    title: 'Crumbelle — Handcrafted Luxury Bakes & Cakes',
+    text: 'Order handcrafted Crumbelle Fruit Biscuits, Royal Osmania, Mithai & Custom Cakes with pan-India delivery!',
     url: window.location.origin || 'https://karachi-bakery-website-redesign.vercel.app'
   };
 
@@ -10086,7 +10081,7 @@ function formatKarachiOrderWhatsAppMessage(order) {
     ? o.items.join(', ')
     : 'Original Hyderabad Fruit Biscuit (400g Collectible Tin)';
 
-  return `🎉 *Karachi Bakery (Est. 1953) — Order Confirmation* 🎉
+  return `🎉 *Crumbelle — Order Confirmation* 🎉
 
 Dear *${name}*,
 Thank you for your order! Your freshly baked delicacies are confirmed and being handcrafted in our central kitchen.
@@ -10101,7 +10096,7 @@ Thank you for your order! Your freshly baked delicacies are confirmed and being 
 🔍 *Track Live Baking & Dispatch Status:*
 ${siteUrl}
 
-Need support? Contact Karachi Bakery Care: care@karachibakery.com | 040-6666-1953`;
+Need support? Contact Crumbelle Care: care@crumbelle.com | 040-6666-1953`;
 }
 
 function generateOrderWhatsAppUrl(orderData) {
@@ -10326,8 +10321,8 @@ function adminSendTestWhatsappMessage() {
       orderId: testOrderId,
       amount: 499,
       paymentId: 'pay_test_zero_click',
-      paymentMethod: 'Karachi Cloud Test Gateway',
-      address: 'Karachi Bakery Central Store, Moazzam Jahi Market, Hyderabad',
+      paymentMethod: 'Crumbelle Cloud Test Gateway',
+      address: 'Crumbelle Central Boutique, Mozamjahi Market, Hyderabad',
       deliveryDate: 'Today, Express Delivery',
       items: ['Signature Fruit Biscuits (400g)', 'Osmania Tea Biscuits (400g)']
     })

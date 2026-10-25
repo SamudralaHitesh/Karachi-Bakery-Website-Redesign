@@ -40,7 +40,7 @@ module.exports = async function handler(req, res) {
 
       const reviewDoc = {
         productId: body.productId || 'p1',
-        productName: body.productName || 'Karachi Bakery Delicacy',
+        productName: body.productName || 'Crumbelle Delicacy',
         author: body.author || 'Anonymous Connoisseur',
         rating: Math.min(5, Math.max(1, Number(body.rating) || 5)),
         title: body.title || 'Exceptional Quality',
